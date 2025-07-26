@@ -1,0 +1,35 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+
+        maven {
+            name = 'Neoforge Maven'
+            url = 'https://maven.neoforged.net/releases/'
+        }
+
+        maven {
+            name = 'MincraftForge Maven'
+            url = 'https://maven.minecraftforge.net/'
+        }
+
+        maven {
+            name = 'FabricMC Maven'
+            url = 'https://maven.fabricmc.net/'
+        }
+
+        maven {
+            name = 'SpongePowered Maven'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+
+        maven {
+            name = 'ParchmentMC Maven'
+            url = 'https://maven.parchmentmc.org/'
+        }
+    }
+}
+
+rootProject.name = 'MoonlightCore'
+include 'Xplat'
+include 'Fabric'
+include 'Forge'

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "${modId}",
+  "version": "${modVersion}",
+  "name": "${modName}",
+  "description": "${modDescription}",
+  "authors": ["${modAuthor}"],
+  "contributors": ["${modCredits}"],
+  "contact": {
+    "sources": "https://github.com/leoxianx/MoonlightCore"
+  },
+  "license": "${modLicense}",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["de.leoxian.moonlightcore.fabric.MoonlightCoreFabric"]
+  },
+  "mixins": ["moonlightcore.mixins.json", "moonlightcore.fabric.mixins.json"],
+  "depends": {
+    "fabricloader": ">=${fabricLoaderVersion}",
+    "fabric-api": ">=${fabricApiVersion}"
+  }
+}

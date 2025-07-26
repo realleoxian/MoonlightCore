@@ -1,0 +1,123 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+group = rootProject.group
+version = rootProject.version
+
+base.archivesName = "${modName}-xplat"
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(modJavaVersion)
+        vendor = JvmVendorSpec.ADOPTIUM
+    }
+}
+
+sourceSets {
+    api {
+        compileClasspath += configurations['compileClasspath']
+    }
+
+    main {
+        java {
+            compileClasspath += sourceSets.api.output
+            runtimeClasspath += sourceSets.api.output
+        }
+    }
+}
+
+repositories {
+    exclusiveContent {
+        forRepositories(
+                maven {
+                    name = "ParchmentMC Maven"
+                    url = "https://maven.parchmentmc.org"
+                },
+                maven {
+                    name = "Neoforge Maven"
+                    url = "https://maven.neoforged.net/releases"
+                }
+        )
+        filter {
+            includeGroupAndSubgroups("org.parchmentmc.data")
+        }
+    }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'SpongePowered Maven'
+                url = 'https://repo.spongepowered.org/repository/maven-public'
+            }
+        }
+        filter {
+            includeGroupAndSubgroups("org.spongepowered.mixin")
+        }
+    }
+}
+
+legacyForge {
+    mcpVersion = mcVersion
+
+    def atFile = file("src/main/resources/META-INF/accesstransformer.cfg")
+    if(atFile.exists()) {
+        accessTransformers = [atFile.absolutePath]
+    }
+
+    parchment {
+        minecraftVersion = parchmentMc
+        mappingsVersion = parchmentVersion
+    }
+}
+
+dependencies {
+    compileOnly 'org.spongepowered:mixin:0.8.5'
+    implementation 'com.google.code.findbugs:jsr305:3.0.1'
+}
+
+tasks.named('jar', Jar) {
+    from sourceSets.main.output.classesDirs
+    from sourceSets.main.output.resourcesDir
+
+    from sourceSets.api.output.classesDirs
+    from sourceSets.api.output.resourcesDir
+
+    manifest {
+        attributes([
+                'Specification-Title': modId,
+                'Specification-Vendor': modAuthor,
+                'Specification-Version': project.version,
+
+                'Implementation-Title': project.jar.archiveVersion,
+                'Implementation-Vendor': project.name,
+                'Implementation-Version': modAuthor,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+
+                'Built-On-Minecraft': mcVersion
+        ])
+    }
+}
+
+tasks.withType(Javadoc).configureEach {
+    def docletOptions = options as StandardJavadocDocletOptions
+    docletOptions.addStringOption('Xdoclint:none', '-quiet')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = JavaLanguageVersion.of(modJavaVersion).asInt()
+}
+
+tasks.withType(GenerateModuleMetadata).configureEach {
+    enabled = false
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    setPreserveFileTimestamps(false)
+    setReproducibleFileOrder(true)
+}

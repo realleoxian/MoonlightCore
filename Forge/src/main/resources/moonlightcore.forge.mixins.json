@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "de.leoxian.moonlightcore.forge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "${modId}.refmap.json",
+  "minVersion": "0.8",
+  "mixins": [],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

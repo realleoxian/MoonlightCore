@@ -1,0 +1,53 @@
+plugins {
+    id 'fabric-loom'
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mcVersion}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchmentMc}:${parchmentVersion}@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${fabricLoaderVersion}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}+${mcVersion}"
+
+    include implementation("com.google.code.findbugs:jsr305:3.0.1")
+
+    compileOnly project(":Xplat")
+}
+
+loom {
+    def awFile = project(":Xplat").file("src/main/resources/${modId}.accesswidener")
+    if(awFile.exists()) {
+        accessWidenerPath = awFile
+    }
+
+    mixin {
+        defaultRefmapName = "${modId}.refmap.json"
+    }
+
+    runs {
+        client {
+            client()
+
+            configName = "FabricMC Client"
+            runDir = "../run/client"
+            ideConfigGenerated = true
+        }
+
+        server {
+            server()
+
+            configName = "FabricMC Server"
+            runDir = "../run/server"
+            ideConfigGenerated = true
+        }
+    }
+
+    mods {
+        moonlightcore {
+            sourceSet sourceSets.main
+        }
+    }
+}

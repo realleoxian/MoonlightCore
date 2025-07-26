@@ -1,0 +1,60 @@
+plugins {
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+legacyForge {
+    version = "${mcVersion}-${forgeVersion}"
+    validateAccessTransformers = true
+
+    def atFile = project(":Xplat").file("src/main/resources/META-INF/accesstransformer.cfg")
+    if(atFile.exists()) {
+        accessTransformers = [atFile.absolutePath]
+    }
+
+    parchment {
+        minecraftVersion = parchmentMc
+        mappingsVersion = parchmentVersion
+    }
+
+    runs {
+        client {
+            client()
+
+            ideName = "McForge Client"
+            gameDirectory = file("../run/client")
+            logLevel = org.slf4j.event.Level.DEBUG
+
+            systemProperty 'forge.logging.console.level', 'debug'
+            systemProperty 'fml.earlyprogresswindow', 'false'
+        }
+
+        server {
+            server()
+
+            ideName = "McForge Server"
+            gameDirectory = file("../run/server")
+            logLevel = org.slf4j.event.Level.DEBUG
+
+            systemProperty 'forge.logging.console.level', 'debug'
+            systemProperty 'fml.earlyprogresswindow', 'false'
+        }
+    }
+
+    mods {
+        moonlightcore {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    compileOnly project(":Xplat")
+    jarJar(implementation("com.google.code.findbugs:jsr305:3.0.1"))
+}
+
+mixin {
+    add sourceSets.main, "${modId}.refmap.json"
+
+    config("${modId}.mixins.json")
+    config("${modId}.forge.mixins.json")
+}
