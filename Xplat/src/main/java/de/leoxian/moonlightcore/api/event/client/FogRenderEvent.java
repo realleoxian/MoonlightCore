@@ -45,8 +45,6 @@ public interface FogRenderEvent {
         void bootstrap(GameRenderer renderer, Context context, float partialTick);
 
         interface Context {
-            void build();
-
             void setRed(float red);
 
             void setGreen(float green);
@@ -58,8 +56,6 @@ public interface FogRenderEvent {
             float getGreen();
 
             float getBlue();
-
-            boolean isValid();
 
             Camera getCamera();
         }

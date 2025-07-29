@@ -8,6 +8,7 @@
     "PacketDispatcherImpl"
   ],
   "client": [
+    "client.FogRendererMixin",
     "client.PacketDispatcherImpl"
   ],
   "injectors": {
