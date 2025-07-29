@@ -47,13 +47,6 @@ public final class ForgeClientEventHandler {
     @SubscribeEvent
     public static void onRenderFogColor(ViewportEvent.ComputeFogColor event) {
         FogRenderEvent.FogColorCompute.Context context = new FogRenderEvent.FogColorCompute.Context() {
-            private boolean isValid = false;
-
-            @Override
-            public void build() {
-                isValid = true;
-            }
-
             @Override
             public void setRed(float red) {
                 event.setRed(red);
@@ -82,11 +75,6 @@ public final class ForgeClientEventHandler {
             @Override
             public float getBlue() {
                 return event.getBlue();
-            }
-
-            @Override
-            public boolean isValid() {
-                return this.isValid;
             }
 
             @Override
