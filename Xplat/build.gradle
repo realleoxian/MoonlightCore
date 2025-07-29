@@ -18,19 +18,6 @@ java {
     }
 }
 
-sourceSets {
-    api {
-        compileClasspath += configurations['compileClasspath']
-    }
-
-    main {
-        java {
-            compileClasspath += sourceSets.api.output
-            runtimeClasspath += sourceSets.api.output
-        }
-    }
-}
-
 repositories {
     exclusiveContent {
         forRepositories(
@@ -83,9 +70,6 @@ dependencies {
 tasks.named('jar', Jar) {
     from sourceSets.main.output.classesDirs
     from sourceSets.main.output.resourcesDir
-
-    from sourceSets.api.output.classesDirs
-    from sourceSets.api.output.resourcesDir
 
     manifest {
         attributes([

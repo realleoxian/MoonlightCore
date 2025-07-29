@@ -57,9 +57,6 @@ subprojects { sub ->
             dependsOn(project(":Xplat").tasks.named('processResources', ProcessResources))
             from(project(":Xplat").sourceSets.main.output.resourcesDir)
 
-            dependsOn(project(":Xplat").tasks.named('processApiResources', ProcessResources))
-            from(project(":Xplat").sourceSets.api.output.resourcesDir)
-
             var expandedProperties = [
                     modId: modId, modName: modName, modVersion: rootProject.version, modAuthor: modAuthor, modCredits: modCredits, modDescription: modDescription, modLicense: modLicense, modJavaVersion: modJavaVersion, modIssueTracker: modIssueTracker,
 
@@ -88,10 +85,6 @@ subprojects { sub ->
             from(project(":Xplat").sourceSets.main.output.classesDirs)
             from(project(":Xplat").sourceSets.main.output.resourcesDir)
 
-            dependsOn(project(":Xplat").tasks.named('processApiResources', ProcessResources))
-            from(project(":Xplat").sourceSets.api.output.classesDirs)
-            from(project(":Xplat").sourceSets.api.output.resourcesDir)
-
             manifest {
                 attributes([
                         'Specification-Title': modId,
@@ -118,7 +111,6 @@ subprojects { sub ->
             options.release = JavaLanguageVersion.of(modJavaVersion).asInt()
 
             source(project(":Xplat").sourceSets.main.allJava)
-            source(project(":Xplat").sourceSets.api.allJava)
         }
 
         tasks.withType(GenerateModuleMetadata).configureEach {
