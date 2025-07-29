@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 public interface ServerTickEvent {
     Event<ServerTickEvent> SERVER_TICK = Event.create();
 
-    void bootstrap(MinecraftServer level, Phase phase);
+    void bootstrap(MinecraftServer server, Phase phase);
 
     enum Phase {
         START,
