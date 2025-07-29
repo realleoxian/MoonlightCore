@@ -49,6 +49,8 @@ legacyForge {
 
 dependencies {
     compileOnly project(":Xplat")
+
+    jarJar(implementation("io.github.llamalad7:mixinextras-common:0.5.0"))
     jarJar(implementation("com.google.code.findbugs:jsr305:3.0.1"))
 }
 
