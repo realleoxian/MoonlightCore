@@ -10,6 +10,5 @@ public final class ModPacketDispatcher extends PacketDispatcher {
 
     @Override
     public void bootstrap() {
-
     }
 }

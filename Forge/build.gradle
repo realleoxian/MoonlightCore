@@ -32,7 +32,7 @@ legacyForge {
             server()
 
             ideName = "McForge Server"
-            gameDirectory = file("../run/server")
+            gameDirectory = file("../run/server/forge")
             logLevel = org.slf4j.event.Level.DEBUG
 
             systemProperty 'forge.logging.console.level', 'debug'

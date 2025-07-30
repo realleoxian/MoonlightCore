@@ -40,7 +40,7 @@ loom {
             server()
 
             configName = "FabricMC Server"
-            runDir = "../run/server"
+            runDir = "../run/server/fabric"
             ideConfigGenerated = true
         }
     }

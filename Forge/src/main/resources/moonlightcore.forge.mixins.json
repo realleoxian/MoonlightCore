@@ -5,6 +5,7 @@
   "refmap": "${modId}.refmap.json",
   "minVersion": "0.8",
   "mixins": [
+    "LoaderEnvironmentImpl",
     "PacketDispatcherImpl"
   ],
   "client": [],
