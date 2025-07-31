@@ -2,8 +2,10 @@ package de.leoxian.moonlightcore.api.config;
 
 import de.leoxian.moonlightcore.api.util.nullness.NotnullSupplier;
 import de.leoxian.moonlightcore.config.ModConfigSpecImpl;
+import de.leoxian.moonlightcore.util.LoaderEnvironment;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -22,6 +24,10 @@ public interface ModConfigSpec {
     String modId();
 
     Side side();
+
+    default Path filePath() {
+        return LoaderEnvironment.getConfigPath().resolve(this.modId() + "-" + this.side() + ".ezc");
+    }
 
     interface Builder {
         ConfigCategory pushCategory(String id, @Nullable String description, Consumer<ConfigCategory.Builder> builderOutput);

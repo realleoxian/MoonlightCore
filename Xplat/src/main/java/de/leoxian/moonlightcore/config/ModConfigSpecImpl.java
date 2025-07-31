@@ -7,10 +7,10 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.logging.LogUtils;
 import de.leoxian.moonlightcore.api.config.ModConfigSpec;
 import de.leoxian.moonlightcore.api.util.nullness.NotnullSupplier;
-import de.leoxian.moonlightcore.util.LoaderEnvironment;
+import de.leoxian.moonlightcore.config.sync.ConfigSyncRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,10 +39,13 @@ public final class ModConfigSpecImpl implements ModConfigSpec {
         this.side = side;
         this.modId = modId;
 
-        Path filePath = LoaderEnvironment.getConfigPath().resolve(this.modId + "-" + this.side + ".ezc");
-
         ConfigSyncRegistry.tryAdd(this);
-        EzcConfigParser.tryReadFromFile(filePath, this);
+        EzcConfigParser.tryReadFromFile(this.filePath(), this);
+    }
+
+    @ApiStatus.Internal
+    public void reload(byte[] newData) {
+        EzcConfigParser.readFromBytes(newData, this);
     }
 
     @Override

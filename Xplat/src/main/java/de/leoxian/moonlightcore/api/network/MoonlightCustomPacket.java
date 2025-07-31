@@ -20,14 +20,6 @@ public sealed interface MoonlightCustomPacket<T extends MoonlightCustomPacket<T>
      */
     ResourceLocation id();
 
-    @SuppressWarnings("unchecked")
-    default FriendlyByteBuf toBuf() {
-        FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-        this.codec().encode(byteBuf, (T) this);
-
-        return byteBuf;
-    }
-
     /**
      * The representation of a packet codec, used when the packet its being registered
      * @param <T> The type of packet
