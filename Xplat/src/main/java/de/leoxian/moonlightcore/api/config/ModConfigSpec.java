@@ -19,6 +19,10 @@ public interface ModConfigSpec {
 
     Optional<ConfigCategory> getCategory(String categoryId);
 
+    default ConfigCategory getCategoryOrThrow(String categoryId) {
+        return this.getCategory(categoryId).orElseThrow();
+    }
+
     List<String> categoryEntries();
 
     String modId();
@@ -30,7 +34,9 @@ public interface ModConfigSpec {
     }
 
     interface Builder {
-        ConfigCategory pushCategory(String id, @Nullable String description, Consumer<ConfigCategory.Builder> builderOutput);
+        Builder description(String... description);
+
+        ConfigCategory pushCategory(String id, Consumer<ConfigCategory.Builder> builderOutput);
 
         ModConfigSpec build(String modId, Side side);
     }
@@ -49,6 +55,15 @@ public interface ModConfigSpec {
         String id();
 
         String description();
+
+        @SuppressWarnings("unchecked")
+        default <T> ValueKey<T> getUncheckedKeyOrThrow(String key) {
+            return (ValueKey<T>) this.getUncheckedKey(key).orElseThrow();
+        }
+
+        default ConfigCategory getChildOrThrow(String childKey) {
+            return this.getChild(childKey).orElseThrow();
+        }
 
         interface Builder {
             ConfigCategory pushChild(String id, String description, Consumer<Builder> builderOutput);

@@ -5,11 +5,19 @@
   "refmap": "${modId}.refmap.json",
   "minVersion": "0.8",
   "mixins": [
+    "BiomeSourceMixin",
     "BuiltInRegistriesAccessor",
+    "MultiNoiseBiomeSourceAccessor",
+    "MultiNoiseBiomeSourceMixin",
+    "NoiseGeneratorSettingsMixin",
+    "ParameterListMixin",
     "PlayerListMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "SurfaceRulesContextAccessor",
+    "TheEndBiomeSourceMixin"
   ],
   "client": [
+    "WorldOpenFlowsMixin",
     "client.KeyboardHandlerMixin",
     "client.MinecraftMixin",
     "client.MouseHandlerMixin"

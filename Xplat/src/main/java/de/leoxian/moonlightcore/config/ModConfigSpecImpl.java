@@ -70,9 +70,19 @@ public final class ModConfigSpecImpl implements ModConfigSpec {
 
     private static final class BuilderImpl implements Builder {
         private final ImmutableMap.Builder<String, ConfigCategory> categories = ImmutableMap.builder();
+        private final List<String> description = new ArrayList<>();
 
         @Override
-        public ConfigCategory pushCategory(String id, @Nullable String description, Consumer<ConfigCategory.Builder> builderOutput) {
+        public Builder description(String... description) {
+            this.description.addAll(Arrays.asList(description));
+            return this;
+        }
+
+        @Override
+        public ConfigCategory pushCategory(String id, Consumer<ConfigCategory.Builder> builderOutput) {
+            String description = LINE_JOINER.join(this.description);
+            this.description.clear();
+
             ConfigCategoryImpl.BuilderImpl builder = new ConfigCategoryImpl.BuilderImpl(id, description);
             builderOutput.accept(builder);
 

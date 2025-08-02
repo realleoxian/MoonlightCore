@@ -1,4 +1,17 @@
 accessWidener v2 named
 
 # FogRenderer
-accessible      class       net/minecraft/client/renderer/FogRenderer$FogData
+accessible      class       net/minecraft/client/renderer/FogRenderer$FogData                                                               # FogRenderer$FogData
+
+# OverworldBiomeBuilder
+accessible      method      net/minecraft/world/level/biome/OverworldBiomeBuilder       addBiomes       (Ljava/util/function/Consumer;)V    # addBiomes
+
+# SurfaceRules
+accessible      class       net/minecraft/world/level/levelgen/SurfaceRules$SurfaceRule                                                     # SurfaceRules$SurfaceRule
+accessible      class       net/minecraft/world/level/levelgen/SurfaceRules$Context                                                         # SurfaceRules$Context
+
+# Climate
+accessible      class       net/minecraft/world/level/biome/Climate$RTree                                                                   # Climate$RTree
+accessible      class       net/minecraft/world/level/biome/Climate$RTree$Node                                                              # Climate$RTree
+accessible      class       net/minecraft/world/level/biome/Climate$DistanceMetric                                                          # Climate$DistanceMetric
+accessible      method      net/minecraft/world/level/biome/Climate$RTree$Node      distance        ([J)J                                   # Climate$RTree$Node distance
