@@ -42,6 +42,4 @@ public final class ForgeServerEventHandler {
         EventDispatcher.INSTANCE.fire(ServerLifecycleEvent.STOPPED, (listener) -> listener.bootstrap(event.getServer()));
     }
 
-    private ForgeServerEventHandler() {}
-
 }

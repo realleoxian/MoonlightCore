@@ -2,12 +2,10 @@ package de.leoxian.moonlightcore.forge.handler;
 
 import de.leoxian.moonlightcore.api.event.EventDispatcher;
 import de.leoxian.moonlightcore.api.event.common.RegistryEvents;
-import de.leoxian.moonlightcore.api.event.server.CommandRegistrationEvent;
 import net.minecraft.core.DefaultedMappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.NewRegistryEvent;
@@ -16,13 +14,8 @@ import net.minecraftforge.registries.RegistryBuilder;
 
 import java.util.function.Supplier;
 
-@Mod.EventBusSubscriber
-public final class ForgeEventHandler {
-
-    @SubscribeEvent
-    public static void onRegisterCommands(RegisterCommandsEvent event) {
-        EventDispatcher.INSTANCE.fire(CommandRegistrationEvent.COMMAND_REGISTRATION, (listener) -> listener.bootstrap(event.getDispatcher(), event.getCommandSelection(), event.getBuildContext()));
-    }
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+public final class RegistryEventHandler {
 
     @SubscribeEvent
     public static void onNewRegistry(NewRegistryEvent event) {
@@ -53,5 +46,4 @@ public final class ForgeEventHandler {
         }));
     }
 
-    private ForgeEventHandler() {}
 }
