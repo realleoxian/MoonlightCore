@@ -3,7 +3,7 @@
 ## Configuration System
 
 The configuration system had a full rework and now its better than before, being able to even sync your configurations now!
-Everything about the configuration now is on de.leowgc.moonlightcore.api.config.ModConfigSpec.
+Everything about the configuration now is on `de.leowgc.moonlightcore.api.config.ModConfigSpec.`
 
 The configurations now are side-specified, this means you can have one configuration for client, other for common and one for server, the server one being synced automatically. Here an example of how use the new configuration system:
 
