@@ -50,14 +50,14 @@ public class ExampleModConfig {
 }
 ```
 
-When creating the instance of the file it automatically its being created in the configurations directory of the mod loader in a "[modId]-[side].ezc" file.
-You can also implement your own custom type configurations by implementing a ValueKeySerializer that writes/reads the value from the file and specify it with the 'define' method.
+When creating the instance of the file it automatically its being created in the configurations directory of the mod loader in a `<modId>-<side>.ezc` file.
+You can also implement your own custom type configurations by implementing a `ValueKeySerializer` that writes/reads the value from the file and specify it with the 'define' method.
 
 Server side configurations will be synced to players when they join to the server.
 
 ## Networking
 
-The networking (like all the mod things) was reworked too! Now you have to implement MoonlightCustomPacket.ServerBoundCustomPacket if your packet is C2S or MoonlightCustomPacket.ClientBoundCustomPacket if your packet is S2C.
+The networking (like all the mod things) was reworked too! Now you have to implement `MoonlightCustomPacket.ServerBoundCustomPacket` if your packet is C2S or `MoonlightCustomPacket.ClientBoundCustomPacket` if your packet is S2C.
 
 To register these packets you need to implement your `PacketDispatcher`.  Example:
 
@@ -86,8 +86,8 @@ Also, the Network contexts for client and server packets were removed, now you h
 
 The world generation stays likely the sames as the 3.0.0 with some minimal changes.
 
-1. BiomeProvider is no longer a abstract class and now is a interface that needs to be registered on BiomeProviderRegistry with a weight.
-2. ParameterPointsListBuilder now haves a included method to bind all the points to a biome automatically
+1. **BiomeProvider** is no longer a abstract class and now is a interface that needs to be registered on BiomeProviderRegistry with a weight.
+2. **ParameterPointsListBuilder** now haves a included method to bind all the points to a biome automatically
 
 Out of these 2 changes there is nothing else than a re-organization of the classes.
 
@@ -106,45 +106,45 @@ With these priorities change the `event.custom` package was remove to re-organiz
 
 - Client events:
   - ClientLifecycleEvent:
-    - STARTING: Fired when the client is starting to run
-    - STARTED: Fired just before the client enters the running loop
-    - STOPPING: When the client is stopping
+    - **STARTING**: Fired when the client is starting to run
+    - **STARTED**: Fired just before the client enters the running loop
+    - **STOPPING**: When the client is stopping
     
   - ClientTickEvent: Fired on every client tick which can be on the start and the end of the tick
   - FogRenderEvent:
-    - FOG_RENDERING: Fired when rendering the fog
-    - FOG_COLOR_COMPUTE: Fired when selecting the color of the fog
+    - **FOG_RENDERING**: Fired when rendering the fog
+    - **FOG_COLOR_COMPUTE**: Fired when selecting the color of the fog
   - GameRenderingEvents:
-    - BLOCK_COLOR_REGISTRATION: Fired when registering the blocks/fluids colors
-    - BLOCK_RENDERER_REGISTRATION: Fired when registering render types for blocks
-    - ENTITY_RENDERER_REGISTRATION: Fired when registering entity renderers
-    - BLOCK_ENTITY_RENDERER_REGISTRATION: Fired when registering block entity renderers
-    - MODEL_LAYER_REGISTRATION: Fired when registering entity model layers
-    - PARTICLE_FACTORY_REGISTRATION: Fired when registering particle sprites
+    - **BLOCK_COLOR_REGISTRATION**: Fired when registering the blocks/fluids colors
+    - **BLOCK_RENDERER_REGISTRATION**: Fired when registering render types for blocks
+    - **ENTITY_RENDERER_REGISTRATION**: Fired when registering entity renderers
+    - **BLOCK_ENTITY_RENDERER_REGISTRATION**: Fired when registering block entity renderers
+    - **MODEL_LAYER_REGISTRATION**: Fired when registering entity model layers
+    - **PARTICLE_FACTORY_REGISTRATION**: Fired when registering particle sprites
   - HudRenderEvent: Fired when rendering the HUD
   - InputEvent:
-    - KEY_INPUT: Fired when there is an input from the keyboard
-    - MOUSE_INPUT: Fired when there is an input from the mouse
+    - **KEY_INPUT**: Fired when there is an input from the keyboard
+    - **MOUSE_INPUT**: Fired when there is an input from the mouse
 
 
 - Common events:
   - RegistryEvents:
-    - NEW_REGISTRY: Fired when registering new registries to Minecraft
-    - REGISTER: Fired when registering new things to Minecraft
+    - **NEW_REGISTRY**: Fired when registering new registries to Minecraft
+    - **REGISTER**: Fired when registering new things to Minecraft
   - CommandRegistrationEvent: Fired when creating new Commands and registering them on Minecraft
 
 
 - Server events:
   - ServerLifecycleEvent:
-    - STARTING: Fired when the server is starting
-    - STARTED: Fired when the server has been started
-    - STOPPING: Fired when the server is stopping
-    - STOPPED: Fired when the server already has been stopped
+    - **STARTING**: Fired when the server is starting
+    - **STARTED**: Fired when the server has been started
+    - **STOPPING**: Fired when the server is stopping
+    - **STOPPED**: Fired when the server already has been stopped
   - ServerPlayerEvents:
-    - JOIN_SERVER: Fired when a player joins to a server
-    - LEAVE_SERVER Fired when a player leaves a server
-    - AFTER_RESPAWN: Fired after a player respawns
-    - COPY_FROM: Fired when a player data is copied from other player
+    - **JOIN_SERVER**: Fired when a player joins to a server
+    - **LEAVE_SERVER** Fired when a player leaves a server
+    - **AFTER_RESPAWN**: Fired after a player respawns
+    - **COPY_FROM**: Fired when a player data is copied from other player
   - ServerTickEvent: Fired at the start and the end of an tick on the server
 
 ## Miscellaneous
