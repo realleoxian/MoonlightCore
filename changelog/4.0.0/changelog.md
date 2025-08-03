@@ -150,3 +150,7 @@ With these priorities change the `event.custom` package was remove to re-organiz
 ## Miscellaneous
 
 The data attachments have been removed since in a few versions there will be the Mojang's DataComponents so there is no point on having them.
+
+## Fabric Specific Changes
+
+Now FabricMC provides a `MoonlightCoreInitializer` for mod compatibility, use this if you use this mod as a mod-developer because if not you can have some problems with events like registering ones
