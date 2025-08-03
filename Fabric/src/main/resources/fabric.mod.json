@@ -12,9 +12,10 @@
   "license": "${modLicense}",
   "environment": "*",
   "entrypoints": {
-    "main": ["de.leoxian.moonlightcore.fabric.MoonlightCoreFabric"],
-    "client": ["de.leoxian.moonlightcore.fabric.MoonlightCoreFabricClient"]
+    "main": ["de.leowgc.moonlightcore.fabric.MoonlightCoreFabric"],
+    "client": ["de.leowgc.moonlightcore.fabric.MoonlightCoreFabricClient"]
   },
+  "accessWidener": "moonlightcore.accesswidener",
   "mixins": ["moonlightcore.mixins.json", "moonlightcore.fabric.mixins.json"],
   "depends": {
     "fabricloader": ">=${fabricLoaderVersion}",
