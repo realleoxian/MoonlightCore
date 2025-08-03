@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "de.leoxian.moonlightcore.fabric.mixin",
+  "package": "de.leowgc.moonlightcore.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "${modId}.refmap.json",
   "minVersion": "0.8",

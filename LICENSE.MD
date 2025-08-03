@@ -1,5 +1,5 @@
 # License
-This repository is copyright ©Leoxian 2025. The following license is provided to allow you to creatively contribute to and improve the repository.
+This repository is copyright ©LeoWgc 2025. The following license is provided to allow you to creatively contribute to and improve the repository.
 
 The license applies only to the source code in this repository. The compiled mod comes under its own separated license (MIT). By downloading, running, forking, contributing to or otherwise interacting with this repository, you agree to the license set below.
 
@@ -9,7 +9,7 @@ TL;DR do what you want with this repository on GitHub, but ask me first if you w
 
 ### 1. Used Terms:
 - 'GitHub': The website https://github.com, maintained by GitHub Inc.
-- 'Leoxian': The author of this Minecraft mod, MoonlightCore
+- 'LeoWgc': The author of this Minecraft mod, MoonlightCore
 - 'Repository': This repository on GitHub, containing this license and other informational files, configurations and code which are part of MoonlightCore
 - 'Curseforge': The website https://curseforge.com were the mod its being hosted
 - 'Modrinth': The website https://modrinth.com were the mod its being hosted
@@ -20,7 +20,7 @@ TL;DR do what you want with this repository on GitHub, but ask me first if you w
 This repository, the source of the minecraft mod 'MoonlightCore', is provided in the hope that it will be useful and/or educational. You are free to download and modify this repository for personal use. See [Derivative Works](#3-derivative-works) for defaults regarding public sharing of this repository.
 
 THIS REPOSITORY IS PROVIDED AS-IS WITH NO WARRANTIES, IMPLIED OR OTHERWISE.
-Leoxian TAKES NOT RESPONSIBILITY FOR ANY DAMAGES INCURRED BY THE USER OR MISUSE OF THIS REPOSITORY.
+LeoWgc TAKES NOT RESPONSIBILITY FOR ANY DAMAGES INCURRED BY THE USER OR MISUSE OF THIS REPOSITORY.
 
 ### 3. Derivative Works
 
@@ -31,12 +31,12 @@ Any code or assets that are adding remain in the intellectual property of their 
 
 ### 4. Distribution
 
-Distribution of this repository anywhere expect on  GitHub, in whole or in part, modified or otherwise, is forbidden without advanced permission from Leoxian.
-Leoxian reserves the right to defuse or withdraw such permission at any time.
+Distribution of this repository anywhere expect on  GitHub, in whole or in part, modified or otherwise, is forbidden without advanced permission from LeoWgc.
+LeoWgc reserves the right to defuse or withdraw such permission at any time.
 
 ### 5. Contributing
-You are encouraged to submit relevant pull request for this repository. By submitting a pull request, you grant Leoxian permission to use the content thereof, with due credit given in MoonlightCore.
-Leoxian reserves the right to modify, remove code or assets that may be incorporated into MoonlightCore from accepted pull request, but the contributor(s) responsible will remain in the mod credits even if their contribution is removed.
+You are encouraged to submit relevant pull request for this repository. By submitting a pull request, you grant LeoWgc permission to use the content thereof, with due credit given in MoonlightCore.
+LeoWgc reserves the right to modify, remove code or assets that may be incorporated into MoonlightCore from accepted pull request, but the contributor(s) responsible will remain in the mod credits even if their contribution is removed.
 Credit will be given to contributors of accepted request as follows:
 
 1. The contributor's name or pseudonym will be listed in the CREDITS.txt, both in this repository and in any compiled version of the mod released on curseforge or modrinth, which incorporate the contributor's work.
@@ -44,7 +44,7 @@ Credit will be given to contributors of accepted request as follows:
 
 # 6. Changes to this license
 
-This license is subject to change and may be modified by Leoxian at any time. Only the most recent version will apply at any given time.
-It is the reponsability of the owner of any forked or modified version of this repository to keep their code of the license up-to-date, and in case that is not up-to-date, the license in the original repository belonging to Leoxian overrides the copies
+This license is subject to change and may be modified by LeoWgc at any time. Only the most recent version will apply at any given time.
+It is the reponsability of the owner of any forked or modified version of this repository to keep their code of the license up-to-date, and in case that is not up-to-date, the license in the original repository belonging to LeoWgc overrides the copies
 
 ## END OF THE LICENSE

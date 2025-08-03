@@ -8,6 +8,15 @@ plugins {
     id 'me.modmuss50.mod-publish-plugin' version '0.8.4'
 }
 
+ext {
+    changelogFile = rootProject.file("changelog/${version}/changelog.md")
+
+    secrets = new Properties()
+    if (rootProject.file("secrets.properties").exists()) {
+        rootProject.file("secrets.properties").withInputStream {is -> secrets.load(is) }
+    }
+}
+
 subprojects { sub ->
     if(sub.name != "Xplat") {
         evaluationDependsOn(":Xplat")
@@ -120,6 +129,67 @@ subprojects { sub ->
         tasks.withType(AbstractArchiveTask).configureEach {
             setPreserveFileTimestamps(false)
             setReproducibleFileOrder(true)
+        }
+    }
+}
+
+// From https://modmuss50.github.io/mod-publish-plugin/multi_platform/
+publishMods {
+    type = "${releaseChannel}"
+
+    if (changelogFile.exists()) {
+        changelog = changelogFile.text
+    }
+
+    def cfOptions = curseforgeOptions {
+        accessToken = secrets.curseforgeToken
+        projectId = "${curseforgeProjectId}"
+
+        minecraftVersions = ["${mcVersion}"]
+        javaVersions = [JavaVersion.toVersion(modJavaVersion)]
+
+        clientRequired = true
+        serverRequired = true
+    }
+
+    def mrOptions = modrinthOptions {
+        accessToken = secrets.modrinthToken
+        projectId = "${modrinthProjectId}"
+        minecraftVersions = ["${mcVersion}"]
+    }
+
+    curseforge("MlCoreForge_Curseforge") {
+        from cfOptions
+        file project(":Forge")
+
+        modLoaders = ["forge"]
+    }
+
+    curseforge ("MlCoreFabric_Curseforge") {
+        from cfOptions
+        file project(":Fabric")
+
+        modLoaders = ["fabric"]
+
+        requires {
+            slug = "fabric-api"
+        }
+    }
+
+    modrinth("MlCoreForge_Modrinth") {
+        from mrOptions
+        file project(":Forge")
+
+        modLoaders = ["forge"]
+    }
+
+    modrinth("MlCoreFabric_Modrinth") {
+        from mrOptions
+        file project(":Fabric")
+
+        modLoaders = ["fabric"]
+        requires {
+            slug = "fabric-api"
         }
     }
 }
