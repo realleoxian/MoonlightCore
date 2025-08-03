@@ -1,0 +1,124 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+base {
+    archivesName = "${modId}-${project.name}-${mcVersion}"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(modJavaVersion)
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+    // https://docs.gradle.org/current/userguide/declaring_repositories.html#declaring_content_exclusively_found_in_one_repository
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Sponge'
+                url = 'https://repo.spongepowered.org/repository/maven-public'
+            }
+        }
+        filter { includeGroupAndSubgroups('org.spongepowered') }
+    }
+    exclusiveContent {
+        forRepositories(
+                maven {
+                    name = 'ParchmentMC'
+                    url = 'https://maven.parchmentmc.org/'
+                },
+                maven {
+                    name = "NeoForge"
+                    url = 'https://maven.neoforged.net/releases'
+                }
+        )
+        filter { includeGroup('org.parchmentmc.data') }
+    }
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com'
+    }
+}
+
+// Declare capabilities on the outgoing configurations.
+// Read more about capabilities here: https://docs.gradle.org/current/userguide/component_capabilities.html#sec:declaring-additional-capabilities-for-a-local-component
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations."$variant".outgoing {
+        capability("$group:${project.name}:$version")
+        capability("$group:${base.archivesName.get()}:$version")
+        capability("$group:$modId-${project.name}-${mcVersion}:$version")
+        capability("$group:$modId:$version")
+    }
+    publishing.publications.configureEach {
+        suppressPomMetadataWarningsFor(variant)
+    }
+}
+
+sourcesJar {
+    from(rootProject.file('LICENSE')) {
+        rename { "${it}_${mod_name}" }
+    }
+}
+
+jar {
+    from(rootProject.file('LICENSE')) {
+        rename { "${it}_${mod_name}" }
+    }
+
+    manifest {
+        attributes([
+                'Specification-Title': modId,
+                'Specification-Vendor': modAuthor,
+                'Specification-Version': project.version,
+
+                'Implementation-Title': project.name,
+                'Implementation-Vendor': modAuthor,
+                'Implementation-Version': project.jar.archiveVersion,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+
+                'Built-On-Minecraft': mcVersion
+        ])
+    }
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var expandedProperties = [
+            modId: modId, modName: modName, modVersion: rootProject.version, modAuthor: modAuthor, modCredits: modCredits, modDescription: modDescription, modLicense: modLicense, modJavaVersion: modJavaVersion, modIssueTracker: modIssueTracker,
+
+            forgeVersion: forgeVersion, forgeVersionRange: forgeVersionRange, forgeLoaderVersionRange: forgeLoaderVersionRange,
+            fabricApiVersion: fabricApiVersion, fabricLoaderVersion: fabricLoaderVersion
+    ]
+
+    var jsonExpandedProperties = expandedProperties.collectEntries {
+        key, value -> [(key): value instanceof String ? value.replace("\n", "\\\\n") : value]
+    }
+
+    filesMatching(["META-INF/mods.toml", "META-INF/neoforge.mods.toml"]) {
+        expand expandedProperties
+    }
+
+    filesMatching(["fabric.mod.json", "*.mixins.json"]) {
+        expand jsonExpandedProperties
+    }
+
+    inputs.properties expandedProperties
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifactId base.archivesName.get()
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url System.getenv('local_maven_url')
+        }
+    }
+}

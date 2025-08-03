@@ -1,18 +1,33 @@
 plugins {
+    id 'multiloader-loader'
     id 'net.neoforged.moddev.legacyforge'
+
+    id 'com.modrinth.minotaur'
+    id 'com.matthewprenger.cursegradle'
+}
+
+group = rootProject.group
+version = rootProject.version
+base.archivesName = "${modId}-forge"
+
+mixin {
+    add(sourceSets.main, "${modId}.refmap.json")
+
+    config("${modId}.mixins.json")
+    config("${modId}.forge.mixins.json")
 }
 
 legacyForge {
     version = "${mcVersion}-${forgeVersion}"
     validateAccessTransformers = true
 
-    def atFile = project(":Xplat").file("src/main/resources/META-INF/accesstransformer.cfg")
-    if(atFile.exists()) {
-        accessTransformers = [atFile.absolutePath]
+    def at = project(":Xplat").file('src/main/resources/META-INF/accesstransformer.cfg')
+    if(at.exists()) {
+        accessTransformers = [at.absolutePath]
     }
 
     parchment {
-        minecraftVersion = parchmentMc
+        minecraftVersion = mcVersion
         mappingsVersion = parchmentVersion
     }
 
@@ -27,7 +42,6 @@ legacyForge {
             systemProperty 'forge.logging.console.level', 'debug'
             systemProperty 'fml.earlyprogresswindow', 'false'
         }
-
         server {
             server()
 
@@ -41,7 +55,7 @@ legacyForge {
     }
 
     mods {
-        moonlightcore {
+        "${modId}" {
             sourceSet sourceSets.main
         }
     }
@@ -50,13 +64,46 @@ legacyForge {
 dependencies {
     compileOnly project(":Xplat")
 
-    jarJar(implementation("io.github.llamalad7:mixinextras-common:0.5.0"))
-    jarJar(implementation("com.google.code.findbugs:jsr305:3.0.1"))
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 }
 
-mixin {
-    add sourceSets.main, "${modId}.refmap.json"
+jar {
+    finalizedBy("reobfJar")
 
-    config("${modId}.mixins.json")
-    config("${modId}.forge.mixins.json")
+    manifest.attributes([
+            "MixinConfigs": "${modId}.mixins.json,${modId}.forge.mixins.json"
+    ])
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = modrinthProjectId
+
+    versionName = "[Forge] MoonlightCore | ${mcVersion}-${version}"
+    versionNumber = "${mcVersion}-${version}"
+    versionType = "${releaseChannel}"
+
+    changelog = rootProject.ext.changelogFile.text
+
+    gameVersions = ["${mcVersion}"]
+    loaders = ["forge"]
+
+    uploadFile = jar
+}
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_API_KEY")
+
+    project {
+        id = "${curseforgeProjectId}"
+
+        changelog = rootProject.ext.changelogFile.text
+        releaseType = "${releaseChannel}"
+
+        addGameVersion "${mcVersion}"
+
+        mainArtifact(jar) {
+            displayName = "[Forge] MoonlightCore | ${mcVersion}-${version}"
+        }
+    }
 }
