@@ -19,7 +19,7 @@ Moonlight core is a layer abstraction of Minecraft mod loaders like fabric, forg
 
 ### Credits | Contributions
 
-1. Leoxian/LeoWGC - Author and creator of the mod
+1. LeoWGC - Author and creator of the mod
 
 ### Contributing to this mod
 If you want to contribute to this mod, adding, requesting new features or submitting an error/bug you can but i highly recommend to read the repository license and also read the contribution guidelines on the "CONTRIBUTING.MD" file
