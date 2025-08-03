@@ -5,6 +5,7 @@ import de.leowgc.moonlightcore.api.config.ModConfigSpec;
 public final class MoonlightCoreConfiguration {
 
     public static final Common COMMON = ModConfigSpec.build(Common::new);
+    public static final Server SERVER = ModConfigSpec.build(Server::new);
 
     static void init() {}
 
@@ -52,5 +53,28 @@ public final class MoonlightCoreConfiguration {
 
         // ------------------------------------------------------------------------------------------------------------------------
 
+    }
+
+    public static final class Server {
+
+        private final ModConfigSpec spec;
+
+        private final ModConfigSpec.ConfigCategory root;
+
+        public Server(ModConfigSpec.Builder builder) {
+            builder.pushCategory("root", this::syncCategory);
+
+            this.spec = builder.build(MoonlightCore.MOD_ID, ModConfigSpec.Side.SERVER);
+            this.root = this.spec.getCategoryOrThrow("root");
+        }
+
+        private void syncCategory(ModConfigSpec.ConfigCategory.Builder builder) {
+            builder.description("Define the range of blocks were the mod syncs");
+            builder.defineInt("syncRange", (val) -> val >= 32,  () -> 32);
+        }
+
+        public int syncRange() {
+            return this.root.getValue("syncRange");
+        }
     }
 }
