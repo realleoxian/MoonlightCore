@@ -1,4 +1,4 @@
-package de.leowgc.moonlightcore.mixin;
+package de.leowgc.moonlightcore.mixin.client;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.client.Minecraft;
