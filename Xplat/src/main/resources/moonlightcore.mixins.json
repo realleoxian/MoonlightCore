@@ -18,6 +18,7 @@
   ],
   "client": [
     "WorldOpenFlowsMixin",
+    "client.HumanoidModelMixin",
     "client.KeyboardHandlerMixin",
     "client.MinecraftMixin",
     "client.MouseHandlerMixin"
