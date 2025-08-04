@@ -66,7 +66,9 @@ modrinth {
     versionNumber = "${mcVersion}-${version}"
     versionType = "${releaseChannel}"
 
-    changelog = rootProject.ext.changelogFile.text
+    if(rootProject.ext.changelogFile.exists()) {
+        changelog = rootProject.ext.changelogFile.text
+    }
 
     gameVersions = ["${mcVersion}"]
     loaders = ["fabric"]
@@ -85,9 +87,14 @@ curseforge {
     project {
         id = "${curseforgeProjectId}"
 
-        changelog = rootProject.ext.changelogFile.text
+        if(rootProject.ext.changelogFile.exists()) {
+            changelog = rootProject.ext.changelogFile.text
+        }
+
         releaseType = "${releaseChannel}"
 
+        addGameVersion "Java ${modJavaVersion}"
+        addGameVersion "Fabric"
         addGameVersion "${mcVersion}"
 
         mainArtifact(remapJar) {
