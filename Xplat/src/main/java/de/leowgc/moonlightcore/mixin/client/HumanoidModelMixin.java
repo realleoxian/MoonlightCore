@@ -32,18 +32,10 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
             ItemAnimation animation = animationItem.getAnimation(itemInHand);
             if(animation == null) continue;
 
-            boolean isRightHand = animationItem.isRightHand(player, hand);
-
-            if(animationItem.isItemBeingUsed(player)) {
-                if(isRightHand) {
-                    animation.onItemUsedInRightHand(self, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-                } else {
-                    animation.onItemUsedInLeftHand(self, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-                }
-            } else if(isRightHand) {
-                animation.onRightHandItem(self, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+            if(animation.isItemBeingUsed(player)) {
+                animation.setupUseAnimation(hand, itemInHand, self, player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
             } else {
-                animation.onLeftHandItem(self, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+                animation.setupAnimation(hand, itemInHand, self, player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
             }
         }
     }

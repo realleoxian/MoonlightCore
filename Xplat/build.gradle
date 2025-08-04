@@ -17,6 +17,7 @@ configurations {
 
 legacyForge {
     mcpVersion = "${mcVersion}"
+    validateAccessTransformers = true
 
     if(file('src/main/resources/META-INF/accesstransformer.cfg')) {
         accessTransformers = ['src/main/resources/META-INF/accesstransformer.cfg']

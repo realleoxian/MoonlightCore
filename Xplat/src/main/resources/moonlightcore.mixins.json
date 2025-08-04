@@ -17,11 +17,13 @@
     "TheEndBiomeSourceMixin"
   ],
   "client": [
-    "client.WorldOpenFlowsMixin",
     "client.HumanoidModelMixin",
+    "client.ItemInHandLayerMixin",
+    "client.ItemInHandRendererMixin",
     "client.KeyboardHandlerMixin",
     "client.MinecraftMixin",
-    "client.MouseHandlerMixin"
+    "client.MouseHandlerMixin",
+    "client.WorldOpenFlowsMixin"
   ],
   "injectors": {
     "defaultRequire": 1
