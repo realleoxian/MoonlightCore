@@ -42,4 +42,5 @@ public interface ItemAnimation {
     default boolean isItemBeingUsed(LivingEntity player) {
         return (player.isUsingItem() && player.getUseItemRemainingTicks() > 0);
     }
+
 }

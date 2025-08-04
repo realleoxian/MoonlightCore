@@ -1,5 +1,7 @@
 package de.leowgc.moonlightcore.api.util;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import de.leowgc.moonlightcore.api.event.common.RegistryEvents;
 import de.leowgc.moonlightcore.api.util.nullness.NotnullSupplier;
 import net.minecraft.core.Registry;
@@ -8,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class DeferredRegister<R> {
 
@@ -36,6 +40,13 @@ public final class DeferredRegister<R> {
         });
     }
 
-    private record Entry<R, T extends R>(ResourceLocation id, NotnullSupplier<T> value) {}
+    public List<R> value() {
+        return ImmutableList.copyOf(this.entries.stream().map(Entry::value).map(NotnullSupplier::get).toList());
+    }
 
+    public Set<ResourceLocation> keys() {
+        return ImmutableSet.copyOf(this.entries.stream().map(Entry::id).collect(Collectors.toSet()));
+    }
+
+    public record Entry<R, T extends R>(ResourceLocation id, NotnullSupplier<T> value) {}
 }
