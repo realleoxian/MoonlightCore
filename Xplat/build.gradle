@@ -3,6 +3,8 @@ plugins {
     id 'net.neoforged.moddev.legacyforge'
 }
 
+version = rootProject.version
+
 configurations {
     xplatJava {
         canBeResolved = false

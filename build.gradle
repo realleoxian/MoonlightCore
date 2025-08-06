@@ -10,6 +10,14 @@ plugins {
     id 'idea'
 }
 
+if(releaseChannel != "release") {
+    if(releaseChannel == "beta") {
+        version += "-beta"
+    } else if(releaseChannel == "alpha") {
+        version += "-alpha"
+    }
+}
+
 ext {
     changelogFile = rootProject.file("changelog/${version}/changelog.md")
 }
