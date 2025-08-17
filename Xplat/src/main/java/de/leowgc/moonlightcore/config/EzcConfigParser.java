@@ -92,9 +92,6 @@ public final class EzcConfigParser {
         String str = new String(newData, StandardCharsets.UTF_8);
         List<String> lines = Arrays.asList(str.split("\\r?\\n"));
 
-        LOGGER.debug("Applying the next data (on runtime) to file: {}", spec.filePath());
-        LOGGER.debug(str);
-
         ModConfigSpec.ConfigCategory currentCategory = null;
         for(int i = 0; i < lines.size(); i++) {
             int lineNumber = i + 1;

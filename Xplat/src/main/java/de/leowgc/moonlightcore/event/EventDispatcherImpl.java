@@ -13,10 +13,8 @@ public enum EventDispatcherImpl implements EventDispatcher {
     @Override
     public <T> void fire(Event<T> event, Consumer<T> output) {
         try {
-            for(EventPriority priority : EventPriority.values()) {
-                for(T listener : ((EventImpl<T>) event).listeners(priority)) {
-                    output.accept(listener);
-                }
+            for(T listener : ((EventImpl<T>) event).listeners()) {
+                output.accept(listener);
             }
         } catch (Exception exception) {
             throw new RuntimeException(exception);

@@ -1,5 +1,6 @@
 package de.leowgc.moonlightcore.config.sync;
 
+import com.mojang.logging.LogUtils;
 import de.leowgc.moonlightcore.api.network.MoonlightCustomPacket;
 import de.leowgc.moonlightcore.config.ModConfigSpecImpl;
 import de.leowgc.moonlightcore.core.MoonlightCore;
@@ -11,6 +12,7 @@ public record ConfigSyncPacket(String modId, byte[] data) implements MoonlightCu
     public static final Codec CODEC = new Codec();
 
     public void handle() {
+        LogUtils.getLogger().debug("Syncing {} mod server config", modId);
         ((ModConfigSpecImpl) ConfigSyncRegistry.get(this.modId()).orElseThrow()).reload(this.data());
     }
 

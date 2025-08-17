@@ -16,6 +16,7 @@ public final class MoonlightCore {
 
     public static void init() {
         ServerLifecycleEvent.STARTING.subscribe(BiomeApi::setupBiomeApi);
+        ServerLifecycleEvent.STARTING.subscribe(($) -> {});
         ServerPlayerEvents.JOIN_SERVER.subscribe((server, player) -> ConfigSyncRegistry.createPackets().forEach((packet) -> PACKET_DISPATCHER.sendToPlayer(player, packet)));
 
         MoonlightCoreConfiguration.init();
