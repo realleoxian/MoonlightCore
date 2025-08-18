@@ -17,7 +17,7 @@ public final class SimpleItemStorage implements ItemStorage {
 
     @Override
     public int insert(Transaction transaction, TransferResource<ItemStack> resource) {
-        if(resource.isBlank()) {
+        if(resource.isBlank() || !this.supportsInsertion()) {
             return 0;
         }
 
@@ -43,7 +43,7 @@ public final class SimpleItemStorage implements ItemStorage {
 
     @Override
     public TransferResource<ItemStack> extract(Transaction transaction, ItemStack resourceType, int maxAmount) {
-        if(this.stored.isEmpty() || !ItemStack.isSameItemSameTags(this.stored, resourceType)) {
+        if(this.stored.isEmpty() || !ItemStack.isSameItemSameTags(this.stored, resourceType) || !this.supportsExtraction()) {
             return ItemResource.empty();
         }
 

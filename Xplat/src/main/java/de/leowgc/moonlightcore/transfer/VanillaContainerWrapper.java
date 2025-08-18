@@ -16,7 +16,7 @@ public class VanillaContainerWrapper implements Storage<ItemStack> {
 
     @Override
     public int insert(Transaction transaction, TransferResource<ItemStack> resource) {
-        if(resource.isBlank()) {
+        if(!this.supportsInsertion() || resource.isBlank()) {
             return 0;
         }
         ItemStack toInsert = resource.get();
@@ -72,7 +72,7 @@ public class VanillaContainerWrapper implements Storage<ItemStack> {
 
     @Override
     public TransferResource<ItemStack> extract(Transaction transaction, ItemStack resourceType, int maxAmount) {
-        if(resourceType.isEmpty()) {
+        if(!this.supportsExtraction() || resourceType.isEmpty()) {
             return ItemResource.empty();
         }
 
