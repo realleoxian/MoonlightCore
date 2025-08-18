@@ -1,5 +1,9 @@
 package de.leowgc.moonlightcore.api.transfer;
 
+import de.leowgc.moonlightcore.transfer.VanillaContainerWrapper;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+
 public interface Storage<T> {
 
     static <T> int move(Storage<T> from, Storage<T> to, Transaction transaction, T resourceType, int maxAmount) {
@@ -15,6 +19,10 @@ public interface Storage<T> {
             throw new IllegalStateException("Destination couldn't accept full transfer!");
         }
         return inserted;
+    }
+
+    static Storage<ItemStack> vanillaWrapper(Container container) {
+        return new VanillaContainerWrapper(container);
     }
 
     int insert(Transaction transaction, TransferResource<T> resource);
