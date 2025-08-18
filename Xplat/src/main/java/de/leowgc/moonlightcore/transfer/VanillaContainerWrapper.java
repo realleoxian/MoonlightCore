@@ -4,6 +4,9 @@ import de.leowgc.moonlightcore.api.transfer.Storage;
 import de.leowgc.moonlightcore.api.transfer.Transaction;
 import de.leowgc.moonlightcore.api.transfer.TransferResource;
 import de.leowgc.moonlightcore.api.transfer.item.ItemResource;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
@@ -96,5 +99,42 @@ public class VanillaContainerWrapper implements Storage<ItemStack> {
         }
 
         return ItemResource.empty();
+    }
+
+    @Override
+    public CompoundTag toNBT() {
+        CompoundTag nbt = new CompoundTag();
+
+        ListTag itemsListTag = new ListTag();
+        for(int slot = 0; slot < this.container.getContainerSize(); slot++) {
+            ItemStack existing = this.container.getItem(slot);
+
+            if(!existing.isEmpty()) {
+                CompoundTag itemTag = new CompoundTag();
+
+                itemTag.putInt("slot", slot);
+                itemTag.put("value", existing.save(new CompoundTag()));
+
+                itemsListTag.add(itemTag);
+            }
+        }
+        nbt.put("items", itemsListTag);
+
+        return nbt;
+    }
+
+    @Override
+    public void fromNBT(CompoundTag nbt) {
+        if(nbt.contains("items")) {
+            ListTag itemsTag = nbt.getList("items", Tag.TAG_COMPOUND);
+
+            for(int i = 0; i < itemsTag.size(); i++) {
+                CompoundTag itemTag = itemsTag.getCompound(i);
+
+                int slot = itemTag.getInt("slot");
+                ItemStack value = ItemStack.of(itemTag.getCompound("value"));
+                this.container.setItem(slot, value);
+            }
+        }
     }
 }

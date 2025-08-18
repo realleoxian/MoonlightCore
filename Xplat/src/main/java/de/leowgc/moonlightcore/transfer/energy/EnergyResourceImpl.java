@@ -2,8 +2,6 @@ package de.leowgc.moonlightcore.transfer.energy;
 
 import de.leowgc.moonlightcore.api.transfer.TransferResource;
 import de.leowgc.moonlightcore.api.transfer.energy.EnergyResource;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 
 public final class EnergyResourceImpl implements EnergyResource {
     private long energy;
@@ -27,26 +25,4 @@ public final class EnergyResourceImpl implements EnergyResource {
         return new EnergyResourceImpl(this.energy);
     }
 
-    @Override
-    public CompoundTag toNBT() {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putLong("energy", this.energy);
-
-        return nbt;
-    }
-
-    @Override
-    public void fromNBT(CompoundTag nbt) {
-        this.energy = nbt.getLong("energy");
-    }
-
-    @Override
-    public void writeToBuffer(FriendlyByteBuf byteBuf) {
-        byteBuf.writeLong(this.energy);
-    }
-
-    @Override
-    public void readFromBuffer(FriendlyByteBuf byteBuf) {
-        this.energy = byteBuf.readLong();
-    }
 }

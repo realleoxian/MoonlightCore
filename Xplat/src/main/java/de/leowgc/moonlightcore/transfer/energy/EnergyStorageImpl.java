@@ -4,6 +4,7 @@ import de.leowgc.moonlightcore.api.transfer.Transaction;
 import de.leowgc.moonlightcore.api.transfer.TransferResource;
 import de.leowgc.moonlightcore.api.transfer.energy.EnergyResource;
 import de.leowgc.moonlightcore.api.transfer.energy.EnergyStorage;
+import net.minecraft.nbt.CompoundTag;
 
 public final class EnergyStorageImpl implements EnergyStorage {
     private final long capacity;
@@ -49,5 +50,18 @@ public final class EnergyStorageImpl implements EnergyStorage {
         }
 
         return EnergyResource.empty();
+    }
+
+    @Override
+    public CompoundTag toNBT() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putLong("value", this.energy);
+
+        return nbt;
+    }
+
+    @Override
+    public void fromNBT(CompoundTag nbt) {
+        this.energy = nbt.getLong("value");
     }
 }

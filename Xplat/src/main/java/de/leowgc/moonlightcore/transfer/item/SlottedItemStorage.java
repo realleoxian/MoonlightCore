@@ -4,6 +4,9 @@ import de.leowgc.moonlightcore.api.transfer.SlottedStorage;
 import de.leowgc.moonlightcore.api.transfer.Transaction;
 import de.leowgc.moonlightcore.api.transfer.TransferResource;
 import de.leowgc.moonlightcore.api.transfer.item.ItemResource;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
@@ -154,6 +157,44 @@ public final class SlottedItemStorage implements SlottedStorage<ItemStack> {
         }
 
         return this.slotCapacities[slot];
+    }
+
+    @Override
+    public CompoundTag toNBT() {
+        CompoundTag nbt = new CompoundTag();
+
+        ListTag itemsTag = new ListTag();
+        for(int slot = 0; slot < this.slotCount; slot++) {
+            ItemStack itemInSlot = this.slots[slot];
+
+            if(!itemInSlot.isEmpty()) {
+                CompoundTag itemTag = new CompoundTag();
+
+                itemTag.putInt("slot", slot);
+                itemTag.put("value", itemInSlot.save(new CompoundTag()));
+
+                itemsTag.add(itemTag);
+            }
+        }
+        nbt.put("items", itemsTag);
+
+        return nbt;
+    }
+
+    @Override
+    public void fromNBT(CompoundTag nbt) {
+        if (nbt.contains("items")) {
+            ListTag itemsTag = nbt.getList("items", Tag.TAG_COMPOUND);
+
+            for (int i = 0; i < itemsTag.size(); i++) {
+                CompoundTag itemTag = itemsTag.getCompound(i);
+                int slot = itemTag.getInt("slot");
+
+                if (slot >= 0 && slot < this.slotCount) {
+                    this.slots[slot] = ItemStack.of(itemTag.getCompound("value"));
+                }
+            }
+        }
     }
 
     @Override

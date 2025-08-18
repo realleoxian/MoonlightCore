@@ -1,9 +1,6 @@
 package de.leowgc.moonlightcore.transfer.item;
 
-import de.leowgc.moonlightcore.api.transfer.TransferResource;
 import de.leowgc.moonlightcore.api.transfer.item.ItemResource;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
 public final class ItemResourceImpl implements ItemResource {
@@ -13,42 +10,6 @@ public final class ItemResourceImpl implements ItemResource {
     public ItemResourceImpl(ItemStack stack, int amount) {
         this.stack = stack.copy();
         this.amount = Math.min(amount, stack.getMaxStackSize());
-    }
-
-    @Override
-    public CompoundTag toNBT() {
-        CompoundTag tag = new CompoundTag();
-        tag.put("stack", this.stack.save(new CompoundTag()));
-        tag.putInt("amount", this.amount);
-
-        return tag;
-    }
-
-    @Override
-    public void fromNBT(CompoundTag nbt) {
-        ItemStack savedStack = ItemStack.of(nbt.getCompound("stack"));
-        int savedAmound = nbt.getInt("amount");
-
-        this.stack = savedStack;
-        this.amount = savedAmound;
-    }
-
-    @Override
-    public void writeToBuffer(FriendlyByteBuf byteBuf) {
-        if(this.isBlank()) {
-            byteBuf.writeBoolean(false);
-        } else {
-            byteBuf.writeItem(this.stack);
-            byteBuf.writeVarInt(this.amount);
-        }
-    }
-
-    @Override
-    public void readFromBuffer(FriendlyByteBuf byteBuf) {
-        if(byteBuf.readBoolean()) {
-            this.stack = byteBuf.readItem();
-            this.amount = byteBuf.readVarInt();
-        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import de.leowgc.moonlightcore.api.transfer.Transaction;
 import de.leowgc.moonlightcore.api.transfer.TransferResource;
 import de.leowgc.moonlightcore.api.transfer.item.ItemResource;
 import de.leowgc.moonlightcore.api.transfer.item.ItemStorage;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 public final class SimpleItemStorage implements ItemStorage {
@@ -63,4 +64,21 @@ public final class SimpleItemStorage implements ItemStorage {
         return new ItemResourceImpl(extractedStack, amountToExtract);
     }
 
+    @Override
+    public CompoundTag toNBT() {
+        CompoundTag nbt = new CompoundTag();
+
+        if(!this.stored.isEmpty()) {
+            nbt.put("value", this.stored.save(new CompoundTag()));
+        }
+
+        return nbt;
+    }
+
+    @Override
+    public void fromNBT(CompoundTag nbt) {
+        if(nbt.contains("value")) {
+            this.stored = ItemStack.of(nbt.getCompound("value"));
+        }
+    }
 }
