@@ -4,8 +4,8 @@ import de.leowgc.moonlightcore.api.transfer.item.ItemResource;
 import net.minecraft.world.item.ItemStack;
 
 public final class ItemResourceImpl implements ItemResource {
-    private ItemStack stack;
-    private int amount;
+    private final ItemStack stack;
+    private final int amount;
 
     public ItemResourceImpl(ItemStack stack, int amount) {
         this.stack = stack.copy();

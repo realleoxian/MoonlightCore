@@ -81,4 +81,8 @@ public final class SimpleItemStorage implements ItemStorage {
             this.stored = ItemStack.of(nbt.getCompound("value"));
         }
     }
+
+    public ItemStack getStored() {
+        return stored.copy();
+    }
 }
