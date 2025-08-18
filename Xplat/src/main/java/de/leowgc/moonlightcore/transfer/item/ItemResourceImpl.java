@@ -62,7 +62,7 @@ public final class ItemResourceImpl implements ItemResource {
     }
 
     @Override
-    public TransferResource<ItemStack> copy() {
+    public ItemResource copy() {
         return new ItemResourceImpl(this.stack, this.amount);
     }
 

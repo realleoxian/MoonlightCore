@@ -14,7 +14,7 @@ public final class EmptyItemStorage implements ItemStorage {
     }
 
     @Override
-    public TransferResource<ItemStack> extract(Transaction transaction, ItemStack resourceType, int maxAmount) {
+    public ItemResource extract(Transaction transaction, ItemStack resourceType, int maxAmount) {
         return ItemResource.empty();
     }
 
