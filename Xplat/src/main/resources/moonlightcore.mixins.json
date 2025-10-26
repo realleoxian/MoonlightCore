@@ -1,0 +1,31 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "refmap": "moonlightcore.refmap.json",
+  "package": "de.leoxian.moonlightcore.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AttachmentHoldersMixin",
+    "BlockEntityMixin",
+    "ChunkAccessMixin",
+    "EntityMixin",
+    "ImposterProtoChunkMixin",
+    "LevelChunkMixin",
+    "LevelMixin",
+    "ServerLevelMixin",
+    "accessor.ChunkMapAccessor",
+    "accessor.FriendlyByteBufAccessor",
+    "accessor.ServerboundCustomPayloadPacketAccessor",
+    "accessor.TrackedEntityAccessor",
+    "event.PlayerListMixin"
+  ],
+  "client": [
+    "event.KeyboardHandlerMixin",
+    "event.LevelRendererMixin",
+    "event.MinecraftMixin",
+    "event.MouseHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

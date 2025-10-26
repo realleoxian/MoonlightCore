@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "${modId}",
+  "version": "${modVersion}",
+  "name": "${modName}",
+  "description": "${modDescription}",
+  "authors": ["${modAuthor}"],
+  "license": "${modLicense}",
+  "environment": "*",
+  "accessWidener": "moonlightcore.accesswidener",
+  "entrypoints": {
+    "main": ["de.leoxian.moonlightcore.fabric.MoonlightCoreFabric"],
+    "client": ["de.leoxian.moonlightcore.fabric.MoonlightCoreClientFabric"]
+  },
+  "mixins": [
+    "moonlightcore.mixins.json",
+    "moonlightcore.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabricLoader}",
+    "fabric-api": "${fabricApi}"
+  }
+}

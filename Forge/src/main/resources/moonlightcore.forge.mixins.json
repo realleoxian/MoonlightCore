@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "refmap": "moonlightcore.refmap.json",
+  "package": "de.leoxian.moonlightcore.forge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "impl.ForgePlatformImplMixin",
+    "impl.PacketDispatcherImplMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

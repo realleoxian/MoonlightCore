@@ -1,0 +1,13 @@
+accessWidener v2 named
+
+# FogRenderer
+accessible  class   net/minecraft/client/renderer/FogRenderer$FogData # FogRenderer$FogData
+
+# BlockEntityType
+accessible  class   net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier # BlockEntityType$BlockEntitySupplier
+
+# ParticleEngine
+accessible  class   net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration # ParticleEngine$SpriteParticleRegistration
+accessible  method  net/minecraft/client/particle/ParticleEngine    register    (Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration;)V # register
+accessible  method  net/minecraft/client/particle/ParticleEngine    register    (Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/client/particle/ParticleProvider$Sprite;)V # register
+accessible  method  net/minecraft/client/particle/ParticleEngine    register    (Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/client/particle/ParticleProvider;)V # register

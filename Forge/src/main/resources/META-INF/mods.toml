@@ -1,0 +1,21 @@
+modLoader = "javafml"
+loaderVersion = "${fmlRange}"
+
+license = "${modLicense}"
+issueTrackerURL = "${modIssueTracker}"
+showAsResourcePack = false
+
+[[mods]]
+    modId = "${modId}"
+    version = "${modVersion}"
+    displayName = "${modName}"
+    credits = "${modCredits}"
+    authors = "${modAuthor}"
+    description = "${modDescription}"
+
+    [[dependencies."${modId}"]]
+        modId = "forge"
+        mandatory = true
+        versionRange = "${forgeRange}"
+        ordering = "NONE"
+        side = "BOTH"
