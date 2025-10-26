@@ -1,0 +1,92 @@
+plugins {
+    id 'com.diffplug.spotless' version '5.12.5' apply false
+
+    id 'com.modrinth.minotaur' version '2.+' apply false
+    id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
+
+    id 'net.neoforged.moddev.legacyforge' version '2.0.112' apply false
+    id 'fabric-loom' version '1.11-SNAPSHOT' apply false
+}
+
+ext {
+    changelogFile = rootProject.file("changelog/${version}/changelog.md")
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'com.diffplug.spotless'
+    apply plugin: 'maven-publish'
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(modJavaVersion)
+    java.withJavadocJar()
+    java.withSourcesJar()
+
+    repositories {
+        maven {
+            name = "Sponge / Mixin"
+            url = "https://repo.sponepowered.org/repository/maven-public/"
+        }
+
+
+        maven{
+            name = "ParchmentMC"
+            url = "https://maven.parchmentmc.org/"
+        }
+    }
+
+    jar {
+        manifest {
+            attributes([
+                    'Specification-Title': "${modId}",
+                    'Specification-Vendor': "${modAuthor}",
+                    'Specification-Version': "1",
+                    'Implementation-Title': project.name,
+                    'Implementation-Vendor': "${modAuthor}",
+                    'Implementation-Version': project.jar.archiveVersion,
+                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    'Built-On-Minecraft': "${mcVersion}"
+            ])
+        }
+    }
+
+    idea {
+        module {
+            downloadSources = true
+            downloadJavadoc = true
+        }
+    }
+
+    tasks.withType(ProcessResources).configureEach {
+        var expandedProperties = [
+                modId: modId, modName: modName, modVersion: modVersion, modAuthor: modAuthor, modCredits: modCredits, modDescription: modDescription, modLicense: modLicense, modJavaVersion: modJavaVersion, modIssueTracker: modIssueTracker,
+
+                forgeVersion: forgeVersion, forgeRange: forgeRange, fmlRange: fmlRange,
+                fabricApi: fabricApi, fabricLoader: fabricLoader
+        ]
+
+        var jsonExpandedProperties = expandedProperties.collectEntries {
+            key, value -> [(key): value instanceof String ? value.replace("\n", "\\\\n") : value]
+        }
+
+        filesMatching(["META-INF/mods.toml", "META-INF/neoforge.mods.toml"]) {
+            expand expandedProperties
+        }
+
+        filesMatching(["fabric.mod.json", "*.mixins.json"]) {
+            expand jsonExpandedProperties
+        }
+
+        inputs.properties expandedProperties
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.encoding = 'UTF-8'
+        it.options.release = Integer.parseInt(modJavaVersion)
+    }
+
+    tasks.withType(GenerateModuleMetadata).configureEach {
+        it.enabled = false
+    }
+}

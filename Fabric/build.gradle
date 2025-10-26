@@ -1,0 +1,136 @@
+plugins {
+    id 'fabric-loom'
+    id 'com.modrinth.minotaur'
+    id 'com.matthewprenger.cursegradle'
+}
+
+group = project.modGroup
+version = "${mcVersion}-${modVersion}.fabric"
+base.archivesName = "${modName}"
+
+if(!releaseChannel.equalsIgnoreCase("release")) {
+    version += "." + releaseChannel
+}
+
+loom {
+    def awFile = file("src/main/resources/${modId}.accesswidener")
+    if(awFile.exists()) {
+        accessWidenerPath = awFile
+    }
+
+    mixin {
+        defaultRefmapName = "${modId}.refmap.json"
+    }
+
+    runs {
+        client {
+            client()
+
+            configName = "FabricClient"
+            runDir = "../run/client"
+        }
+
+        server {
+            server()
+
+            configName = "FabricServer"
+            runDir = "../run/server/fabric"
+        }
+    }
+
+    mods {
+        "${modId}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mcVersion}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${mcVersion}:${parchmentVersion}@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${fabricLoader}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabricApi}+${mcVersion}"
+
+    compileOnly project(":Xplat")
+}
+
+compileJava {
+    source project(":Xplat").sourceSets.main.allSource
+}
+
+sourcesJar {
+    from project(":Xplat").sourceSets.main.allJava
+}
+
+processResources {
+    from project(":Xplat").sourceSets.main.resources
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = "file://" + System.getenv("local_maven")
+        }
+    }
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = project.modrinthId
+
+    versionName = "[Fabric] MoonlightCore | ${mcVersion}-${version}"
+    versionNumber = "${mcVersion}-${version}"
+    versionType = "${releaseChannel}"
+
+    if(rootProject.ext.changelogFile.exists()) {
+        changelog = rootProject.ext.changelogFile.text
+    }
+
+    gameVersions = ["${mcVersion}"]
+    loaders = ["fabric"]
+
+    uploadFile = remapJar
+
+    dependencies {
+        required.project 'fabric-api'
+    }
+}
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_API_KEY")
+
+    project {
+        id = "${curseforgeId}"
+
+        if(rootProject.ext.changelogFile.exists()) {
+            changelog = rootProject.ext.changelogFile.text
+            changelogType = "markdown"
+        }
+
+        releaseType = "${releaseChannel}"
+
+        addGameVersion "Java ${modJavaVersion}"
+        addGameVersion "Fabric"
+        addGameVersion "${mcVersion}"
+
+        mainArtifact(remapJar) {
+            displayName = "[Fabric] MoonlightCore | ${mcVersion}-${version}"
+        }
+
+        relations {
+            requiredDependency "fabric-api"
+        }
+    }
+}
