@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.client.render;
+package de.leoxian.moonlightcore.client;
 
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
