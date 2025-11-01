@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-public interface SingleSlotStorage<T extends TransferResource<?>> extends Storage<T>, StorageView<T> {
+public interface SingleSlotStorage<V, T extends TransferResource<V>> extends Storage<V, T>, StorageView<V, T> {
 
     @Override
     default int extract(Transaction tx, int index, T resource, int amount) {
@@ -43,12 +43,12 @@ public interface SingleSlotStorage<T extends TransferResource<?>> extends Storag
     }
 
     @Override
-    default @NotNull StorageView<T> get(int index) {
+    default @NotNull StorageView<V, T> get(int index) {
         return this;
     }
 
     @Override
-    default @NotNull Iterator<StorageView<T>> iterator() {
+    default @NotNull Iterator<StorageView<V, T>> iterator() {
         return StorageInternals.singletonIterator(this);
     }
     

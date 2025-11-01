@@ -5,13 +5,14 @@ import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
 import de.leoxian.moonlightcore.transfer.StorageInternals;
 import de.leoxian.moonlightcore.transfer.item.ItemResource;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collections;
 import java.util.List;
 
 public class ConstantStorageItemContext implements ItemStorageContext {
-    private final SingleResourceStorage<ItemResource> backingSlot = new SingleResourceStorage<ItemResource>(ItemResource.empty()) {
+    private final SingleResourceStorage<Item, ItemResource> backingSlot = new SingleResourceStorage<>(ItemResource.empty()) {
         @Override
         public int insert(Transaction tx, ItemResource resource, int amount) {
             StorageInternals.checkNonEmptyNonNegative(resource, amount);
@@ -36,12 +37,12 @@ public class ConstantStorageItemContext implements ItemStorageContext {
     }
 
     @Override
-    public SingleSlotStorage<ItemResource> getMainSlot() {
+    public SingleSlotStorage<Item, ItemResource> getMainSlot() {
         return backingSlot;
     }
 
     @Override
-    public @UnmodifiableView List<SingleSlotStorage<ItemResource>> getAdditionalSlots() {
+    public @UnmodifiableView List<SingleSlotStorage<Item, ItemResource>> getAdditionalSlots() {
         return Collections.emptyList();
     }
 

@@ -6,6 +6,7 @@ import de.leoxian.moonlightcore.transfer.item.InventoryStorage;
 import de.leoxian.moonlightcore.transfer.item.ItemResource;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 
 public class CreativeInventoryStorageItemContext extends ConstantStorageItemContext {
 
@@ -23,7 +24,7 @@ public class CreativeInventoryStorageItemContext extends ConstantStorageItemCont
         if(amount > 0) {
             boolean hasItem = false;
 
-            for(SingleSlotStorage<ItemResource> slot : this.playerStorage.getSlots()) {
+            for(SingleSlotStorage<Item, ItemResource> slot : this.playerStorage.getSlots()) {
                 if(slot.resource().is(resource.get()) && slot.amount() > 0) {
                     hasItem = true;
                     break;

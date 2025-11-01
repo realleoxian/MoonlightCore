@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-public class EmptyItemFluidStorage implements InsertionOnlyStorage<FluidResource> {
+public class EmptyItemFluidStorage implements InsertionOnlyStorage<Fluid, FluidResource> {
 
-    private final List<StorageView<FluidResource>> emptyView;
+    private final List<StorageView<Fluid, FluidResource>> emptyView;
     private final ItemStorageContext context;
     private final Function<ItemResource, ItemResource> emptyToFullMapping;
     private final Item emptyItem;
@@ -65,12 +65,12 @@ public class EmptyItemFluidStorage implements InsertionOnlyStorage<FluidResource
     }
 
     @Override
-    public @NotNull StorageView<FluidResource> get(int index) {
+    public @NotNull StorageView<Fluid, FluidResource> get(int index) {
         return this.emptyView.get(0);
     }
 
     @Override
-    public @NotNull Iterator<StorageView<FluidResource>> iterator() {
+    public @NotNull Iterator<StorageView<Fluid, FluidResource>> iterator() {
         return this.emptyView.iterator();
     }
 }

@@ -9,16 +9,17 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class CombinedStorage<T extends TransferResource<?>, S extends Storage<T>> implements Storage<T> {
+public class CombinedStorage<V, T extends TransferResource<V>, S extends Storage<V, T>> implements Storage<V, T> {
     protected S[] storages;
     protected final int[] baseIndex;
     protected final int sizeCache;
 
     @SuppressWarnings("unchecked")
-    public CombinedStorage(List<? extends Storage<T>> storages) {
+    public CombinedStorage(List<? extends Storage<V, T>> storages) {
         this((S[]) storages.toArray(Storage[]::new));
     }
 
+    @SafeVarargs
     public CombinedStorage(S... storages) {
         this.storages = storages;
         this.baseIndex = new int[storages.length];
@@ -32,7 +33,7 @@ public class CombinedStorage<T extends TransferResource<?>, S extends Storage<T>
         this.sizeCache = index;
     }
 
-    public Storage<T> getStorageFromIndex(int idx) {
+    public Storage<V, T> getStorageFromIndex(int idx) {
         return this.storages[idx];
     }
 
@@ -103,7 +104,7 @@ public class CombinedStorage<T extends TransferResource<?>, S extends Storage<T>
     }
 
     @Override
-    public @NotNull StorageView<T> get(int index) {
+    public @NotNull StorageView<V, T> get(int index) {
         Objects.checkIndex(index, this.size());
 
         int handlerIndex = this.getStorageIndex(index);
@@ -116,14 +117,14 @@ public class CombinedStorage<T extends TransferResource<?>, S extends Storage<T>
     }
 
     @Override
-    public @NotNull Iterator<StorageView<T>> iterator() {
+    public @NotNull Iterator<StorageView<V, T>> iterator() {
         return new CombinedIterator();
     }
 
-    private class CombinedIterator implements Iterator<StorageView<T>> {
-        final Iterator<Storage<T>> storageIterator = Iterators.forArray(storages);
+    private class CombinedIterator implements Iterator<StorageView<V, T>> {
+        final Iterator<Storage<V, T>> storageIterator = Iterators.forArray(storages);
 
-        Iterator<? extends StorageView<T>> currentViewIterator = null;
+        Iterator<? extends StorageView<V, T>> currentViewIterator = null;
 
         CombinedIterator() {
             this.advanceCurrentViewIterator();
@@ -135,12 +136,12 @@ public class CombinedStorage<T extends TransferResource<?>, S extends Storage<T>
         }
 
         @Override
-        public StorageView<T> next() {
+        public StorageView<V, T> next() {
             if(!this.hasNext()) {
                 throw new NoSuchElementException();
             }
 
-            StorageView<T> returned = this.currentViewIterator.next();
+            StorageView<V, T> returned = this.currentViewIterator.next();
             if(!this.currentViewIterator.hasNext()) {
                 this.advanceCurrentViewIterator();
             }

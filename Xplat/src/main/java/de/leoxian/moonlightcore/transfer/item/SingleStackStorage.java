@@ -4,9 +4,10 @@ import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
 import de.leoxian.moonlightcore.transfer.StorageInternals;
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class SingleStackStorage extends SnapshotJournal<ItemStack> implements SingleSlotStorage<ItemResource> {
+public abstract class SingleStackStorage extends SnapshotJournal<ItemStack> implements SingleSlotStorage<Item, ItemResource> {
 
     public abstract ItemStack getStack();
 

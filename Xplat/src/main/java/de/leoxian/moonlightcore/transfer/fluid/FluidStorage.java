@@ -23,8 +23,8 @@ import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
 public class FluidStorage {
-    public static final BlockApiLookup<Storage<FluidResource>, @NullableType Direction> SIDED = BlockApiLookup.get(MoonlightCore.location("sided_fluid_storage"), Storage.asClass(), Direction.class);
-    public static final ItemApiLookup<Storage<FluidResource>, ItemStorageContext> ITEM = ItemApiLookup.get(MoonlightCore.location("fluid_storage"), Storage.asClass(), ItemStorageContext.class);
+    public static final BlockApiLookup<Storage<Fluid, FluidResource>, @NullableType Direction> SIDED = BlockApiLookup.get(MoonlightCore.location("sided_fluid_storage"), Storage.asClass(), Direction.class);
+    public static final ItemApiLookup<Storage<Fluid, FluidResource>, ItemStorageContext> ITEM = ItemApiLookup.get(MoonlightCore.location("fluid_storage"), Storage.asClass(), ItemStorageContext.class);
 
     public static final Event<CombinedItemApiProvider> GENERAL_COMBINED_PROVIDERS_EVENT = CombinedProviders.createEvent(false);
 
@@ -54,13 +54,12 @@ public class FluidStorage {
             return null;
         });
 
-        combinedItemApiProvider(Items.GLASS_BOTTLE).subscribe(ctx -> {
-            return new EmptyItemFluidStorage(ctx, emptyBottle -> {
-                ItemStack newStack = emptyBottle.toStack();
-                PotionUtils.setPotion(newStack, Potions.WATER);
-                return ItemResource.of(Items.POTION, newStack.getTag());
-            }, Fluids.WATER, FluidConstants.BOTTLE);
-        });
+        combinedItemApiProvider(Items.GLASS_BOTTLE).subscribe(ctx ->
+                new EmptyItemFluidStorage(ctx, emptyBottle -> {
+                    ItemStack newStack = emptyBottle.toStack();
+                    PotionUtils.setPotion(newStack, Potions.WATER);
+                    return ItemResource.of(Items.POTION, newStack.getTag());
+        }, Fluids.WATER, FluidConstants.BOTTLE));
         combinedItemApiProvider(Items.POTION).subscribe(WaterPotionStorage::find);
     }
 
@@ -71,7 +70,7 @@ public class FluidStorage {
     @FunctionalInterface
     public interface CombinedItemApiProvider {
         @Nullable
-        Storage<FluidResource> find(ItemStorageContext context);
+        Storage<Fluid, FluidResource> find(ItemStorageContext context);
     }
 
     private FluidStorage() {}

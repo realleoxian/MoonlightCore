@@ -4,13 +4,14 @@ import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 import net.minecraft.core.Direction;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.item.Item;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 class WordlyInventoryStorage extends VanillaContainerWrapper {
-    private static List<SingleSlotStorage<ItemResource>> createWrapperList(VanillaContainerWrapper storage, Direction direction) {
+    private static List<SingleSlotStorage<Item, ItemResource>> createWrapperList(VanillaContainerWrapper storage, Direction direction) {
         WorldlyContainer container = (WorldlyContainer) storage.container;
         int[] availableSlots = container.getSlotsForFace(direction);
         WordlySlotWrapper[] slots = new WordlySlotWrapper[availableSlots.length];
@@ -26,7 +27,7 @@ class WordlyInventoryStorage extends VanillaContainerWrapper {
         super(Collections.unmodifiableList(createWrapperList(storage, direction)), storage.container);
     }
 
-    static class WordlySlotWrapper implements SingleSlotStorage<ItemResource> {
+    static class WordlySlotWrapper implements SingleSlotStorage<Item, ItemResource> {
         private final VanillaContainerWrapper.SlotWrapper wrapper;
         private final WorldlyContainer container;
         private final Direction direction;

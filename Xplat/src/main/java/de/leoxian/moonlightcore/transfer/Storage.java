@@ -7,26 +7,26 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.Objects;
 
-public interface Storage<T extends TransferResource<?>> extends StorageIO<T>, Iterable<StorageView<T>> {
+public interface Storage<V, T extends TransferResource<V>> extends StorageIO<T>, Iterable<StorageView<V, T>> {
 
     @SuppressWarnings("unchecked")
-    static <T extends TransferResource<?>> Class<Storage<T>> asClass() {
-        return (Class<Storage<T>>) (Object) Storage.class;
+    static <V, T extends TransferResource<V>> Class<Storage<V, T>> asClass() {
+        return (Class<Storage<V, T>>) (Object) Storage.class;
     }
 
     int size();
 
     @NotNull
-    StorageView<T> get(int index);
+    StorageView<V, T> get(int index);
 
     @Override
-    @NotNull Iterator<StorageView<T>> iterator();
+    @NotNull Iterator<StorageView<V, T>> iterator();
 
-    default Iterator<StorageView<T>> nonEmptyIterator() {
+    default Iterator<StorageView<V, T>> nonEmptyIterator() {
         return Iterators.filter(this.iterator(), (view) -> view.amount() > 0 && !view.resource().isEmpty());
     }
 
-    default Iterable<StorageView<T>> nonEmptyViews() {
+    default Iterable<StorageView<V, T>> nonEmptyViews() {
         return this::nonEmptyIterator;
     }
 
@@ -45,7 +45,7 @@ public interface Storage<T extends TransferResource<?>> extends StorageIO<T>, It
         return this.get(index).resource();
     }
 
-    default ResourceStack<T> toStack(int index) {
+    default ResourceStack<V, T> toStack(int index) {
         Objects.checkIndex(index, this.size());
         return this.get(index).toStack();
     }

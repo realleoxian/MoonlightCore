@@ -54,6 +54,7 @@ dependencies {
 
     modImplementation "net.fabricmc:fabric-loader:${fabricLoader}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabricApi}+${mcVersion}"
+    include implementation("com.google.code.findbugs:jsr305:3.0.2")
 
     compileOnly project(":Xplat")
 }

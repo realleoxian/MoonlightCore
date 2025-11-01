@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 
 @ApiStatus.Internal
 public class StorageInternals {
-    static <T extends TransferResource<?>> Iterator<StorageView<T>> singletonIterator(StorageView<T> resource) {
+    static <V, T extends TransferResource<V>> Iterator<StorageView<V, T>> singletonIterator(StorageView<V, T> resource) {
         return new Iterator<>() {
             boolean hasNext = true;
 
@@ -17,27 +17,13 @@ public class StorageInternals {
             }
 
             @Override
-            public StorageView<T> next() {
+            public StorageView<V, T> next() {
                 if(!this.hasNext) {
                     throw new NoSuchElementException();
                 }
                 this.hasNext = false;
 
                 return resource;
-            }
-        };
-    }
-
-    static <T extends TransferResource<?>, S extends StorageView<T>> Iterator<StorageView<T>> iterator(Iterator<S> iterator) {
-        return new Iterator<StorageView<T>>() {
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            @Override
-            public StorageView<T> next() {
-                return iterator.next();
             }
         };
     }

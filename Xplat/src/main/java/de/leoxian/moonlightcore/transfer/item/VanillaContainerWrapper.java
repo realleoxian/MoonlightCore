@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ChestBlock;
@@ -25,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class VanillaContainerWrapper extends CombinedStorage<ItemResource, SingleSlotStorage<ItemResource>> {
+public class VanillaContainerWrapper extends CombinedStorage<Item, ItemResource, SingleSlotStorage<Item, ItemResource>> {
     private static final Map<Container, VanillaContainerWrapper> WRAPPERS = new MapMaker().weakKeys().weakValues().makeMap();
 
-    public static Storage<ItemResource> of(Container container) {
+    public static Storage<Item, ItemResource> of(Container container) {
         return internalOf(container);
     }
 
@@ -53,7 +54,7 @@ public class VanillaContainerWrapper extends CombinedStorage<ItemResource, Singl
         this(Collections.emptyList(), container);
     }
 
-    protected VanillaContainerWrapper(List<SingleSlotStorage<ItemResource>> slots, Container container) {
+    protected VanillaContainerWrapper(List<SingleSlotStorage<Item, ItemResource>> slots, Container container) {
         super(slots);
         this.container = container;
     }
@@ -66,7 +67,7 @@ public class VanillaContainerWrapper extends CombinedStorage<ItemResource, Singl
         return this;
     }
 
-    public List<SingleSlotStorage<ItemResource>> getSlots() {
+    public List<SingleSlotStorage<Item, ItemResource>> getSlots() {
         return Arrays.asList(this.storages);
     }
 
@@ -79,7 +80,7 @@ public class VanillaContainerWrapper extends CombinedStorage<ItemResource, Singl
                 this.slotWrappers.add(new SlotWrapper(this, this.slotWrappers.size()));
             }
 
-            this.storages = (SingleSlotStorage<ItemResource>[]) Collections.unmodifiableList(this.slotWrappers.subList(0, containerSize)).toArray(Storage[]::new);
+            this.storages = (SingleSlotStorage<Item, ItemResource>[]) Collections.unmodifiableList(this.slotWrappers.subList(0, containerSize)).toArray(Storage[]::new);
         }
     }
 

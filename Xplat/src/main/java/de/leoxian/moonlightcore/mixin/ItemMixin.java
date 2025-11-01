@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Item.class)
-public class ItemMixin implements TransferResourceExtension<ItemResource> {
+public class ItemMixin implements TransferResourceExtension<Item, ItemResource> {
     @Unique
     private ItemResource mlcore_cachedItemResource = null;
 

@@ -3,7 +3,7 @@ package de.leoxian.moonlightcore.transfer;
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 
-public abstract class SingleResourceStorage<T extends TransferResource<?>> extends SnapshotJournal<ResourceStack<T>> implements SingleSlotStorage<T> {
+public abstract class SingleResourceStorage<V, T extends TransferResource<V>> extends SnapshotJournal<ResourceStack<V, T>> implements SingleSlotStorage<V, T> {
 
     protected final T emptyResource;
 
@@ -73,19 +73,19 @@ public abstract class SingleResourceStorage<T extends TransferResource<?>> exten
     }
 
     @Override
-    public ResourceStack<T> createSnapshot() {
+    public ResourceStack<V, T> createSnapshot() {
         return new ResourceStack<>(this.resource, this.amount);
     }
 
     @Override
-    public void revertToSnapshot(ResourceStack<T> snapshot) {
+    public void revertToSnapshot(ResourceStack<V, T> snapshot) {
         this.resource = snapshot.resource();
         this.amount = snapshot.amount();
     }
 
     @Override
     public boolean isResourceValid(T resource) {
-        return this.resource.isEmpty() || resource.fullyMatches(this.resource.get(), this.resource.getNBT());
+        return this.resource.isEmpty() || this.resource.fullyMatches(resource.get(), resource.getNBT());
     }
 
     @Override

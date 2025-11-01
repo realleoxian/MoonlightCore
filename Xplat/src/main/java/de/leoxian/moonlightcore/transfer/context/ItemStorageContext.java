@@ -7,6 +7,7 @@ import de.leoxian.moonlightcore.transfer.item.ItemResource;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -30,11 +31,11 @@ public interface ItemStorageContext {
         return new InventoryStorageItemContext(player, hand);
     }
 
-    static ItemStorageContext ofPlayerSlot(Player player, SingleSlotStorage<ItemResource> slot) {
+    static ItemStorageContext ofPlayerSlot(Player player, SingleSlotStorage<Item, ItemResource> slot) {
         return new InventoryStorageItemContext(player, slot);
     }
 
-    static ItemStorageContext ofSingleSlot(SingleSlotStorage<ItemResource> slot) {
+    static ItemStorageContext ofSingleSlot(SingleSlotStorage<Item, ItemResource> slot) {
         return new SingleSlotStorageItemContext(slot);
     }
 
@@ -47,10 +48,10 @@ public interface ItemStorageContext {
         return withConstant(ItemResource.of(stack), stack.getCount());
     }
 
-    SingleSlotStorage<ItemResource> getMainSlot();
+    SingleSlotStorage<Item, ItemResource> getMainSlot();
 
     @UnmodifiableView
-    List<SingleSlotStorage<ItemResource>> getAdditionalSlots();
+    List<SingleSlotStorage<Item, ItemResource>> getAdditionalSlots();
 
     int insertOverflow(Transaction tx, ItemResource resource, int amount);
 

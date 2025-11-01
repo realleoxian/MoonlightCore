@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Fluid.class)
-public class FluidMixin implements TransferResourceExtension<FluidResource> {
+public class FluidMixin implements TransferResourceExtension<Fluid, FluidResource> {
     @Unique
     private FluidResource mlcore_cachedFluidResource = null;
 

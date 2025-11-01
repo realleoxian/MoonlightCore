@@ -9,6 +9,7 @@ import de.leoxian.moonlightcore.transfer.fluid.FluidResource;
 import de.leoxian.moonlightcore.transfer.fluid.FluidStorage;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -17,10 +18,10 @@ import java.util.List;
 public class CombinedProviders {
     public static Event<FluidStorage.CombinedItemApiProvider> createEvent(boolean invokeFallback) {
         return EventFactory.of(listeners -> context -> {
-            List<Storage<FluidResource>> storages = new ArrayList<>();
+            List<Storage<Fluid, FluidResource>> storages = new ArrayList<>();
 
             for(FluidStorage.CombinedItemApiProvider listener : listeners) {
-                Storage<FluidResource> found = listener.find(context);
+                Storage<Fluid, FluidResource> found = listener.find(context);
 
                 if(found != null) {
                     storages.add(found);
@@ -28,10 +29,10 @@ public class CombinedProviders {
             }
 
             if(!storages.isEmpty() && invokeFallback) {
-                Storage<FluidResource> fallbackFOound = FluidStorage.GENERAL_COMBINED_PROVIDERS_EVENT.invoker().find(context);
+                Storage<Fluid, FluidResource> fallbackFound = FluidStorage.GENERAL_COMBINED_PROVIDERS_EVENT.invoker().find(context);
 
-                if(fallbackFOound != null) {
-                    storages.add(fallbackFOound);
+                if(fallbackFound != null) {
+                    storages.add(fallbackFound);
                 }
             }
 
@@ -39,11 +40,11 @@ public class CombinedProviders {
         });
     }
 
-    private static class Provider implements ItemApiLookup.ItemApiProvider<Storage<FluidResource>, ItemStorageContext> {
+    private static class Provider implements ItemApiLookup.ItemApiProvider<Storage<Fluid, FluidResource>, ItemStorageContext> {
         private final Event<FluidStorage.CombinedItemApiProvider> event = createEvent(true);
 
         @Override
-        public @Nullable Storage<FluidResource> find(ItemStack itemStack, ItemStorageContext context) {
+        public @Nullable Storage<Fluid, FluidResource> find(ItemStack itemStack, ItemStorageContext context) {
             if(!context.resource().fullyMatches(itemStack.getItem(), itemStack.getTag())) {
                 String errorMessage = String.format(
                         "Query stack %s as ItemStorageContext resource %s don't match",
@@ -59,7 +60,7 @@ public class CombinedProviders {
     }
 
     public static Event<FluidStorage.CombinedItemApiProvider> getOrCreateItemEvent(Item item) {
-        ItemApiLookup.ItemApiProvider<Storage<FluidResource>, ItemStorageContext> existingProvider = FluidStorage.ITEM.getProvider(item);
+        ItemApiLookup.ItemApiProvider<Storage<Fluid, FluidResource>, ItemStorageContext> existingProvider = FluidStorage.ITEM.getProvider(item);
 
         if(existingProvider == null) {
             FluidStorage.ITEM.registerForItems(new Provider(), item);

@@ -45,7 +45,7 @@ public final class ItemResource implements TransferResource<Item> {
         Objects.requireNonNull(item, "Item cannot be null");
 
         if(nbt == null || item == Items.AIR) {
-            return ((TransferResourceExtension<ItemResource>) item).mlcore_getCachedResource();
+            return ((TransferResourceExtension<Item, ItemResource>) item).mlcore_getCachedResource();
         }
 
         return new ItemResource(item, nbt);

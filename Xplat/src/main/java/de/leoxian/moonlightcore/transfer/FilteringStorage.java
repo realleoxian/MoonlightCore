@@ -7,26 +7,26 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.function.Supplier;
 
-public abstract class FilteringStorage<T extends TransferResource<?>> implements Storage<T> {
+public abstract class FilteringStorage<V, T extends TransferResource<V>> implements Storage<V, T> {
 
-    public static <T extends TransferResource<?>> Storage<T> insertOnlyOf(Storage<T> backingStorage) {
+    public static <V, T extends TransferResource<V>> Storage<V, T> insertOnlyOf(Storage<V, T> backingStorage) {
         return of(backingStorage, true, false);
     }
 
-    public static <T extends TransferResource<?>> Storage<T> extractOnlyOf(Storage<T> backingStorage) {
+    public static <V, T extends TransferResource<V>> Storage<V, T> extractOnlyOf(Storage<V, T> backingStorage) {
         return of(backingStorage, false, true);
     }
 
-    public static <T extends TransferResource<?>> Storage<T> readOnlyOf(Storage<T> backingStorage) {
+    public static <V, T extends TransferResource<V>> Storage<V, T> readOnlyOf(Storage<V, T> backingStorage) {
         return of(backingStorage, false, false);
     }
 
-    public static <T extends TransferResource<?>> Storage<T> of(Storage<T> backingStorage, boolean allowInsert, boolean allowExtract) {
+    public static <V, T extends TransferResource<V>> Storage<V, T> of(Storage<V, T> backingStorage, boolean allowInsert, boolean allowExtract) {
         if(allowInsert && allowExtract) {
             return backingStorage;
         }
 
-        return new FilteringStorage<T>(() -> backingStorage) {
+        return new FilteringStorage<>(() -> backingStorage) {
             @Override
             protected boolean canInsert(T resource) {
                 return allowInsert;
@@ -49,9 +49,9 @@ public abstract class FilteringStorage<T extends TransferResource<?>> implements
         };
     }
 
-    protected final Supplier<Storage<T>> backingStorage;
+    protected final Supplier<Storage<V, T>> backingStorage;
 
-    protected FilteringStorage(Supplier<Storage<T>> backingStorage) {
+    protected FilteringStorage(Supplier<Storage<V, T>> backingStorage) {
         this.backingStorage = backingStorage;
     }
 
@@ -78,7 +78,7 @@ public abstract class FilteringStorage<T extends TransferResource<?>> implements
     }
 
     @Override
-    public @NotNull StorageView<T> get(int index) {
+    public @NotNull StorageView<V, T> get(int index) {
         return this.backingStorage.get().get(index);
     }
 
@@ -98,14 +98,14 @@ public abstract class FilteringStorage<T extends TransferResource<?>> implements
     }
 
     @Override
-    public @NotNull Iterator<StorageView<T>> iterator() {
+    public @NotNull Iterator<StorageView<V, T>> iterator() {
         return Iterators.transform(this.backingStorage.get().iterator(), FilteringStorageView::new);
     }
 
-    private class FilteringStorageView implements StorageView<T> {
-        private final StorageView<T> backingView;
+    private class FilteringStorageView implements StorageView<V, T> {
+        private final StorageView<V, T> backingView;
 
-        private FilteringStorageView(StorageView<T> backingView) {
+        private FilteringStorageView(StorageView<V, T> backingView) {
             this.backingView = backingView;
         }
 

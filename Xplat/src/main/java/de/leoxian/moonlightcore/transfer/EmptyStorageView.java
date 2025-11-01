@@ -2,7 +2,7 @@ package de.leoxian.moonlightcore.transfer;
 
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 
-public class EmptyStorageView<T extends TransferResource<?>> implements StorageView<T> {
+public class EmptyStorageView<V, T extends TransferResource<V>> implements StorageView<V, T> {
     private final T emptyResource;
     private final int capacity;
 

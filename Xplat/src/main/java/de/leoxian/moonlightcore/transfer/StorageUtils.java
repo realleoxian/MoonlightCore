@@ -1,6 +1,5 @@
 package de.leoxian.moonlightcore.transfer;
 
-import de.leoxian.moonlightcore.transfer.item.ItemResource;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +10,7 @@ import java.util.function.Predicate;
 
 public class StorageUtils {
 
-    public static <T extends TransferResource<?>> int move(@Nullable TransactionContext ctx, @Nullable Storage<T> from, @Nullable Storage<T> to, Predicate<T> filter, int amount) {
+    public static <V, T extends TransferResource<V>> int move(@Nullable TransactionContext ctx, @Nullable Storage<V, T> from, @Nullable Storage<V, T> to, Predicate<T> filter, int amount) {
         Objects.requireNonNull(filter, "Filter may not be null");
         StorageInternals.checkNonNegative(amount);
 
@@ -62,12 +61,12 @@ public class StorageUtils {
         }
     }
 
-    public static <T extends ItemResource> int insertStacking(Transaction tx, T resource, int amount, List<SingleSlotStorage<T>> slots) {
+    public static <V, T extends TransferResource<V>> int insertStacking(Transaction tx, T resource, int amount, List<SingleSlotStorage<V, T>> slots) {
         StorageInternals.checkNonEmptyNonNegative(resource, amount);
 
         int currentAmount = 0;
 
-        for(SingleSlotStorage<T> slot : slots) {
+        for(SingleSlotStorage<V, T> slot : slots) {
             if(!slot.isResourceValid(resource)) {
                 continue;
             }
@@ -78,7 +77,7 @@ public class StorageUtils {
             }
         }
 
-        for(SingleSlotStorage<T> slot : slots) {
+        for(SingleSlotStorage<V, T> slot : slots) {
             currentAmount += slot.insert(tx, resource, amount - currentAmount);
 
             if(currentAmount == amount) {
@@ -89,7 +88,7 @@ public class StorageUtils {
         return currentAmount;
     }
 
-    public static <T extends TransferResource<?>> boolean isValid(Storage<T> storage, T resource) {
+    public static <V, T extends TransferResource<V>> boolean isValid(Storage<V, T> storage, T resource) {
         StorageInternals.checkNonEmpty(resource);
 
         int size = storage.size();
@@ -102,7 +101,7 @@ public class StorageUtils {
         return false;
     }
 
-    public static <T extends TransferResource<?>> boolean isFull(Storage<T> storage) {
+    public static <V, T extends TransferResource<V>> boolean isFull(Storage<V, T> storage) {
         int size = storage.size();
 
         for(int i = 0; i < size; i++) {
@@ -114,7 +113,7 @@ public class StorageUtils {
         return true;
     }
 
-    public static boolean isEmpty(Storage<? extends TransferResource<?>> storage) {
+    public static boolean isEmpty(Storage<?, ? extends TransferResource<?>> storage) {
         int size = storage.size();
 
         for(int i = 0; i < size; i++) {

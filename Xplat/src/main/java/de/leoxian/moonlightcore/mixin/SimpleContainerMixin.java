@@ -14,7 +14,8 @@ public class SimpleContainerMixin implements SpecialLogicInventory {
     @Unique
     private boolean mlcore_suppressSpecialLogic = false;
 
-    @Redirect(method = "setItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/SimpleContainer;setChanged()V"))
+    @Redirect(method = "setItem(ILnet/minecraft/world/item/ItemStack;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/SimpleContainer;setChanged()V"))
     public void mlcore_redirectSetChanged(SimpleContainer self) {
         if(!this.mlcore_suppressSpecialLogic) {
             self.setChanged();

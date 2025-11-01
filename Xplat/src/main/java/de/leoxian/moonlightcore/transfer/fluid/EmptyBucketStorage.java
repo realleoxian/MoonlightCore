@@ -10,13 +10,14 @@ import de.leoxian.moonlightcore.transfer.item.ItemResource;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class EmptyBucketStorage implements InsertionOnlyStorage<FluidResource> {
-    private final List<StorageView<FluidResource>> blankView = List.of(new EmptyStorageView<>(FluidResource.empty(), FluidConstants.BUCKET));
+public class EmptyBucketStorage implements InsertionOnlyStorage<Fluid, FluidResource> {
+    private final List<StorageView<Fluid, FluidResource>> blankView = List.of(new EmptyStorageView<>(FluidResource.empty(), FluidConstants.BUCKET));
     private final ItemStorageContext context;
 
     public EmptyBucketStorage(ItemStorageContext context) {
@@ -48,12 +49,12 @@ public class EmptyBucketStorage implements InsertionOnlyStorage<FluidResource> {
     }
 
     @Override
-    public @NotNull StorageView<FluidResource> get(int index) {
+    public @NotNull StorageView<Fluid, FluidResource> get(int index) {
         return this.blankView.get(0);
     }
 
     @Override
-    public @NotNull Iterator<StorageView<FluidResource>> iterator() {
+    public @NotNull Iterator<StorageView<Fluid, FluidResource>> iterator() {
         return this.blankView.iterator();
     }
 }

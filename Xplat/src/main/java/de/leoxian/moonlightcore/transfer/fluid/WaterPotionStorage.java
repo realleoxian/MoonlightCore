@@ -10,10 +10,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
-public class WaterPotionStorage implements ExtractionOnlyStorage<FluidResource>, SingleSlotStorage<FluidResource> {
+public class WaterPotionStorage implements ExtractionOnlyStorage<Fluid, FluidResource>, SingleSlotStorage<Fluid, FluidResource> {
     private static final FluidResource CONTAINED_FLUID = FluidResource.of(Fluids.WATER);
     private static final int CONTAINED_AMOUNT = FluidConstants.BOTTLE;
 

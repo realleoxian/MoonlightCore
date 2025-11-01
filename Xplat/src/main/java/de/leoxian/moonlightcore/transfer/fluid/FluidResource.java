@@ -34,7 +34,7 @@ public final class FluidResource implements TransferResource<Fluid> {
         Objects.requireNonNull(fluid, "Fluid cannot be null");
 
         if(tag == null || fluid == Fluids.EMPTY) {
-            return ((TransferResourceExtension<FluidResource>) fluid).mlcore_getCachedResource();
+            return ((TransferResourceExtension<Fluid, FluidResource>) fluid).mlcore_getCachedResource();
         }
 
         return new FluidResource(fluid, tag);

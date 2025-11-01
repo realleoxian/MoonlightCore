@@ -1,7 +1,6 @@
 package de.leoxian.moonlightcore.transfer.item;
 
 import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
-import de.leoxian.moonlightcore.transfer.Storage;
 import de.leoxian.moonlightcore.transfer.StorageInternals;
 import de.leoxian.moonlightcore.transfer.StorageUtils;
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
@@ -10,6 +9,7 @@ import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,10 @@ public class InventoryStorage extends VanillaContainerWrapper {
         StorageInternals.checkNonEmptyNonNegative(resource, amount);
 
         int initialAmount = amount;
-        List<SingleSlotStorage<ItemResource>> mainSlots = this.getSlots().subList(0, Inventory.INVENTORY_SIZE);
+        List<SingleSlotStorage<Item, ItemResource>> mainSlots = this.getSlots().subList(0, Inventory.INVENTORY_SIZE);
 
         for(InteractionHand hand : InteractionHand.values()) {
-            SingleSlotStorage<ItemResource> handSlot = getHandSlot(hand);
+            SingleSlotStorage<Item, ItemResource> handSlot = getHandSlot(hand);
 
             if(handSlot.resource().is(resource.get())) {
                 amount -= handSlot.insert(tx, resource, amount);
@@ -80,7 +80,7 @@ public class InventoryStorage extends VanillaContainerWrapper {
         return offer(tx, resource, amount);
     }
 
-    public SingleSlotStorage<ItemResource> getHandSlot(InteractionHand hand) {
+    public SingleSlotStorage<Item, ItemResource> getHandSlot(InteractionHand hand) {
         if(hand == InteractionHand.MAIN_HAND) {
             if(Inventory.isHotbarSlot(inventory.selected)) {
                 return getSlots().get(inventory.selected);

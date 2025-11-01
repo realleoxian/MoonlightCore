@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.transfer;
 
-public interface StorageView<T extends TransferResource<?>> extends StorageIO<T> {
+public interface StorageView<V, T extends TransferResource<V>> extends StorageIO<T> {
 
     boolean isResourceValid(T resource);
 
@@ -10,7 +10,7 @@ public interface StorageView<T extends TransferResource<?>> extends StorageIO<T>
 
     int amount();
 
-    default ResourceStack<T> toStack() {
+    default ResourceStack<V, T> toStack() {
         return new ResourceStack<>(this.resource(), this.amount());
     }
 

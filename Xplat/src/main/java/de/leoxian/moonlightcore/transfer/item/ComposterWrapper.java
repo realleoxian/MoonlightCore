@@ -7,6 +7,7 @@ import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -22,7 +23,7 @@ public class ComposterWrapper extends SnapshotJournal<BlockState> {
     private static final Map<WrapperLocation, ComposterWrapper> WRAPPERS = new MapMaker().concurrencyLevel(1).weakKeys().weakValues().makeMap();
     private static final ItemResource BONE_MEAL = ItemResource.of(Items.BONE_MEAL);
 
-    public static Storage<ItemResource> get(Level level, BlockPos pos, @Nullable Direction direction) {
+    public static Storage<Item, ItemResource> get(Level level, BlockPos pos, @Nullable Direction direction) {
         if(direction == null || !direction.getAxis().isVertical()) {
             return null;
         }
@@ -92,7 +93,7 @@ public class ComposterWrapper extends SnapshotJournal<BlockState> {
         }
     }
 
-    private class TopStorage implements InsertionOnlyStorage<ItemResource>, SingleSlotStorage<ItemResource> {
+    private class TopStorage implements InsertionOnlyStorage<Item, ItemResource>, SingleSlotStorage<Item, ItemResource> {
         @Override
         public int insert(Transaction tx, ItemResource resource, int amount) {
             StorageInternals.checkNonEmptyNonNegative(resource, amount);
@@ -134,7 +135,7 @@ public class ComposterWrapper extends SnapshotJournal<BlockState> {
         }
     }
 
-    private class BottomStorage implements ExtractionOnlyStorage<ItemResource>, SingleSlotStorage<ItemResource> {
+    private class BottomStorage implements ExtractionOnlyStorage<Item, ItemResource>, SingleSlotStorage<Item, ItemResource> {
         @Override
         public int extract(Transaction tx, ItemResource resource, int amount) {
             StorageInternals.checkNonEmptyNonNegative(resource, amount);

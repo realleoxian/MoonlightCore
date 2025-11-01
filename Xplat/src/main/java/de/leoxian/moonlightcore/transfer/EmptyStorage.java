@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class EmptyStorage<T extends TransferResource<?>> implements Storage<T> {
-    private static final EmptyStorage<?> INSTANCE = new EmptyStorage<>();
+public class EmptyStorage<V, T extends TransferResource<V>> implements Storage<V, T> {
+    private static final EmptyStorage<?, ?> INSTANCE = new EmptyStorage<>();
 
     @SuppressWarnings("unchecked")
-    public static  <T extends TransferResource<?>> Storage<T> empty() {
-        return (EmptyStorage<T>) INSTANCE;
+    public static <V, T extends TransferResource<V>> Storage<V, T> empty() {
+        return (EmptyStorage<V, T>) INSTANCE;
     }
 
     private EmptyStorage() {}
@@ -22,12 +22,12 @@ public class EmptyStorage<T extends TransferResource<?>> implements Storage<T> {
     }
 
     @Override
-    public @NotNull StorageView<T> get(int index) {
+    public @NotNull StorageView<V, T> get(int index) {
         return null;
     }
 
     @Override
-    public @NotNull Iterator<StorageView<T>> iterator() {
+    public @NotNull Iterator<StorageView<V, T>> iterator() {
         return Collections.emptyIterator();
     }
 

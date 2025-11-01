@@ -7,10 +7,11 @@ import de.leoxian.moonlightcore.transfer.context.ItemStorageContext;
 import de.leoxian.moonlightcore.transfer.item.ItemResource;
 import de.leoxian.moonlightcore.transfer.transaction.Transaction;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.function.Function;
 
-public final class FullItemFluidStorage implements ExtractionOnlyStorage<FluidResource>, SingleSlotStorage<FluidResource> {
+public final class FullItemFluidStorage implements ExtractionOnlyStorage<Fluid, FluidResource>, SingleSlotStorage<Fluid, FluidResource> {
 
     private final ItemStorageContext context;
     private final Function<ItemResource, ItemResource> fullToEmptyMapping;
