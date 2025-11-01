@@ -12,6 +12,8 @@ import de.leoxian.moonlightcore.core.network.ModPacketDispatcher;
 import de.leoxian.moonlightcore.event.common.ChunkEvent;
 import de.leoxian.moonlightcore.event.common.PlayerEvent;
 import de.leoxian.moonlightcore.event.common.RegistryCreationEvent;
+import de.leoxian.moonlightcore.event.common.ServerLifecycleEvent;
+import de.leoxian.moonlightcore.lookup.entity.EntityApiLookup;
 import de.leoxian.moonlightcore.util.MoonlightRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -39,6 +41,7 @@ public class MoonlightCore {
 
         RegistryCreationEvent.EVENT.subscribe(MoonlightCore::setupModRegistries);
         PlayerEvent.JOIN_SERVER.subscribe(MoonlightCore::setupConfigSync);
+        ServerLifecycleEvent.STARTING.subscribe(EntityApiLookup::checkSelfImplementingTypes);
 
         init = true;
     }
