@@ -1,6 +1,10 @@
 # MoonlightCore | 5.0.0
 ### - 2025-03-11 | Leoxian / Wonejo / LeoWGC
 
+HII!!! I came back with a new update to MoonlightCore and with a lot of changes on the mod!!
+
+- Note: This release will be alpha because I don't know if there is a bug/error that may I forget or didn't know
+
 ## Added
 
 ### 1. Attachment System:
