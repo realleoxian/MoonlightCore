@@ -22,7 +22,7 @@ public class VanillaRegistriesMixin {
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void mlcore_registerDatapackRegistries(CallbackInfo ci) {
         DatapackRegistryBuilder.bootstrap((key, bootstrap) -> {
-            BUILDER.add((ResourceKey) key, bootstrap);
+            BUILDER.add((ResourceKey) key, (RegistrySetBuilder.RegistryBootstrap) bootstrap);
         });
     }
 

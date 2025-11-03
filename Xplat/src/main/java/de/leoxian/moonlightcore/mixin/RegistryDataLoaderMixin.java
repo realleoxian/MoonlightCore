@@ -10,6 +10,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,11 +23,12 @@ import java.util.Map;
 @Mixin(RegistryDataLoader.class)
 public class RegistryDataLoaderMixin {
 
+    @Mutable
     @Accessor
     static void setWORLDGEN_REGISTRIES(List<RegistryDataLoader.RegistryData<?>> list) {}
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
-    private static void mlcore_init(CallbackInfo ci) {
+    private static void mlcore_clinit(CallbackInfo ci) {
         List<RegistryDataLoader.RegistryData<?>> enhanced = new ArrayList<>(RegistryDataLoader.WORLDGEN_REGISTRIES.size() + 1);
         enhanced.addAll(RegistryDataLoader.WORLDGEN_REGISTRIES);
         MoonlightCore.LOGGER.debug("Enhanced RegistryDataLoader.WORLDGEN_REGISTRIES");
