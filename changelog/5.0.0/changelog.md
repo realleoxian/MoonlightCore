@@ -3,7 +3,7 @@
 
 HII!!! I came back with a new update to MoonlightCore and with a lot of changes on the mod!!
 
-- Note: This release will be alpha because I don't know if there is a bug/error that may I forget or didn't know
+- Note: If you find any error, bug, a crash that happens because of the mod or an API that doesn't work has it should. Report it on the [Github repository](https://github.com/realleoxian/MoonlightCore/tree/dev)
 
 ## Added
 
@@ -13,7 +13,7 @@ Here an example of how can this system be used:
 
 ```java
 // On your attachment registrar
-public static Supplier<AttachmentType<?>> mana;
+public static RegistryEntry<AttachmentType<?>, AttachmentType<Float>> mana;
 
 public static void setupAttachments(Consumer<RegistryEntry<AttachmentType<?>, AttachmentType<?>>> output) {
     mana = AttachmentTypeBuilder.of(new ResourceLocation("exampleMod", "mana")).persistentCodec(Codec.FLOAT).syncWith(ByteBufCodecs.FLOAT, AttachmentSyncPredicate.all()).build(output);

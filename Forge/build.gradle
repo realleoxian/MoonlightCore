@@ -12,12 +12,11 @@ if(!releaseChannel.equalsIgnoreCase("release")) {
     version += "." + releaseChannel
 }
 
-
 mixin {
-    add sourceSets.main, "${modId}.refmap.json"
+    add(sourceSets.main, "${modId}.refmap.json")
 
-    config "${modId}.mixins.json"
-    config "${modId}.forge.mixins.json"
+    config("${modId}.mixins.json")
+    config("${modId}.forge.mixins.json")
 }
 
 legacyForge {
@@ -64,6 +63,7 @@ dependencies {
     compileOnly project(":Xplat")
 
     implementation(jarJar("io.github.llamalad7:mixinextras-common:0.5.0"))
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 }
 
 jar {
