@@ -20,6 +20,7 @@ import de.leoxian.moonlightcore.levelgen.biome.BiomeProviderRegistry;
 import de.leoxian.moonlightcore.lookup.entity.EntityApiLookup;
 import de.leoxian.moonlightcore.mixin.accessor.MultiNoiseBiomeSourceAccessor;
 import de.leoxian.moonlightcore.util.MoonlightRegistries;
+import de.leoxian.moonlightcore.util.ServerLifecycleHooks;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -56,8 +57,8 @@ public class MoonlightCore {
 
         RegistryCreationEvent.EVENT.subscribe(MoonlightCore::setupModRegistries);
         PlayerEvent.JOIN_SERVER.subscribe(MoonlightCore::onPlayerJoin);
-        ServerLifecycleEvent.STARTING.subscribe(EntityApiLookup::checkSelfImplementingTypes);
         ServerLifecycleEvent.STARTING.subscribe(MoonlightCore::onServerStarting);
+        ServerLifecycleEvent.STOPPED.subscribe(ServerLifecycleHooks::onServerStopped);
 
         init = true;
     }
@@ -115,6 +116,9 @@ public class MoonlightCore {
             LevelStem stem = entry.getValue();
             setupLevelGeneration(registryAccess, entry.getKey(), stem.generator(), stem.generator().getBiomeSource(), seed);
         }
+
+        ServerLifecycleHooks.onServerStarting(server);
+        EntityApiLookup.checkSelfImplementingTypes(server);
     }
 
     private static void setupLevelGeneration(RegistryAccess registryAccess, ResourceKey<LevelStem> levelKey, ChunkGenerator chunkGenerator, BiomeSource biomeSource, long seed) {
