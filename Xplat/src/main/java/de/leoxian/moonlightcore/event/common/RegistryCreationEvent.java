@@ -27,7 +27,7 @@ public interface RegistryCreationEvent {
         <T> void register(Registry<T> registry, boolean sync);
 
         /**
-         * Registers the given {@link Registry} but being unsynced. Equivalent to calling {@link #register(WritableRegistry, boolean)} with the sync being false
+         * Registers the given {@link Registry} but being unsynced. Equivalent to calling {@link #register(Registry)} with the sync being false
          * @param registry The registry that is going to be registered
          * @param <T> The type value of the registry
          */
