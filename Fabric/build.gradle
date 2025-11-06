@@ -91,8 +91,8 @@ modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = project.modrinthId
 
-    versionName = "[Fabric] MoonlightCore | ${mcVersion}-${version}"
-    versionNumber = "${mcVersion}-${version}"
+    versionName = "[Fabric] MoonlightCore | ${mcVersion}-${modVersion}"
+    versionNumber = "${mcVersion}-${modVersion}"
     versionType = "${releaseChannel}"
 
     if(rootProject.ext.changelogFile.exists()) {
@@ -127,7 +127,7 @@ curseforge {
         addGameVersion "${mcVersion}"
 
         mainArtifact(remapJar) {
-            displayName = "[Fabric] MoonlightCore | ${mcVersion}-${version}"
+            displayName = "[Fabric] MoonlightCore | ${mcVersion}-${modVersion}"
         }
 
         relations {
