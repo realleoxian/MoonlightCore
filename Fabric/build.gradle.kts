@@ -106,17 +106,17 @@ publishMods {
 
     curseforge {
         projectId = curseProjectId
-        accessToken.set(System.getProperty("CURSEFORGE_API_KEY"))
+        accessToken.set(System.getenv("CURSEFORGE_API_KEY"))
         minecraftVersions.add(mcVersion)
         javaVersions.add(JavaVersion.toVersion(modJavaVersion))
-        dryRun = System.getProperty("CURSEFORGE_API_KEY") != null
+        dryRun.set(!System.getenv().containsKey("CURSEFORGE_API_KEY"))
     }
 
     modrinth {
         projectId = modrinthId
-        accessToken.set(System.getProperty("MODRINTH_TOKEN"))
+        accessToken.set(System.getenv("MODRINTH_TOKEN"))
         minecraftVersions.add(mcVersion)
-        dryRun = System.getProperty("MODRINTH_TOKEN") != null
+        dryRun.set(!System.getenv().containsKey("MODRINTH_TOKEN"))
     }
 }
 
