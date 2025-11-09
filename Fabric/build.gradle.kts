@@ -98,7 +98,7 @@ loom {
 
 publishMods {
     file.set(tasks.remapJar.get().archiveFile)
-    changelog.set(provider { file("../Changelog/${modVersion}.md").readText() })
+    changelog.set(provider { file("../changelog/${modVersion}.md").readText() })
     type = ReleaseType.STABLE
     modLoaders.add("fabric")
     displayName.set("[Fabric] $modName | ${mcVersion}-${modVersion}")
