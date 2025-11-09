@@ -6,7 +6,8 @@ import de.leoxian.moonlightcore.config.ConfigSerializer;
 import de.leoxian.moonlightcore.config.ModConfigSpec;
 import de.leoxian.moonlightcore.core.MoonlightCore;
 import de.leoxian.moonlightcore.core.network.serverbound.C2SConfigSyncRequestAcceptedPacket;
-import net.minecraft.client.Minecraft;
+import de.leoxian.moonlightcore.core.proxy.Proxy;
+import net.minecraft.world.level.Level;
 
 public class ClientPacketHandler {
 
@@ -31,8 +32,14 @@ public class ClientPacketHandler {
     }
 
     public static void handleAttachmentSyncPacket(S2CAttachmentSyncPacket packet) {
+        Level level = Proxy.PROXY.getLevel();
+
+        if(level == null) {
+            return;
+        }
+
         for(AttachmentChange change : packet.changes()) {
-            change.applyChanges(Minecraft.getInstance().level);
+            change.applyChanges(level);
         }
     }
 
