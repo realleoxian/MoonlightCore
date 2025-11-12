@@ -256,7 +256,7 @@ public class ModConfigSpec {
     }
 
     public Path getFilePath() {
-        return PlatformEnvironment.get().getConfigDirectory().resolve("%s.ezc".formatted(this.getFullFilename()));
+        return PlatformEnvironment.INSTANCE.getConfigDirectory().resolve("%s.ezc".formatted(this.getFullFilename()));
     }
 
     public String getFilename() {

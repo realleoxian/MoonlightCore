@@ -33,7 +33,6 @@
     "accessor.ChunkMapAccessor",
     "accessor.FriendlyByteBufAccessor",
     "accessor.MultiNoiseBiomeSourceAccessor",
-    "accessor.ServerboundCustomPayloadPacketAccessor",
     "accessor.SurfaceRulesContextAccessor",
     "accessor.TrackedEntityAccessor",
     "event.PlayerListMixin"

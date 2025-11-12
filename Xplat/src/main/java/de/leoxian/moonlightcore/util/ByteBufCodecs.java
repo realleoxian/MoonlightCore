@@ -20,6 +20,8 @@ import java.util.*;
 import java.util.function.IntFunction;
 
 public interface ByteBufCodecs {
+    int SERVERBOUND_MAX_PAYLOAD_SIZE = 32767;
+
     StreamCodec<ByteBuf, Boolean> BOOLEAN = new StreamCodec<ByteBuf, Boolean>() {
         @Override
         public void encode(ByteBuf buf, Boolean value) {

@@ -7,7 +7,7 @@ public enum EnvironmentSide {
      SERVER
      ;
 
-     private static final EnvironmentSide CURRENT = PlatformEnvironment.get().getEnvironmentSide();
+     private static final EnvironmentSide CURRENT = PlatformEnvironment.INSTANCE.getEnvironmentSide();
 
      public static <T> T unsafeRunIf(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
           return switch (CURRENT) {

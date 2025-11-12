@@ -18,7 +18,6 @@
     "ServerLevelMixin",
     "ServerPlayerGameModeMixin",
     "ServerPlayerMixin",
-    "impl.FabricPlatformImplMixin",
     "impl.PacketDispatcherImplMixin"
   ],
   "client": [

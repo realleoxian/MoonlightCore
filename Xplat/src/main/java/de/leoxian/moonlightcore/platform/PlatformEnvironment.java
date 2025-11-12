@@ -1,42 +1,22 @@
 package de.leoxian.moonlightcore.platform;
 
 import java.nio.file.Path;
+import java.util.ServiceLoader;
 
-public final class PlatformEnvironment {
-     private static PlatformEnvironment INSTANCE = null;
+public interface PlatformEnvironment {
 
-     public static PlatformEnvironment get() {
-          if(INSTANCE == null) {
-               INSTANCE = new PlatformEnvironment();
-          }
+    PlatformEnvironment INSTANCE = ServiceLoader.load(PlatformEnvironment.class).findFirst().orElseThrow(() -> new IllegalStateException("No platform implementation provided"));
 
-          return INSTANCE;
-     }
+    boolean isModLoaded(String modId);
 
-     private PlatformEnvironment() {}
+    String getPlatformName();
 
-     public boolean isModLoaded(String modId) {
-          throw new AssertionError();
-     }
+    EnvironmentSide getEnvironmentSide();
 
-     public String getPlatformName() {
-          throw new AssertionError();
-     }
+    Path getGameDirectory();
 
-     public EnvironmentSide getEnvironmentSide() {
-          throw new AssertionError();
-     }
+    Path getConfigDirectory();
 
-     public Path getGameDirectory() {
-          throw new AssertionError();
-     }
-
-     public Path getConfigDirectory() {
-          throw new AssertionError();
-     }
-
-     public boolean isDevelopmentEnvironment() {
-          throw new AssertionError();
-     }
+    boolean isDevelopmentEnvironment();
 
 }

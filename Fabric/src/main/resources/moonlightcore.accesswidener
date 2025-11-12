@@ -27,4 +27,4 @@ accessible  class   net/minecraft/world/level/biome/Climate$DistanceMetric # Cli
 accessible  method  net/minecraft/world/level/biome/Climate$RTree$Node distance ([J)J # Climate$RTree$Node distance
 
 # BuiltInRegistries
-accessible  class   net/minecraft/core/registries/BuiltInRegistries$RegistryBootstrap
+accessible  class   net/minecraft/core/registries/BuiltInRegistries$RegistryBootstrap # RegistryBootstrap
