@@ -42,7 +42,7 @@ loom {
 }
 
 publishMods {
-    file = tasks.jar.archiveFile
+    file = tasks.remapJar.archiveFile
     changelog = provider {
         def changelogFile = rootProject.file("changelog/${mcVersion}-${modVersion}.md")
 
