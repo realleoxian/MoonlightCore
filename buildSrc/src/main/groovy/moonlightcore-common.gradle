@@ -113,8 +113,7 @@ publishing {
     publications {
         register('mavenJava', MavenPublication) {
             artifactId base.archivesName.get()
-            artifact(tasks.jar)
-            artifact(tasks.sourcesJar)
+            from components.java
         }
     }
     repositories {
