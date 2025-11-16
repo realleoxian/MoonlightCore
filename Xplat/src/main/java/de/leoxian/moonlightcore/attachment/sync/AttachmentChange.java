@@ -5,6 +5,7 @@ import de.leoxian.moonlightcore.attachment.AttachmentType;
 import de.leoxian.moonlightcore.core.MoonlightCore;
 import de.leoxian.moonlightcore.core.network.clientbound.S2CAttachmentSyncPacket;
 import de.leoxian.moonlightcore.mixin.accessor.FriendlyByteBufAccessor;
+import de.leoxian.moonlightcore.mixin.accessor.ServerboundCustomPayloadPacketAccessor;
 import de.leoxian.moonlightcore.util.ByteBufCodecs;
 import de.leoxian.moonlightcore.util.MoonlightRegistries;
 import de.leoxian.moonlightcore.util.StreamCodec;
@@ -18,7 +19,7 @@ import java.util.*;
 
 public record AttachmentChange(AttachmentHolderInfo<?> holderInfo, AttachmentType<?> type, byte[] data) {
     private static final int MAX_PADDING_SIZE_IN_BYTES = AttachmentHolderInfo.MAX_SIZE_IN_BYTES + AttachmentType.MAX_SYNC_ID_SIZE;
-    private static final int MAX_DATA_SIZE_IN_BYTES = ByteBufCodecs.SERVERBOUND_MAX_PAYLOAD_SIZE - MAX_PADDING_SIZE_IN_BYTES;
+    private static final int MAX_DATA_SIZE_IN_BYTES = ServerboundCustomPayloadPacketAccessor.getMAX_PAYLOAD_SIZE() - MAX_PADDING_SIZE_IN_BYTES;
 
     public static final StreamCodec<ByteBuf, AttachmentChange> STREAM_CODEC = StreamCodec.composite(
             AttachmentHolderInfo.STREAM_CODEC, AttachmentChange::holderInfo,
