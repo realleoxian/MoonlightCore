@@ -1,0 +1,102 @@
+plugins {
+    id 'moonlightcore-loader'
+
+    id 'me.modmuss50.mod-publish-plugin'
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+mixin {
+    add sourceSets.main, 'moonlightcore.refmap.json'
+
+    config 'moonlightcore.mixins.json'
+    config 'moonlightcore.forge.mixins.json'
+}
+
+legacyForge {
+    version = "$mcVersion-$forgeVersion"
+
+    validateAccessTransformers = true
+    accessTransformers.from project(':Xplat').file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    parchment {
+        minecraftVersion = mcVersion
+        mappingsVersion = parchmentVersion
+    }
+
+    runs {
+        client {
+            client()
+
+            ideName = 'Forge Client'
+            gameDirectory = file('run/client')
+
+            systemProperty('forge.logging.console.level', 'debug')
+            systemProperty('fml.earlyprogresswindow', 'false')
+        }
+        server {
+            server()
+
+            ideName = 'Forge Server'
+            gameDirectory = file('run/server')
+
+            systemProperty('forge.logging.console.level', 'debug')
+            systemProperty('fml.earlyprogresswindow', 'false')
+        }
+    }
+
+    mods {
+        register('moonlightcore') {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    compileOnly project(':Xplat')
+    compileOnly(group: 'io.github.llamalad7', name: 'mixinextras-common', version: mixinextrasVersion)
+    jarJar(runtimeOnly(group: 'io.github.llamalad7', name: 'mixinextras-forge', version: mixinextrasVersion))
+
+    if(System.getProperty('idea.sync.active') != 'true') {
+        annotationProcessor(group: 'org.spongepowered', name: 'mixin', version: mixinVersion, classifier: 'processor')
+    }
+    annotationProcessor(group: 'io.github.llamalad7', name: 'mixinextras-common', version: mixinextrasVersion)
+}
+
+publishMods {
+    file = tasks.jar.archiveFile
+    changelog = provider {
+        def changelogFile = rootProject.file("changelog/${mcVersion}-${modVersion}.md")
+
+        if(changelogFile.exists()) {
+            return changelogFile.text
+        }
+
+        return "No changelog provided"
+    }
+    type = STABLE
+    displayName.set("[Forge] MoonlightCore | ${mcVersion}-${modVersion}")
+    modLoaders.add("forge")
+    version = project.version.toString()
+
+    curseforge {
+        projectId = "1152824"
+        accessToken = System.getenv("CURSEFORGE_API_KEY")
+        minecraftVersions.add(mcVersion)
+        javaVersions.add(JavaVersion.VERSION_17)
+        dryRun = !System.getenv().containsKey("CURSEFORGE_API_KEY")
+    }
+    modrinth {
+        projectId = "6MSffsOL"
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        minecraftVersions.add(mcVersion)
+        dryRun.set(!System.getenv().containsKey("MODRINTH_TOKEN"))
+    }
+}
+
+jar {
+    manifest.attributes([
+            'MixinConfigs': 'moonlightcore.mixins.json,moonlightcore.forge.mixins.json'
+    ])
+
+    finalizedBy('reobfJar')
+}

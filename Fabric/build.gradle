@@ -1,0 +1,73 @@
+plugins {
+    id 'moonlightcore-loader'
+
+    id 'me.modmuss50.mod-publish-plugin'
+    id 'fabric-loom'
+}
+
+dependencies {
+    minecraft(group: 'com.mojang', name: 'minecraft', version: mcVersion)
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${mcVersion}:${parchmentVersion}@zip")
+    }
+    modImplementation(group: 'net.fabricmc', name: 'fabric-loader', version: fabricLoaderVersion)
+    modImplementation(group: 'net.fabricmc.fabric-api', name: 'fabric-api', version: "${fabricApiVersion}+${mcVersion}")
+
+    include implementation(group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1')
+    implementation project(":Xplat")
+}
+
+loom {
+    accessWidenerPath = project(":Xplat").file("src/main/resources/moonlightcore.accesswidener")
+
+    mixin {
+        defaultRefmapName = "moonlightcore.refmap.json"
+    }
+
+    runs {
+        client {
+            client()
+
+            setConfigName("Fabric Client")
+            runDir("run/client")
+        }
+        server {
+            server()
+
+            setConfigName("Fabric Server")
+            runDir("run/server")
+        }
+    }
+}
+
+publishMods {
+    file = tasks.jar.archiveFile
+    changelog = provider {
+        def changelogFile = rootProject.file("changelog/${mcVersion}-${modVersion}.md")
+
+        if(changelogFile.exists()) {
+            return changelogFile.text
+        }
+
+        return "No changelog provided"
+    }
+    type = STABLE
+    displayName.set("[Fabric] MoonlightCore | ${mcVersion}-${modVersion}")
+    modLoaders.add("fabric")
+    version = project.version.toString()
+
+    curseforge {
+        projectId = "1152824"
+        accessToken = System.getenv("CURSEFORGE_API_KEY")
+        minecraftVersions.add(mcVersion)
+        javaVersions.add(JavaVersion.VERSION_17)
+        dryRun = !System.getenv().containsKey("CURSEFORGE_API_KEY")
+    }
+    modrinth {
+        projectId = "6MSffsOL"
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        minecraftVersions.add(mcVersion)
+        dryRun.set(!System.getenv().containsKey("MODRINTH_TOKEN"))
+    }
+}

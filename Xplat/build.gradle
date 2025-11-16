@@ -1,0 +1,38 @@
+plugins {
+    id 'moonlightcore-common'
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+configurations {
+    xplatJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+
+    xplatResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+dependencies {
+    compileOnly(group: 'io.github.llamalad7', name: 'mixinextras-common', version: mixinextrasVersion)
+    compileOnly(group: 'org.spongepowered', name: 'mixin', version: mixinVersion)
+}
+
+legacyForge {
+    mcpVersion = mcVersion
+
+    validateAccessTransformers = true
+    accessTransformers.from file("src/main/resources/META-INF/accesstransformer.cfg")
+
+    parchment {
+        minecraftVersion = mcVersion
+        mappingsVersion = parchmentVersion
+    }
+}
+
+artifacts {
+    xplatJava sourceSets.main.java.sourceDirectories.singleFile
+    xplatResources sourceSets.main.resources.sourceDirectories.singleFile
+}

@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "${modId}",
-  "version": "${modVersion}",
-  "name": "${modName}",
-  "description": "${modDescription}",
-  "authors": ["${modAuthor}"],
-  "license": "${modLicense}",
+  "id": "moonlightcore",
+  "version": "${version}",
+  "name": "Moonlight Core",
+  "description": "MoonlightCore is a layer abstraction that simplifies the process of creating multi-loader mods by prividing loader-agnostic APIs",
+  "authors": ["Leoxian"],
+  "license": "MIT",
   "environment": "*",
   "accessWidener": "moonlightcore.accesswidener",
   "entrypoints": {
@@ -17,7 +17,7 @@
     "moonlightcore.fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${fabricLoader}",
-    "fabric-api": ">=${fabricApi}"
+    "fabricloader": ">=${fabricLoaderVersion}",
+    "fabric-api": ">=${fabricApiVersion}"
   }
 }

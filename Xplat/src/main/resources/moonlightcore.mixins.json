@@ -5,6 +5,7 @@
   "package": "de.leoxian.moonlightcore.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractFurnaceBlockEntityMixin",
     "AttachmentHoldersMixin",
     "BiomeSourceMixin",
     "BlockEntityMixin",
@@ -33,6 +34,7 @@
     "accessor.ChunkMapAccessor",
     "accessor.FriendlyByteBufAccessor",
     "accessor.MultiNoiseBiomeSourceAccessor",
+    "accessor.ServerboundCustomPayloadPacketAccessor",
     "accessor.SurfaceRulesContextAccessor",
     "accessor.TrackedEntityAccessor",
     "event.PlayerListMixin"

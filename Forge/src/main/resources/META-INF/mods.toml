@@ -1,21 +1,21 @@
 modLoader = "javafml"
-loaderVersion = "${fmlRange}"
+loaderVersion = "${fmlVersionRange}"
 
-license = "${modLicense}"
-issueTrackerURL = "${modIssueTracker}"
+license = "MIT"
+issueTrackerURL = "https://github.com/realleoxian/MoonlightCore/issues"
 showAsResourcePack = false
 
 [[mods]]
-    modId = "${modId}"
-    version = "${modVersion}"
-    displayName = "${modName}"
-    credits = "${modCredits}"
-    authors = "${modAuthor}"
-    description = "${modDescription}"
+    modId = "moonlightcore"
+    version = "${version}"
+    displayName = "Moonlight Core"
+    credits = "Leoxian"
+    authors = "Leoxian"
+    description = "MoonlightCore is a layer abstraction that simplifies the process of creating multi-loader mods by prividing loader-agnostic APIs"
 
-    [[dependencies."${modId}"]]
+    [[dependencies.moonlightcore]]
         modId = "forge"
         mandatory = true
-        versionRange = "${forgeRange}"
+        versionRange = "${forgeVersionRange}"
         ordering = "NONE"
         side = "BOTH"
