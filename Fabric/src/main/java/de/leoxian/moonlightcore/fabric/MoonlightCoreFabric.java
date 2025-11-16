@@ -3,6 +3,7 @@ package de.leoxian.moonlightcore.fabric;
 import de.leoxian.moonlightcore.core.MoonlightCore;
 import de.leoxian.moonlightcore.event.common.*;
 import de.leoxian.moonlightcore.fabric.api.MoonlightCoreInitializer;
+import de.leoxian.moonlightcore.fabric.mixin.accessor.BuiltInRegistriesAccessor;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -14,9 +15,12 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class MoonlightCoreFabric implements ModInitializer {
@@ -75,7 +79,13 @@ public class MoonlightCoreFabric implements ModInitializer {
              }
          });
 
-         for(var registryId : BuiltInRegistries.REGISTRY.keySet()) {
+         Set<ResourceLocation> registryOrder = new HashSet<>();
+         registryOrder.add(Registries.ATTRIBUTE.location());
+         registryOrder.add(Registries.PARTICLE_TYPE.location());
+         registryOrder.addAll(BuiltInRegistriesAccessor.getLOADERS().keySet());
+         registryOrder.addAll(BuiltInRegistries.REGISTRY.keySet().stream().sorted(ResourceLocation::compareTo).toList());
+
+         for(var registryId : registryOrder) {
             var registryKey = ResourceKey.createRegistryKey(registryId);
             var registry =  BuiltInRegistries.REGISTRY.get(registryId);
 

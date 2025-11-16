@@ -18,6 +18,7 @@
     "ServerLevelMixin",
     "ServerPlayerGameModeMixin",
     "ServerPlayerMixin",
+    "accessor.BuiltInRegistriesAccessor",
     "impl.PacketDispatcherImplMixin"
   ],
   "client": [
