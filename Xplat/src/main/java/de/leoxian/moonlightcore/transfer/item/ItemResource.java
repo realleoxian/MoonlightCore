@@ -33,7 +33,7 @@ public final class ItemResource implements TransferResource<Item> {
     }
 
     public static ItemResource of(ItemLike like) {
-        return of(like.asItem());
+        return of(like, null);
     }
 
     public static ItemResource of(ItemLike like, @Nullable CompoundTag nbt) {
