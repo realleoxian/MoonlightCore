@@ -53,32 +53,32 @@ public class CombinedStorage<V, T extends TransferResource<V>, S extends Storage
     public int insert(Transaction tx, T resource, int amount) {
         StorageInternals.checkNonEmptyNonNegative(resource, amount);
 
-        int currentAmount = 0;
-        for(var storage : this.storages) {
-            currentAmount += storage.insert(tx, resource, amount);
-
-            if(currentAmount == amount) {
+        int remaining = amount;
+        for(Storage<V, T> storage : this.storages) {
+            if(remaining <= 0) {
                 break;
             }
+
+            remaining -= storage.insert(tx, resource, amount);
         }
 
-        return currentAmount;
+        return amount - remaining;
     }
 
     @Override
     public int extract(Transaction tx, T resource, int amount) {
         StorageInternals.checkNonEmptyNonNegative(resource, amount);
 
-        int currentExtracted = 0;
-        for(var storage : this.storages) {
-            currentExtracted += storage.extract(tx, resource, amount);
-
-            if(currentExtracted == amount) {
+        int remaining = amount;
+        for(Storage<V, T> storage : this.storages) {
+            if(remaining <= 0) {
                 break;
             }
+
+            remaining -= storage.extract(tx, resource, amount);
         }
 
-        return currentExtracted;
+        return amount - remaining;
     }
 
     @Override
