@@ -1,7 +1,11 @@
 package de.leoxian.moonlightcore.util;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
@@ -261,6 +265,25 @@ public interface ByteBufCodecs {
     StreamCodec<ByteBuf, ResourceLocation> RESOURCE_LOCATION = STRING_UTF8.xmap(ResourceLocation::new, ResourceLocation::toString);
 
     StreamCodec<ByteBuf, BlockPos> BLOCK_POS = LONG.xmap(BlockPos::of, BlockPos::asLong);
+
+    static <B extends ByteBuf, T> StreamCodec<B, T> fromCodec(Codec<T> valueCodec) {
+        return new StreamCodec<B, T>() {
+            @Override
+            public void encode(B buf, T value) {
+                valueCodec.encodeStart(JsonOps.INSTANCE, value).resultOrPartial(error -> {
+                    throw new EncoderException("Couldn't encode value from codec. Error: \n" + error);
+                }).ifPresent(json -> STRING_UTF8.encode(buf, json.getAsString()));
+            }
+
+            @Override
+            public T decode(B buf) {
+                JsonElement json = JsonParser.parseString(STRING_UTF8.decode(buf));
+                return valueCodec.parse(JsonOps.INSTANCE, json).resultOrPartial(error -> {
+                    throw new DecoderException("Couldn't decode value from codec. Error: \n" + error);
+                }).orElseThrow();
+            }
+        };
+    }
 
     static <T> StreamCodec<ByteBuf, ResourceKey<T>> resourceKey(ResourceKey<? extends Registry<T>> registry) {
         return RESOURCE_LOCATION.xmap(id -> ResourceKey.create(registry, id), ResourceKey::location);
