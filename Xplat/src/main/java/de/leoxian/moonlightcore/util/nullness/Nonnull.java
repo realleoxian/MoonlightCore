@@ -3,7 +3,7 @@ package de.leoxian.moonlightcore.util.nullness;
 import java.lang.annotation.*;
 
 /**
- * An alternative to {@link javax.annotation.Nonnull} which works with type parameters
+ * A type-use alternative of {@link javax.annotation.Nonnull}
  */
 @Target({ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
