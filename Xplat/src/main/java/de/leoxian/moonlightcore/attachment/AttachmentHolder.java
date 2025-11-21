@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.attachment;
 
-import org.jetbrains.annotations.Nullable;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 
 import java.util.Objects;
 import java.util.function.Supplier;

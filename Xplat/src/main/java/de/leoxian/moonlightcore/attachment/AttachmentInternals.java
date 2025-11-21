@@ -4,12 +4,12 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import de.leoxian.moonlightcore.core.MoonlightCore;
 import de.leoxian.moonlightcore.util.MoonlightRegistries;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.IdentityHashMap;

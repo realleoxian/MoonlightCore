@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import de.leoxian.moonlightcore.lookup.ApiLookupMap;
 import de.leoxian.moonlightcore.lookup.ApiProviderMap;
 import de.leoxian.moonlightcore.mixin.accessor.BlockEntityTypeAccessor;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.List;

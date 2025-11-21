@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.attachment;
 
-import org.jetbrains.annotations.Nullable;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 
 /**
  * A convenience wrapper for {@link AttachmentHolder} that provides type-safe access

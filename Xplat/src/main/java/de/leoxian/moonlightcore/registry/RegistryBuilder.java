@@ -1,16 +1,17 @@
 package de.leoxian.moonlightcore.registry;
 
 import com.mojang.serialization.Lifecycle;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.DefaultedMappedRegistry;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 public final class RegistryBuilder<T> {
+
     public static <T> Registry<T> build(ResourceKey<? extends Registry<T>> registryKey) {
         return build(registryKey, $ -> {});
     }

@@ -1,12 +1,13 @@
 package de.leoxian.moonlightcore.core.proxy;
 
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 public class CommonProxy implements Proxy {
 
     @Override
-    public @Nullable Level getLevel() {
+    @Nullable
+    public Level getLevel() {
         return null;
     }
 

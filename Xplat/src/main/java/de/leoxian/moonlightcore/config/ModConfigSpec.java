@@ -7,8 +7,8 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import de.leoxian.moonlightcore.core.MoonlightCore;
 import de.leoxian.moonlightcore.platform.PlatformEnvironment;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

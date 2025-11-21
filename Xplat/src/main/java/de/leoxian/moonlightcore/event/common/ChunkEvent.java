@@ -2,10 +2,10 @@ package de.leoxian.moonlightcore.event.common;
 
 import de.leoxian.moonlightcore.event.Event;
 import de.leoxian.moonlightcore.event.EventFactory;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import org.jetbrains.annotations.Nullable;
 
 public interface ChunkEvent {
      /**

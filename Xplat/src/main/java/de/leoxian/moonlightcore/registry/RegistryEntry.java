@@ -1,6 +1,7 @@
 package de.leoxian.moonlightcore.registry;
 
 import com.mojang.datafixers.util.Either;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
@@ -8,7 +9,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -16,6 +16,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class RegistryEntry<R, T extends R> implements Holder<R> {
+
     public static <R, T extends R>  RegistryEntry<R, T> create(ResourceLocation registryKey, ResourceLocation id, Supplier<T> valueCandidate) {
         return create(ResourceKey.createRegistryKey(registryKey), id,  valueCandidate);
     }
@@ -151,4 +152,5 @@ public class RegistryEntry<R, T extends R> implements Holder<R> {
             throw new IllegalStateException("Registry not present for " + this + ": " + this.key.registry());
         }
     }
+
 }

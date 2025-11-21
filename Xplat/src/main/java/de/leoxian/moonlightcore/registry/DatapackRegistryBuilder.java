@@ -5,14 +5,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import de.leoxian.moonlightcore.event.common.DatapackRegistryCreationEvent;
 import de.leoxian.moonlightcore.util.PriorityLinkedList;
-import de.leoxian.moonlightcore.util.nullness.NullableType;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.*;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.function.BiConsumer;
@@ -47,7 +46,7 @@ public final class DatapackRegistryBuilder {
                         entry.bootstrap().accept((BootstapContext) ctx)));
     }
 
-    public static void forEach(BiConsumer<ResourceKey<? extends Registry<?>>, @NullableType Codec<?>> output) {
+    public static void forEach(BiConsumer<ResourceKey<? extends Registry<?>>, @Nullable Codec<?>> output) {
         REGISTRIES.forEach(entry ->
                 output.accept(entry.key, entry.codec));
     }
@@ -104,7 +103,7 @@ public final class DatapackRegistryBuilder {
 
     private DatapackRegistryBuilder() {}
 
-    private record Entry<T>(ResourceKey<? extends Registry<T>> key, @Nullable Codec<T> codec, Consumer<BootstapContext<T>> bootstrap) {
+    private record Entry<T>(ResourceKey<? extends Registry<T>> key, @org.jetbrains.annotations.Nullable Codec<T> codec, Consumer<BootstapContext<T>> bootstrap) {
 
         public BootstapContext<T> getContext(RegistryOps.RegistryInfoLookup infoLookup, WritableRegistry<T> writableRegistry) {
             return DatapackRegistryBuilder.makeContext(infoLookup, writableRegistry);

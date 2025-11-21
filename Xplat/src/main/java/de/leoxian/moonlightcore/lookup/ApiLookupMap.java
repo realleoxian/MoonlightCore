@@ -1,7 +1,7 @@
 package de.leoxian.moonlightcore.lookup;
 
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,7 +44,8 @@ public class ApiLookupMap<L> implements Iterable<L> {
     }
 
     @Override
-    public @NotNull Iterator<L> iterator() {
+    @Nonnull
+    public Iterator<L> iterator() {
         return this.lookups.values().stream().map(StoredLookup::lookup).collect(Collectors.toList()).iterator();
     }
 

@@ -1,7 +1,7 @@
 package de.leoxian.moonlightcore.event;
 
 import com.google.common.reflect.AbstractInvocationHandler;
-import org.jetbrains.annotations.Nullable;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
@@ -20,7 +20,8 @@ public final class EventFactory {
      public static <T> Event<T> create(Class<T> typeClass) {
           return of((listeners) -> (T) Proxy.newProxyInstance(EventFactory.class.getClassLoader(), new Class[]{typeClass}, new AbstractInvocationHandler() {
                @Override
-               protected @Nullable Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
+               @Nullable
+               protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
                     for(var listener : listeners) {
                          invokeMethod(listener, method, args);
                     }
@@ -34,7 +35,8 @@ public final class EventFactory {
      public static <T> Event<T> createWithResult(Class<T> typeClass) {
           return of((listeners) -> (T) Proxy.newProxyInstance(EventFactory.class.getClassLoader(), new Class[]{typeClass}, new AbstractInvocationHandler() {
                @Override
-               protected @Nullable Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
+               @Nullable
+               protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
                     for(var listener : listeners) {
                          var result = (Event.Result) Objects.requireNonNull(invokeMethod(listener, method, args));
                          if(result.interruptsFurtherEvaluation) {

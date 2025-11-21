@@ -3,8 +3,8 @@ package de.leoxian.moonlightcore.config;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import de.leoxian.moonlightcore.core.network.clientbound.S2CConfigSyncRequestPacket;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;

@@ -2,13 +2,13 @@ package de.leoxian.moonlightcore.levelgen.biome;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 

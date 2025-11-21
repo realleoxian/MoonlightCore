@@ -3,12 +3,12 @@ package de.leoxian.moonlightcore.lookup.item;
 import com.mojang.logging.LogUtils;
 import de.leoxian.moonlightcore.lookup.ApiLookupMap;
 import de.leoxian.moonlightcore.lookup.ApiProviderMap;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.List;

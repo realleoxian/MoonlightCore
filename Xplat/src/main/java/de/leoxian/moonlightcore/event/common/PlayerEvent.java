@@ -2,6 +2,7 @@ package de.leoxian.moonlightcore.event.common;
 
 import de.leoxian.moonlightcore.event.Event;
 import de.leoxian.moonlightcore.event.EventFactory;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -14,7 +15,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
-import org.jetbrains.annotations.Nullable;
 
 public interface PlayerEvent {
      /**

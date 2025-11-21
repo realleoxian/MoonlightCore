@@ -3,14 +3,13 @@ package de.leoxian.moonlightcore.lookup.entity;
 import com.mojang.logging.LogUtils;
 import de.leoxian.moonlightcore.lookup.ApiLookupMap;
 import de.leoxian.moonlightcore.lookup.ApiProviderMap;
-import net.minecraft.advancements.critereon.EntityPredicate;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.*;
