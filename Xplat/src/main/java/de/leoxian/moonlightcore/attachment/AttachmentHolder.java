@@ -20,8 +20,7 @@ public interface AttachmentHolder {
      * @param type The {@link AttachmentType} that may have associated data
      * @param <T> The type of data
      */
-    @Nullable
-    default <T> T getAttachedData(AttachmentType<T> type) {
+    default @Nullable <T> T getAttachedData(AttachmentType<T> type) {
         throw new AssertionError();
     }
 
@@ -34,8 +33,7 @@ public interface AttachmentHolder {
      * @throws IllegalArgumentException If trying to change the value of a read-only {@link AttachmentType}
      * @param <T> The type of data
      */
-    @Nullable
-    default <T> T setAttachedData(AttachmentType<T> type, @Nullable T value) {
+    default @Nullable <T> T setAttachedData(AttachmentType<T> type, @Nullable T value) {
         throw new AssertionError();
     }
 

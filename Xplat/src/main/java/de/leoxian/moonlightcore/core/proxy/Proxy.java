@@ -7,7 +7,6 @@ import net.minecraft.world.level.Level;
 public interface Proxy {
     Proxy PROXY = EnvironmentSide.unsafeRunIf(() -> ClientProxy::new, () -> CommonProxy::new);
 
-    @Nullable
-    Level getLevel();
+    @Nullable Level getLevel();
 
 }

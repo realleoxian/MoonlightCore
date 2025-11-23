@@ -56,18 +56,16 @@ public final class BiomeProviderRegistry {
         this.toWeight.put(provider, weight);
     }
 
-    @Nullable
-    public BiomeProvider get(ResourceLocation name) {
+
+    public @Nullable BiomeProvider get(ResourceLocation name) {
         return this.byName.get(name);
     }
 
-    @Nullable
-    public ResourceLocation getName(BiomeProvider provider) {
+    public @Nullable ResourceLocation getName(BiomeProvider provider) {
         return this.toName.get(provider);
     }
 
-    @Nullable
-    public BiomeProvider byId(int id) {
+    public @Nullable BiomeProvider byId(int id) {
         return this.byId.get(id);
     }
 

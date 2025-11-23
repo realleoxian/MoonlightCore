@@ -28,8 +28,7 @@ public final class RegistryBuilder<T> {
     }
 
     private final ResourceKey<? extends Registry<T>> registryKey;
-    @Nullable
-    private ResourceLocation defaultKey;
+    private @Nullable ResourceLocation defaultKey;
 
     private RegistryBuilder(ResourceKey<? extends Registry<T>> registryKey) {
         this.registryKey = registryKey;

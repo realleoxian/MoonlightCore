@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.util;
 
-import org.jetbrains.annotations.NotNull;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -16,11 +16,11 @@ public class PriorityLinkedList<T> implements Iterable<T>, Collection<T> {
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends T> c) {
+    public boolean addAll(@Nonnull Collection<? extends T> c) {
         return addAll(c, DEFAULT_PRIORITY);
     }
 
-    public boolean addAll(@NotNull Collection<? extends T> c, int priority) {
+    public boolean addAll(@Nonnull Collection<? extends T> c, int priority) {
         boolean changed = false;
         for(T t : c) {
             changed |= add(t, priority);
@@ -44,7 +44,7 @@ public class PriorityLinkedList<T> implements Iterable<T>, Collection<T> {
     }
 
     @Override
-    public boolean containsAll(@NotNull Collection<?> c) {
+    public boolean containsAll(@Nonnull Collection<?> c) {
         return this.entries.containsAll(c);
     }
 
@@ -54,12 +54,12 @@ public class PriorityLinkedList<T> implements Iterable<T>, Collection<T> {
     }
 
     @Override
-    public boolean removeAll(@NotNull Collection<?> c) {
+    public boolean removeAll(@Nonnull Collection<?> c) {
         return this.entries.removeAll(c);
     }
 
     @Override
-    public boolean retainAll(@NotNull Collection<?> c) {
+    public boolean retainAll(@Nonnull Collection<?> c) {
         return this.entries.retainAll(c);
     }
 
@@ -79,12 +79,12 @@ public class PriorityLinkedList<T> implements Iterable<T>, Collection<T> {
     }
 
     @Override
-    public @NotNull Iterator<T> iterator() {
+    public @Nonnull Iterator<T> iterator() {
         return new PriorityLinkedListIterator<>(this.entries.iterator());
     }
 
     @Override
-    public @NotNull Object[] toArray() {
+    public @Nonnull Object[] toArray() {
         Object[] result = new Object[size()];
         int i = 0;
 
@@ -96,7 +96,7 @@ public class PriorityLinkedList<T> implements Iterable<T>, Collection<T> {
     }
 
     @Override
-    public @NotNull <T1> T1[] toArray(@NotNull T1[] a) {
+    public @Nonnull <T1> T1[] toArray(@Nonnull T1[] a) {
         if(a.length < size()) {
             a = (T1[]) Array.newInstance(a.getClass().getComponentType(), size());
         }

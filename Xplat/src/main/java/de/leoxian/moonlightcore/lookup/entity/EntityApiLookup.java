@@ -128,8 +128,7 @@ public class EntityApiLookup<A, C> {
         this.fallbackProviders.add(fallback);
     }
 
-    @Nullable
-    public EntityApiProvider<A, C> getProvider(EntityType<?> entity) {
+    public @Nullable EntityApiProvider<A, C> getProvider(EntityType<?> entity) {
         return this.providersMap.get(entity);
     }
 
@@ -146,7 +145,6 @@ public class EntityApiLookup<A, C> {
     }
 
     public interface EntityApiProvider<A, C> {
-        @Nullable
-        A find(Entity entity, C context);
+        @Nullable A find(Entity entity, C context);
     }
 }

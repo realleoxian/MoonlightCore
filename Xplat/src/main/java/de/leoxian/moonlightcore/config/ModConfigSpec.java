@@ -568,8 +568,7 @@ public class ModConfigSpec {
         private final Predicate<T> validator;
         private final Supplier<T> defaultValue;
 
-        @Nullable
-        private T cachedValue = null;
+        private @Nullable T cachedValue = null;
 
         ValueKey(String key, String comment, ValueSerializer<T> serializer, Predicate<T> validator, Supplier<T> defaultValue) {
             this.key = key;

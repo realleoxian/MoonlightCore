@@ -20,8 +20,7 @@ public final class EventFactory {
      public static <T> Event<T> create(Class<T> typeClass) {
           return of((listeners) -> (T) Proxy.newProxyInstance(EventFactory.class.getClassLoader(), new Class[]{typeClass}, new AbstractInvocationHandler() {
                @Override
-               @Nullable
-               protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
+               protected @Nullable Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
                     for(var listener : listeners) {
                          invokeMethod(listener, method, args);
                     }
@@ -35,8 +34,7 @@ public final class EventFactory {
      public static <T> Event<T> createWithResult(Class<T> typeClass) {
           return of((listeners) -> (T) Proxy.newProxyInstance(EventFactory.class.getClassLoader(), new Class[]{typeClass}, new AbstractInvocationHandler() {
                @Override
-               @Nullable
-               protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
+               protected @Nullable Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
                     for(var listener : listeners) {
                          var result = (Event.Result) Objects.requireNonNull(invokeMethod(listener, method, args));
                          if(result.interruptsFurtherEvaluation) {

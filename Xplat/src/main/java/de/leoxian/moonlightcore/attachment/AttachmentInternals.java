@@ -62,8 +62,7 @@ public class AttachmentInternals {
     }
 
     @SuppressWarnings("unchecked")
-    @Nullable
-    public static IdentityHashMap<AttachmentType<?>, Object> deserializePersistentAttachments(CompoundTag tag) {
+    public static @Nullable IdentityHashMap<AttachmentType<?>, Object> deserializePersistentAttachments(CompoundTag tag) {
         if(!tag.contains(NBT_TAG, Tag.TAG_COMPOUND)) {
             IdentityHashMap<AttachmentType<?>, Object> attachments = new IdentityHashMap<>();
             CompoundTag attachmentsTag = tag.getCompound(NBT_TAG);

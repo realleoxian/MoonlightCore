@@ -6,8 +6,7 @@ import net.minecraft.world.level.Level;
 public class CommonProxy implements Proxy {
 
     @Override
-    @Nullable
-    public Level getLevel() {
+    public @Nullable Level getLevel() {
         return null;
     }
 

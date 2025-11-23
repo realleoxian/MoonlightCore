@@ -20,8 +20,7 @@ public final class ConfigManager {
         }
     }
 
-    @Nullable
-    public static ModConfigSpec getSpec(String modId, String filename) {
+    public @Nullable static ModConfigSpec getSpec(String modId, String filename) {
         if(!CONFIGURATION_SPECS.containsKey(modId)) {
             return null;
         }

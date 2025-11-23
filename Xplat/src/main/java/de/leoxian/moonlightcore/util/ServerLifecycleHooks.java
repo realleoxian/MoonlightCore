@@ -1,14 +1,13 @@
 package de.leoxian.moonlightcore.util;
 
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 public class ServerLifecycleHooks {
     private static MinecraftServer currentServer = null;
 
-    @Nullable
-    public static MinecraftServer getCurrentServer() {
+    public static @Nullable MinecraftServer getCurrentServer() {
         return currentServer;
     }
 

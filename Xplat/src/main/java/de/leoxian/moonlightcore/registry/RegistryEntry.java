@@ -32,10 +32,8 @@ public class RegistryEntry<R, T extends R> implements Holder<R> {
     private final ResourceKey<R> key;
     private final Supplier<T> valueCandidate;
 
-    @Nullable
-    private T cachedValue;
-    @Nullable
-    private Holder<R> innerHolder;
+    private @Nullable T cachedValue;
+    private @Nullable Holder<R> innerHolder;
 
     private RegistryEntry(ResourceKey<R> key, Supplier<T> valueCandidate) {
         this.key = key;
@@ -66,9 +64,8 @@ public class RegistryEntry<R, T extends R> implements Holder<R> {
         return this.cachedValue;
     }
 
-    @Nullable
     @SuppressWarnings("unchecked")
-    public Registry<R> registry() {
+    public @Nullable Registry<R> registry() {
         return (Registry<R>) BuiltInRegistries.REGISTRY.get(this.key.registry());
     }
 

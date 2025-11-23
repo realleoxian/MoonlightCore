@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.util;
 
-import org.jetbrains.annotations.NotNull;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -41,7 +41,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
    }
 
    @Override
-   public boolean addAll(@NotNull Collection<? extends E> c) {
+   public boolean addAll(@Nonnull Collection<? extends E> c) {
       boolean changed = false;
       for(E e : c) {
          changed |= this.add(e);
@@ -73,7 +73,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
    }
 
    @Override
-   public boolean removeAll(@NotNull Collection<?> c) {
+   public boolean removeAll(@Nonnull Collection<?> c) {
       if (c.isEmpty() || head == null) return false;
 
       Set<?> lookup = (c instanceof Set<?> set) ? set : new HashSet<>(c);
@@ -81,7 +81,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
    }
 
    @Override
-   public boolean retainAll(@NotNull Collection<?> c) {
+   public boolean retainAll(@Nonnull Collection<?> c) {
       if (head == null) return false;
 
       if (c.isEmpty()) {
@@ -94,7 +94,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
    }
 
    @Override
-   public boolean removeIf(@NotNull Predicate<? super E> filter) {
+   public boolean removeIf(@Nonnull Predicate<? super E> filter) {
       Objects.requireNonNull(filter);
       return bulkRemove(filter);
    }
@@ -118,7 +118,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
    }
 
    @Override
-   public boolean containsAll(@NotNull Collection<?> c) {
+   public boolean containsAll(@Nonnull Collection<?> c) {
       for(Object o : c) {
          if(!this.contains(o)) {
             return false;
@@ -147,7 +147,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
    }
 
    @Override
-   public @NotNull Object[] toArray() {
+   public @Nonnull Object[] toArray() {
       Object[] result = new Object[size];
       int i = 0;
       for (E e : this) {
@@ -158,7 +158,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
 
    @Override
    @SuppressWarnings("unchecked")
-   public @NotNull <T> T[] toArray(@NotNull T[] a) {
+   public @Nonnull <T> T[] toArray(@Nonnull T[] a) {
       if(a.length < this.size) {
          a = (T[]) Array.newInstance(a.getClass().getComponentType(), this.size);
       }
@@ -187,7 +187,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
    }
 
    @Override
-   public @NotNull Iterator<E> iterator() {
+   public @Nonnull Iterator<E> iterator() {
       return new IteratorImpl();
    }
 
@@ -197,7 +197,7 @@ public class SortedLinkedList<E> implements Collection<E>, Iterable<E> {
    }
 
    @Override
-   public @NotNull Spliterator<E> spliterator() {
+   public @Nonnull Spliterator<E> spliterator() {
       return Spliterators.spliterator(iterator(), this.size, Spliterator.ORDERED);
    }
 

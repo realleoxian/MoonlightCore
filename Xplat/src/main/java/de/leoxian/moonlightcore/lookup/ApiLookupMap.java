@@ -44,8 +44,7 @@ public class ApiLookupMap<L> implements Iterable<L> {
     }
 
     @Override
-    @Nonnull
-    public Iterator<L> iterator() {
+    public @Nonnull Iterator<L> iterator() {
         return this.lookups.values().stream().map(StoredLookup::lookup).collect(Collectors.toList()).iterator();
     }
 

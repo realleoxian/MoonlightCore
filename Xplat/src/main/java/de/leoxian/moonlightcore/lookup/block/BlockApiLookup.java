@@ -170,12 +170,10 @@ public class BlockApiLookup<A, C> {
 
     @FunctionalInterface
     public interface BlockApiProvider<A, C> {
-        @Nullable
-        A get(Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, C context);
+        @Nullable A get(Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, C context);
     }
 
     public interface BlockEntityApiProvider<A, C> {
-        @Nullable
-        A find(BlockEntity block, C context);
+        @Nullable A find(BlockEntity block, C context);
     }
 }

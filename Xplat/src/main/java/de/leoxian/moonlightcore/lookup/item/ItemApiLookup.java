@@ -37,8 +37,7 @@ public class ItemApiLookup<A, C> {
         this.contextClass = contextClass;
     }
 
-    @Nullable
-    public A find(ItemStack stack, C context) {
+    public @Nullable A find(ItemStack stack, C context) {
         Objects.requireNonNull(stack, "Item stack may not be null");
 
         ItemApiProvider<A, C> provider = providerMap.get(stack.getItem());
@@ -101,8 +100,7 @@ public class ItemApiLookup<A, C> {
         this.fallbackProviders.add(fallbackProvider);
     }
 
-    @Nullable
-    public ItemApiProvider<A, C> getProvider(Item item) {
+    public @Nullable ItemApiProvider<A, C> getProvider(Item item) {
         return providerMap.get(item);
     }
 
@@ -120,7 +118,6 @@ public class ItemApiLookup<A, C> {
 
     @FunctionalInterface
     public interface ItemApiProvider<A, C> {
-        @Nullable
-        A find(ItemStack itemStack, C context);
+        @Nullable A find(ItemStack itemStack, C context);
     }
 }
