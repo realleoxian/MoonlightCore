@@ -24,8 +24,7 @@ import java.util.List;
 @Mixin(Climate.ParameterList.class)
 public abstract class ParameterListMixin<T> implements ParameterListExtension<T> {
 
-    @Shadow
-    @Final
+    @Shadow @Final
     private List<Pair<Climate.ParameterPoint, T>> values;
 
     @Shadow

@@ -12,14 +12,11 @@ import org.spongepowered.asm.mixin.*;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Mixin(BiomeSource.class)
 public abstract class BiomeSourceMixin implements BiomeResolver, BiomeSourceExtension {
 
-    @Mutable
-    @Shadow
-    @Final
+    @Mutable @Shadow @Final
     private Supplier<Set<Holder<Biome>>> possibleBiomes;
     @Unique
     private boolean mlcore_hasMerged = false;

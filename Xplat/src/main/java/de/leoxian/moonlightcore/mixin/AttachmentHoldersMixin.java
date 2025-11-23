@@ -6,13 +6,13 @@ import de.leoxian.moonlightcore.attachment.AttachmentType;
 import de.leoxian.moonlightcore.attachment.sync.AttachmentChange;
 import de.leoxian.moonlightcore.core.network.clientbound.S2CAttachmentSyncPacket;
 import de.leoxian.moonlightcore.util.MoonlightRegistries;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -24,10 +24,10 @@ import java.util.function.Consumer;
 
 @Mixin({BlockEntity.class, Entity.class, ChunkAccess.class, Level.class})
 public class AttachmentHoldersMixin implements AttachmentHolderImpl {
-    @Unique @Nullable
-    private IdentityHashMap<AttachmentType<?>, Object> mlcore_attachments = null;
-    @Unique @Nullable
-    private IdentityHashMap<AttachmentType<?>, AttachmentChange> mlcore_attachment_changes = null;
+    @Unique
+    private @Nullable IdentityHashMap<AttachmentType<?>, Object> mlcore_attachments = null;
+    @Unique
+    private @Nullable IdentityHashMap<AttachmentType<?>, AttachmentChange> mlcore_attachment_changes = null;
 
     @Override
     public <T> void syncAttachedData(AttachmentType<T> type) {

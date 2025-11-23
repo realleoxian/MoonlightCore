@@ -23,8 +23,7 @@ import java.util.Map;
 @Mixin(RegistryDataLoader.class)
 public class RegistryDataLoaderMixin {
 
-    @Mutable
-    @Accessor
+    @Mutable @Accessor
     static void setWORLDGEN_REGISTRIES(List<RegistryDataLoader.RegistryData<?>> list) {}
 
     @Inject(method = "<clinit>", at = @At("TAIL"))

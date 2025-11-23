@@ -6,11 +6,11 @@ import de.leoxian.moonlightcore.attachment.sync.AttachmentHolderInfo;
 import de.leoxian.moonlightcore.core.MoonlightCore;
 import de.leoxian.moonlightcore.core.network.clientbound.S2CAttachmentSyncPacket;
 import de.leoxian.moonlightcore.util.PlayerTrackUtils;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,8 +27,7 @@ public abstract class BlockEntityMixin implements AttachmentHolderImpl {
     public abstract boolean hasLevel();
 
     @Shadow
-    @Nullable
-    protected Level level;
+    protected @Nullable Level level;
 
     @Shadow
     public abstract BlockPos getBlockPos();
