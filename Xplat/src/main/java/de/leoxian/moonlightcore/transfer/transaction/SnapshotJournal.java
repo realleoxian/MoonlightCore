@@ -1,10 +1,10 @@
 package de.leoxian.moonlightcore.transfer.transaction;
 
-import de.leoxian.moonlightcore.util.nullness.NullableType;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 
 import java.util.ArrayList;
 
-public abstract class SnapshotJournal<@NullableType T> {
+public abstract class SnapshotJournal<@Nullable T> {
     private static final Object NO_SNAPSHOT = new Object();
 
     private final ArrayList<T> snapshots = new ArrayList<>();

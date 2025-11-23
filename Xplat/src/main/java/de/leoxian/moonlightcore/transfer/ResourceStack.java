@@ -3,18 +3,13 @@ package de.leoxian.moonlightcore.transfer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public record ResourceStack<V, T extends TransferResource<V>>(T resource, int amount) {
+public record ResourceStack<T>(T resource, int amount) {
 
-    public static <V, T extends TransferResource<V>> Codec<ResourceStack<V, T>> codec(Codec<T> codec) {
+    public static <T> Codec<ResourceStack<T>> codec(Codec<T> resourceCodec) {
         return RecordCodecBuilder.create(instance -> instance.group(
-                codec.fieldOf("resource").forGetter(ResourceStack::resource),
+                resourceCodec.fieldOf("resource").forGetter(ResourceStack::resource),
                 Codec.INT.fieldOf("amount").forGetter(ResourceStack::amount)
         ).apply(instance, ResourceStack::new));
     }
-
-    public boolean isEmpty() {
-        return StorageUtils.isEmpty(this.resource(), this.amount());
-    }
-
 
 }

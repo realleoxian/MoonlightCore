@@ -1,32 +1,31 @@
 package de.leoxian.moonlightcore.transfer;
 
 import com.google.common.collect.Iterators;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
-import org.jetbrains.annotations.NotNull;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 
 import java.util.Iterator;
 import java.util.function.Supplier;
 
-public abstract class FilteringStorage<V, T extends TransferResource<V>> implements Storage<V, T> {
-
-    public static <V, T extends TransferResource<V>> Storage<V, T> insertOnlyOf(Storage<V, T> backingStorage) {
+public abstract class FilteringStorage<T> implements Storage<T> {
+    public static <T> Storage<T> insertOnlyOf(Storage<T> backingStorage) {
         return of(backingStorage, true, false);
     }
 
-    public static <V, T extends TransferResource<V>> Storage<V, T> extractOnlyOf(Storage<V, T> backingStorage) {
+    public static <T> Storage<T> extractOnlyOf(Storage<T> backingStorage) {
         return of(backingStorage, false, true);
     }
 
-    public static <V, T extends TransferResource<V>> Storage<V, T> readOnlyOf(Storage<V, T> backingStorage) {
+    public static <T> Storage<T> readOnlyOf(Storage<T> backingStorage) {
         return of(backingStorage, false, false);
     }
 
-    public static <V, T extends TransferResource<V>> Storage<V, T> of(Storage<V, T> backingStorage, boolean allowInsert, boolean allowExtract) {
+    public static <T> Storage<T> of(Storage<T> backingStorage, boolean allowInsert, boolean allowExtract) {
         if(allowInsert && allowExtract) {
             return backingStorage;
         }
 
-        return new FilteringStorage<>(() -> backingStorage) {
+        return new FilteringStorage<T>(() -> backingStorage) {
             @Override
             protected boolean canInsert(T resource) {
                 return allowInsert;
@@ -36,49 +35,47 @@ public abstract class FilteringStorage<V, T extends TransferResource<V>> impleme
             protected boolean canExtract(T resource) {
                 return allowExtract;
             }
-
-            @Override
-            public boolean supportsInsertion() {
-                return allowInsert && super.supportsInsertion();
-            }
-
-            @Override
-            public boolean supportsExtraction() {
-                return allowExtract && super.supportsExtraction();
-            }
         };
     }
 
-    protected final Supplier<Storage<V, T>> backingStorage;
+    private final Supplier<Storage<T>> backingStorage;
 
-    protected FilteringStorage(Supplier<Storage<V, T>> backingStorage) {
+    public FilteringStorage(Storage<T> backingStorage) {
+        this(() -> backingStorage);
+    }
+
+    public FilteringStorage(Supplier<Storage<T>> backingStorage) {
         this.backingStorage = backingStorage;
     }
 
-    protected abstract boolean canInsert(T resource);
-
-    protected abstract boolean canExtract(T resource);
-
     @Override
-    public int insert(Transaction tx, T resource, int amount) {
+    public int insert(TransactionContext context, T resource, int maxAmount) {
         if(this.canInsert(resource)) {
-            return this.backingStorage.get().insert(tx, resource, amount);
+            return this.backingStorage.get().insert(context, resource, maxAmount);
         }
 
         return 0;
     }
 
+    protected boolean canInsert(T resource) {
+        return true;
+    }
+
     @Override
-    public int extract(Transaction tx, T resource, int amount) {
+    public int extract(TransactionContext context, T resource, int maxAmount) {
         if(this.canExtract(resource)) {
-            return this.backingStorage.get().extract(tx, resource, amount);
+            return this.backingStorage.get().extract(context, resource, maxAmount);
         }
 
         return 0;
     }
 
+    protected boolean canExtract(T resource) {
+        return true;
+    }
+
     @Override
-    public @NotNull StorageView<V, T> get(int index) {
+    public @Nonnull StorageView<T> get(int index) {
         return this.backingStorage.get().get(index);
     }
 
@@ -98,38 +95,33 @@ public abstract class FilteringStorage<V, T extends TransferResource<V>> impleme
     }
 
     @Override
-    public @NotNull Iterator<StorageView<V, T>> iterator() {
+    public @Nonnull Iterator<StorageView<T>> iterator() {
         return Iterators.transform(this.backingStorage.get().iterator(), FilteringStorageView::new);
     }
 
-    private class FilteringStorageView implements StorageView<V, T> {
-        private final StorageView<V, T> backingView;
+    private class FilteringStorageView implements StorageView<T> {
+        private final StorageView<T> backingView;
 
-        private FilteringStorageView(StorageView<V, T> backingView) {
+        private FilteringStorageView(StorageView<T> backingView) {
             this.backingView = backingView;
         }
 
         @Override
-        public int extract(Transaction tx, T resource, int amount) {
-            if(!canExtract(resource)) {
-                return this.backingView.extract(tx, resource, amount);
+        public int insert(TransactionContext context, T resource, int maxAmount) {
+            if(canInsert(resource)) {
+                return this.backingView.insert(context, resource, maxAmount);
             }
 
             return 0;
         }
 
         @Override
-        public int insert(Transaction tx, T resource, int amount) {
-            if(!canInsert(resource)) {
-                return this.backingView.insert(tx, resource, amount);
+        public int extract(TransactionContext context, T resource, int maxAmount) {
+            if(canExtract(resource)) {
+                return this.backingView.extract(context, resource, maxAmount);
             }
 
             return 0;
-        }
-
-        @Override
-        public boolean isResourceValid(T resource) {
-            return this.backingView.isResourceValid(resource);
         }
 
         @Override
@@ -138,13 +130,18 @@ public abstract class FilteringStorage<V, T extends TransferResource<V>> impleme
         }
 
         @Override
-        public T resource() {
-            return this.backingView.resource();
+        public int getAmount() {
+            return this.backingView.getAmount();
         }
 
         @Override
-        public int amount() {
-            return this.backingView.amount();
+        public boolean isResourceBlank() {
+            return this.backingView.isResourceBlank();
+        }
+
+        @Override
+        public T getResource() {
+            return this.backingView.getResource();
         }
     }
 }

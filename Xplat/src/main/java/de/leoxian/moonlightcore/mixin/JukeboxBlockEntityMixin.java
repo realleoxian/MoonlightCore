@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.mixin;
 
-import de.leoxian.moonlightcore.transfer.SpecialLogicInventory;
+import de.leoxian.moonlightcore.transfer.item.SpecialLogicInventory;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;

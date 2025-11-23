@@ -1,20 +1,28 @@
 package de.leoxian.moonlightcore.transfer;
 
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
-import org.jetbrains.annotations.NotNull;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 
 import java.util.Collections;
 import java.util.Iterator;
 
-public class EmptyStorage<V, T extends TransferResource<V>> implements Storage<V, T> {
-    private static final EmptyStorage<?, ?> INSTANCE = new EmptyStorage<>();
+class EmptyStorage<T> implements Storage<T> {
+    static final EmptyStorage<?> INSTANCE = new EmptyStorage<>();
 
-    @SuppressWarnings("unchecked")
-    public static <V, T extends TransferResource<V>> Storage<V, T> empty() {
-        return (EmptyStorage<V, T>) INSTANCE;
+    @Override
+    public int insert(TransactionContext context, T insertedResource, int maxAmount) {
+        return 0;
     }
 
-    private EmptyStorage() {}
+    @Override
+    public int extract(TransactionContext context, T extractedResource, int maxAmount) {
+        return 0;
+    }
+
+    @Override
+    public @Nonnull StorageView<T> get(int index) {
+        return null;
+    }
 
     @Override
     public int size() {
@@ -22,22 +30,17 @@ public class EmptyStorage<V, T extends TransferResource<V>> implements Storage<V
     }
 
     @Override
-    public @NotNull StorageView<V, T> get(int index) {
-        return null;
-    }
-
-    @Override
-    public @NotNull Iterator<StorageView<V, T>> iterator() {
+    public @Nonnull Iterator<StorageView<T>> iterator() {
         return Collections.emptyIterator();
     }
 
     @Override
-    public int insert(Transaction tx, T resource, int amount) {
-        return 0;
+    public boolean supportsInsertion() {
+        return false;
     }
 
     @Override
-    public int extract(Transaction tx, T resource, int amount) {
-        return 0;
+    public boolean supportsExtraction() {
+        return false;
     }
 }

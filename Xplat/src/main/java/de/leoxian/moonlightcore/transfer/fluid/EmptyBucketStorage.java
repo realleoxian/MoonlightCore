@@ -1,40 +1,39 @@
 package de.leoxian.moonlightcore.transfer.fluid;
 
 import de.leoxian.moonlightcore.mixin.accessor.BucketItemAccessor;
-import de.leoxian.moonlightcore.transfer.EmptyStorageView;
+import de.leoxian.moonlightcore.transfer.BlankResourceView;
 import de.leoxian.moonlightcore.transfer.InsertionOnlyStorage;
-import de.leoxian.moonlightcore.transfer.StorageInternals;
+import de.leoxian.moonlightcore.transfer.StoragePreconditions;
 import de.leoxian.moonlightcore.transfer.StorageView;
-import de.leoxian.moonlightcore.transfer.context.ItemStorageContext;
+import de.leoxian.moonlightcore.transfer.context.ContainerItemContext;
 import de.leoxian.moonlightcore.transfer.item.ItemResource;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.Fluid;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class EmptyBucketStorage implements InsertionOnlyStorage<Fluid, FluidResource> {
-    private final List<StorageView<Fluid, FluidResource>> blankView = List.of(new EmptyStorageView<>(FluidResource.empty(), FluidConstants.BUCKET));
-    private final ItemStorageContext context;
+public class EmptyBucketStorage implements InsertionOnlyStorage<FluidResource> {
+    private final List<StorageView<FluidResource>> blankView = List.of(new BlankResourceView<>(FluidResource.blank(), FluidConstants.BUCKET));
+    private final ContainerItemContext context;
 
-    public EmptyBucketStorage(ItemStorageContext context) {
+    public EmptyBucketStorage(ContainerItemContext context) {
         this.context = context;
     }
 
     @Override
-    public int insert(Transaction tx, FluidResource resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
-        if(!context.resource().is(Items.BUCKET)) return 0;
+    public int insert(TransactionContext context, FluidResource insertedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(insertedResource, maxAmount);
+        if(!this.context.getResource().isOf(Items.BUCKET)) return 0;
 
-        Item fullBucket = resource.get().getBucket();
-        if(fullBucket instanceof BucketItemAccessor accessor && resource.is(accessor.getContent())) {
-            if(amount >= FluidConstants.BUCKET) {
-                ItemResource newResource = ItemResource.of(fullBucket, context.resource().getNBT());
+        Item fullBucket = insertedResource.getResource().getBucket();
+        if(fullBucket instanceof BucketItemAccessor accessor && insertedResource.isOf(accessor.getContent())) {
+            if(maxAmount >= FluidConstants.BUCKET) {
+                ItemResource newResource = ItemResource.of(fullBucket, this.context.getResource().getNBT());
 
-                if(context.exchange(tx, newResource, 1) == 1) {
+                if(this.context.exchange(context, newResource, 1) == 1) {
                     return FluidConstants.BUCKET;
                 }
             }
@@ -44,17 +43,26 @@ public class EmptyBucketStorage implements InsertionOnlyStorage<Fluid, FluidReso
     }
 
     @Override
+    public StorageView<FluidResource> get(int index) {
+        if(index != 0) {
+            throw new IndexOutOfBoundsException("Slot " + index + " does not exist in empty bucket storage");
+        }
+
+        return blankView.get(0);
+    }
+
+    @Override
     public int size() {
         return 1;
     }
 
     @Override
-    public @NotNull StorageView<Fluid, FluidResource> get(int index) {
-        return this.blankView.get(0);
+    public @Nonnull Iterator<StorageView<FluidResource>> iterator() {
+        return blankView.iterator();
     }
 
     @Override
-    public @NotNull Iterator<StorageView<Fluid, FluidResource>> iterator() {
-        return this.blankView.iterator();
+    public String toString() {
+        return "EmptyBucketStorage[" + this.context + "]";
     }
 }

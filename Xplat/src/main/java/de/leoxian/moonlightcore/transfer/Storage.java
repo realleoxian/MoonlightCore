@@ -1,76 +1,89 @@
 package de.leoxian.moonlightcore.transfer;
 
 import com.google.common.collect.Iterators;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
-import org.jetbrains.annotations.NotNull;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 
 import java.util.Iterator;
 import java.util.Objects;
 
-public interface Storage<V, T extends TransferResource<V>> extends StorageIO<T>, Iterable<StorageView<V, T>> {
+public interface Storage<T> extends StorageIO<T>, Iterable<StorageView<T>> {
 
     @SuppressWarnings("unchecked")
-    static <V, T extends TransferResource<V>> Class<Storage<V, T>> asClass() {
-        return (Class<Storage<V, T>>) (Object) Storage.class;
+    static <T> Storage<T> empty() {
+        return (Storage<T>) EmptyStorage.INSTANCE;
     }
+
+    @SuppressWarnings("unchecked")
+    static <T> Class<Storage<T>> asClass() {
+        return (Class<Storage<T>>) (Object) Storage.class;
+    }
+
+    StorageView<T> get(int index);
 
     int size();
 
-    @NotNull
-    StorageView<V, T> get(int index);
+    @Nonnull Iterator<StorageView<T>> iterator();
 
-    @Override
-    @NotNull Iterator<StorageView<V, T>> iterator();
-
-    default Iterator<StorageView<V, T>> nonEmptyIterator() {
-        return Iterators.filter(this.iterator(), (view) -> view.amount() > 0 && !view.resource().isEmpty());
-    }
-
-    default Iterable<StorageView<V, T>> nonEmptyViews() {
+    default Iterable<StorageView<T>> nonEmptyViews() {
         return this::nonEmptyIterator;
     }
 
-    default int insert(Transaction tx, int index, T resource, int amount) {
-        Objects.checkIndex(index, this.size());
-        return get(index).insert(tx, resource, amount);
+    default Iterator<StorageView<T>> nonEmptyIterator() {
+        return Iterators.filter(this.iterator(), view -> view.getAmount() > 0 && !view.isResourceBlank());
     }
 
-    default int extract(Transaction tx, int index, T resource, int amount) {
+    default int insert(TransactionContext context, int index, T resource, int maxAmount) {
         Objects.checkIndex(index, this.size());
-        return get(index).extract(tx, resource, amount);
+        return get(index).insert(context, resource, maxAmount);
     }
 
-    default T getResource(int index) {
+    default int simulateInsert(TransactionContext context, int index, T resource, int maxAmount) {
         Objects.checkIndex(index, this.size());
-        return this.get(index).resource();
-    }
-
-    default ResourceStack<V, T> toStack(int index) {
-        Objects.checkIndex(index, this.size());
-        return this.get(index).toStack();
-    }
-
-    default int getAmount(int index) {
-        Objects.checkIndex(index, this.size());
-        return this.get(index).amount();
-    }
-
-    default int getLimit(int index, T resource) {
-        Objects.checkIndex(index, this.size());
-        return this.get(index).getCapacity(resource);
-    }
-
-    default boolean isResourceValid(int index, T resource) {
-        Objects.checkIndex(index, this.size());
-        return this.get(index).isResourceValid(resource);
+        return get(index).simulateInsert(context, resource, maxAmount);
     }
 
     default boolean supportsInsertion() {
         return true;
     }
 
+    default int extract(TransactionContext context, int index, T resource, int maxAmount) {
+        Objects.checkIndex(index, this.size());
+        return get(index).extract(context, resource, maxAmount);
+    }
+
+    default int simulateExtract(TransactionContext context, int index, T resource, int maxAmount) {
+        Objects.checkIndex(index, this.size());
+        return get(index).simulateExtract(context, resource, maxAmount);
+    }
+
     default boolean supportsExtraction() {
         return true;
+    }
+
+    default T getResource(int index) {
+        Objects.checkIndex(index, this.size());
+        return get(index).getResource();
+    }
+
+    default int getAmount(int index) {
+        Objects.checkIndex(index, this.size());
+        return get(index).getAmount();
+    }
+
+    default int getCapacity(int index, T resource) {
+        Objects.checkIndex(index, this.size());
+        return get(index).getCapacity(resource);
+    }
+
+    default boolean isBlank(int index) {
+        Objects.checkIndex(index, this.size());
+        return get(index).isResourceBlank();
+    }
+
+    default ResourceStack<T> toStack(int index) {
+        Objects.checkIndex(index, this.size());
+        return get(index).toStack();
     }
 
 }

@@ -1,43 +1,51 @@
 package de.leoxian.moonlightcore.transfer;
 
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import net.minecraft.nbt.CompoundTag;
 
-public abstract class SingleResourceStorage<V, T extends TransferResource<V>> extends SnapshotJournal<ResourceStack<V, T>> implements SingleSlotStorage<V, T> {
+public abstract class SingleResourceStorage<T extends TransferResource<?>> extends SnapshotJournal<ResourceStack<T>> implements SingleSlotStorage<T> {
+    private final T blankResource;
 
-    protected final T emptyResource;
-
-    public T resource;
+    public T currentResource;
     public int amount = 0;
 
-    protected SingleResourceStorage(T emptyResource) {
-        this.emptyResource = emptyResource;
-        this.resource = emptyResource;
+    public SingleResourceStorage(T blankResource) {
+        if(!blankResource.isBlank()) {
+            throw new IllegalArgumentException("Expected a blank resource, but this was given: " + blankResource);
+        }
+
+        this.blankResource = blankResource;
+        this.currentResource = blankResource;
     }
 
-    protected boolean canInsert(T resource) {
-        return true;
-    }
-
-    protected boolean canExtract(T resource) {
-        return true;
-    }
-
-    @Override
     public abstract int getCapacity(T resource);
 
-    @Override
-    public int insert(Transaction tx, T resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public void writeToNBT(CompoundTag tag) {
+        tag.put("resource", this.currentResource.toNBT());
+        tag.putInt("amount", this.amount);
+    }
 
-        if(this.isResourceValid(resource) && this.canInsert(resource)) {
-            int insertedAmount = Math.min(amount, getCapacity(resource) - this.amount);
+    public boolean canInsert(T resource) {
+        return true;
+    }
+
+    public boolean canExtract(T resource) {
+        return true;
+    }
+
+    @Override
+    public int insert(TransactionContext context, T insertedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(insertedResource, maxAmount);
+
+        if((insertedResource.equals(this.currentResource) || this.currentResource.isBlank()) && canInsert(insertedResource)) {
+            int insertedAmount = Math.min(maxAmount, getCapacity(insertedResource) - this.amount);
 
             if(insertedAmount > 0) {
-                this.updateSnapshots(tx);
+                updateSnapshots(context);
 
-                if(resource.isEmpty()) {
-                    this.resource = resource;
+                if(this.currentResource.isBlank()) {
+                    this.currentResource = insertedResource;
                     this.amount = insertedAmount;
                 } else {
                     this.amount += insertedAmount;
@@ -51,18 +59,18 @@ public abstract class SingleResourceStorage<V, T extends TransferResource<V>> ex
     }
 
     @Override
-    public int extract(Transaction tx, T resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public int extract(TransactionContext context, T extractedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(extractedResource, maxAmount);
 
-        if(this.isResourceValid(resource) && this.canExtract(resource)) {
-            int extractedAmount = Math.min(amount, this.amount);
+        if(extractedResource.equals(this.currentResource) && canExtract(extractedResource)) {
+            int extractedAmount = Math.min(maxAmount, this.amount);
 
             if(extractedAmount > 0) {
-                this.updateSnapshots(tx);
+                updateSnapshots(context);
                 this.amount -= extractedAmount;
 
-                if(amount <= 0) {
-                    this.resource = this.emptyResource;
+                if(this.amount == 0) {
+                    this.currentResource = this.blankResource;
                 }
 
                 return extractedAmount;
@@ -73,29 +81,33 @@ public abstract class SingleResourceStorage<V, T extends TransferResource<V>> ex
     }
 
     @Override
-    public ResourceStack<V, T> createSnapshot() {
-        return new ResourceStack<>(this.resource, this.amount);
+    public ResourceStack<T> createSnapshot() {
+        return new ResourceStack<>(this.currentResource, this.amount);
     }
 
     @Override
-    public void revertToSnapshot(ResourceStack<V, T> snapshot) {
-        this.resource = snapshot.resource();
+    public void revertToSnapshot(ResourceStack<T> snapshot) {
+        this.currentResource = snapshot.resource();
         this.amount = snapshot.amount();
     }
 
     @Override
-    public boolean isResourceValid(T resource) {
-        return this.resource.isEmpty() || this.resource.fullyMatches(resource.get(), resource.getNBT());
+    public T getResource() {
+        return this.currentResource;
     }
 
     @Override
-    public T resource() {
-        return this.resource;
+    public boolean isResourceBlank() {
+        return this.currentResource.isBlank();
     }
 
     @Override
-    public int amount() {
+    public int getAmount() {
         return this.amount;
     }
 
+    @Override
+    public String toString() {
+        return "SingleResourceStorage[%d %s]".formatted(this.amount, this.currentResource);
+    }
 }

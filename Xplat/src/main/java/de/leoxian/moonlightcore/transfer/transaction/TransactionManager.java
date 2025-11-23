@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.transfer.transaction;
 
-import org.jetbrains.annotations.Nullable;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ final class TransactionManager {
         return MANAGER.get();
     }
 
-    private final Thread thread = Thread.currentThread();
+    final Thread thread = Thread.currentThread();
 
     final List<Transaction> stack = new ArrayList<>();
     int currentDepth = -1;
@@ -22,7 +22,7 @@ final class TransactionManager {
     final Queue<SnapshotJournal<?>> rootCloseSnapshotJournals = new ArrayDeque<>();
     boolean processingRootCallbacksQueue = false;
 
-    Transaction open(@Nullable TransactionContext parent) {
+    Transaction open(@Nullable TransactionContext parent, Class<?> callerClass) {
         this.validateThread();
 
         if(parent != null) {
@@ -30,12 +30,19 @@ final class TransactionManager {
             this.validateTransaction(tx);
             tx.validateOpen();
         } else if (this.currentDepth > -1) {
-            throw new IllegalStateException("A root transaction is already active on this thread");
+            String errorMessage = String.format(
+                    "A root transaction of '%s' is already active on this thread (%s) when '%s' tried to open.",
+                    getOpenTransaction(0).getDebugName(),
+                    thread.getName(),
+                    callerClass.getName()
+            );
+
+            throw new IllegalStateException(errorMessage);
         }
 
         this.currentDepth++;
         if(this.stack.size() == currentDepth) {
-            this.stack.add(new Transaction(this, this.currentDepth));
+            this.stack.add(new Transaction(this, this.currentDepth, callerClass));
         }
 
         Transaction tx = this.stack.get(this.currentDepth);
@@ -87,8 +94,10 @@ final class TransactionManager {
 
         if(currentDepth == -1 || this.stack.get(this.currentDepth) != tx) {
             String errorMessage = String.format(
-                    "Transaction function was called on a transaction with depth %d, but the current transaction has depth %d",
+                    "Transaction function was called on a transaction (%s) with depth %d, but the current transaction (%s) has depth %d",
+                    tx.getDebugName(),
                     tx.nestingDepth(),
+                    this.getOpenTransaction(currentDepth).getDebugName(),
                     this.currentDepth
             );
 

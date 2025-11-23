@@ -1,19 +1,15 @@
 package de.leoxian.moonlightcore.transfer.item;
 
 import com.google.common.collect.MapMaker;
-import de.leoxian.moonlightcore.transfer.CombinedStorage;
-import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
-import de.leoxian.moonlightcore.transfer.SpecialLogicInventory;
-import de.leoxian.moonlightcore.transfer.Storage;
-import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
+import de.leoxian.moonlightcore.transfer.*;
+import de.leoxian.moonlightcore.transfer.transaction.RootCommitJournal;
 import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ChestBlock;
@@ -22,94 +18,158 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.properties.ChestType;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
-public class VanillaContainerWrapper extends CombinedStorage<Item, ItemResource, SingleSlotStorage<Item, ItemResource>> {
+public class VanillaContainerWrapper extends CombinedStorage<ItemResource, SingleSlotStorage<ItemResource>> {
     private static final Map<Container, VanillaContainerWrapper> WRAPPERS = new MapMaker().weakKeys().weakValues().makeMap();
 
-    public static Storage<Item, ItemResource> of(Container container) {
-        return internalOf(container);
-    }
-
-    private static VanillaContainerWrapper internalOf(Container container) {
-        VanillaContainerWrapper wrapper = WRAPPERS.computeIfAbsent(container, cont -> {
-            if(cont instanceof Inventory inventory) {
-                return new InventoryStorage(inventory);
+    public static VanillaContainerWrapper of(Container container, @Nullable Direction direction) {
+        VanillaContainerWrapper wrapper = WRAPPERS.computeIfAbsent(container, inv -> {
+            if(inv instanceof Inventory inventory) {
+                return new InventoryWrapper(inventory);
             } else {
-                return new VanillaContainerWrapper(cont);
+                return new VanillaContainerWrapper(container);
             }
         });
 
         wrapper.resize();
-        return wrapper;
+        return wrapper.getSidedWrapper(direction);
     }
 
-    private final MarkDirtyJournal markDirtyJournal = new MarkDirtyJournal();
-    protected final List<SlotWrapper> slotWrappers = new ArrayList<>();
-    protected final Container container;
+    final List<SingleSlotStorage<ItemResource>> slotWrappers = new ArrayList<>();
 
-    protected VanillaContainerWrapper(Container container) {
+    private final RootCommitJournal setChangedJournal;
+    final Container container;
+    int size;
+
+    VanillaContainerWrapper(Container container) {
         this(Collections.emptyList(), container);
     }
 
-    protected VanillaContainerWrapper(List<SingleSlotStorage<Item, ItemResource>> slots, Container container) {
-        super(slots);
+    VanillaContainerWrapper(List<SingleSlotStorage<ItemResource>> parts, Container container) {
+        super(parts);
         this.container = container;
+        this.setChangedJournal = new RootCommitJournal(container::setChanged);
     }
 
-    public VanillaContainerWrapper getSidedWrapper(@Nullable Direction direction) {
+    @Override
+    public int insert(TransactionContext context, ItemResource insertedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(insertedResource, maxAmount);
+
+        int remaining = maxAmount;
+        for(SingleSlotStorage<ItemResource> wrapper : this.slotWrappers) {
+            remaining -= wrapper.insert(context, insertedResource, maxAmount - remaining);
+
+            if(remaining == 0) {
+                break;
+            }
+        }
+
+        return maxAmount - remaining;
+    }
+
+    @Override
+    public int extract(TransactionContext context, ItemResource extractedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(extractedResource, maxAmount);
+
+        int remaining = maxAmount;
+        for(SingleSlotStorage<ItemResource> wrapper : this.slotWrappers) {
+            remaining -= wrapper.extract(context, extractedResource, maxAmount);
+
+            if(remaining == 0) {
+                break;
+            }
+        }
+
+        return maxAmount - remaining;
+    }
+
+    @Override
+    public int insert(TransactionContext context, int index, ItemResource insertedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(insertedResource, maxAmount);
+        return getSlotWrapper(index).insert(context, insertedResource, maxAmount);
+    }
+
+    @Override
+    public int extract(TransactionContext context, int index, ItemResource extractedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(extractedResource, maxAmount);
+        return getSlotWrapper(index).extract(context, extractedResource, maxAmount);
+    }
+
+    @Override
+    public int size() {
+        return this.size;
+    }
+
+    @UnmodifiableView
+    public List<SingleSlotStorage<ItemResource>> getSlots() {
+        return this.slotWrappers;
+    }
+
+    SlotWrapper getSlotWrapper(int index) {
+        Objects.checkIndex(index, this.size());
+        return (SlotWrapper) this.slotWrappers.get(index);
+    }
+
+    void resize() {
+        size = container.getContainerSize();
+        while(this.slotWrappers.size() < size) {
+            slotWrappers.add(new SlotWrapper(slotWrappers.size()));
+        }
+    }
+
+    private VanillaContainerWrapper getSidedWrapper(@Nullable Direction direction) {
         if(container instanceof WorldlyContainer && direction != null) {
-            return new WordlyInventoryStorage(this, direction);
+            return new WorldlyContainerWrapper(this, direction);
         }
 
         return this;
     }
 
-    public List<SingleSlotStorage<Item, ItemResource>> getSlots() {
-        return Arrays.asList(this.storages);
-    }
+    class SlotWrapper extends SingleStackStorage {
+        final int index;
+        final @Nullable SpecialLogicInventory specialInv;
 
-    @SuppressWarnings("unchecked")
-    protected void resize() {
-        int containerSize = this.container.getContainerSize();
-
-        if(containerSize != this.storages.length) {
-            while(this.slotWrappers.size() < containerSize) {
-                this.slotWrappers.add(new SlotWrapper(this, this.slotWrappers.size()));
-            }
-
-            this.storages = (SingleSlotStorage<Item, ItemResource>[]) Collections.unmodifiableList(this.slotWrappers.subList(0, containerSize)).toArray(Storage[]::new);
-        }
-    }
-
-    protected static class SlotWrapper extends SingleStackStorage {
-        private final VanillaContainerWrapper wrapper;
-        @Nullable
-        private final SpecialLogicInventory specialInv;
-        final int slot;
-
-        SlotWrapper(VanillaContainerWrapper wrapper, int slot) {
-            this.specialInv = wrapper.container instanceof SpecialLogicInventory ? (SpecialLogicInventory) wrapper.container : null;
-            this.wrapper = wrapper;
-            this.slot = slot;
+        SlotWrapper(int index) {
+            this.index = index;
+            this.specialInv = container instanceof SpecialLogicInventory specialInv ? specialInv : null;
         }
 
         @Override
-        public ItemStack getStack() {
-            return wrapper.container.getItem(this.slot);
+        public int insert(TransactionContext context, ItemResource insertedResource, int maxAmount) {
+            if(!canInsert(this.index, insertedResource.getCachedStack())) {
+                return 0;
+            }
+
+            int inserted = super.insert(context, insertedResource, maxAmount);
+            if(specialInv != null && inserted > 0) {
+                specialInv.mlcore_onTransfer(context, this.index);
+            }
+
+            return inserted;
+        }
+
+        @Override
+        public int extract(TransactionContext context, ItemResource extractedResource, int maxAmount) {
+            int extracted = super.extract(context, extractedResource, maxAmount);
+            if(specialInv != null && extracted > 0) {
+               specialInv.mlcore_onTransfer(context, this.index);
+            }
+
+            return extracted;
         }
 
         @Override
         public void setStack(ItemStack stack) {
             if(specialInv == null) {
-                this.wrapper.container.setItem(slot, stack);
+                container.setItem(this.index, stack);
             } else {
                 specialInv.mlcore_setSuppress(true);
 
                 try {
-                    this.wrapper.container.setItem(slot, stack);
+                    container.setItem(this.index, stack);
                 } finally {
                     specialInv.mlcore_setSuppress(false);
                 }
@@ -117,52 +177,33 @@ public class VanillaContainerWrapper extends CombinedStorage<Item, ItemResource,
         }
 
         @Override
-        public int insert(Transaction tx, ItemResource resource, int amount) {
-            if(!canInsert(this.slot, resource.getCachedStack())) {
-                return 0;
-            }
-
-            int inserted = super.insert(tx, resource, amount);
-            if(this.specialInv != null && inserted > 0) {
-                this.specialInv.mlcore_onTransfer(tx, this.slot);
-            }
-
-            return inserted;
-        }
-
-        @Override
-        public int extract(Transaction tx, ItemResource resource, int amount) {
-            int extracted = super.extract(tx, resource, amount);
-            if(this.specialInv != null && extracted > 0) {
-                this.specialInv.mlcore_onTransfer(tx, this.slot);
-            }
-
-            return extracted;
+        public ItemStack getStack() {
+            return container.getItem(this.index);
         }
 
         @Override
         public int getCapacity(ItemResource resource) {
-            if(this.wrapper.container instanceof AbstractFurnaceBlockEntity && slot == 1 && resource.is(Items.BUCKET)) {
+            if(container instanceof AbstractFurnaceBlockEntity && index == 1 && resource.isOf(Items.BUCKET)) {
                 return 1;
             }
 
-            if(this.wrapper.container instanceof BrewingStandBlockEntity && slot < 3) {
+            if(container instanceof BrewingStandBlockEntity && index < 3) {
                 return 1;
             }
 
-            return Math.min(this.wrapper.container.getMaxStackSize(), resource.get().getMaxStackSize());
+            return Math.min(container.getMaxStackSize(), resource.getResource().getMaxStackSize());
         }
 
         @Override
         public void updateSnapshots(TransactionContext ctx) {
-            this.wrapper.markDirtyJournal.updateSnapshots(ctx);
+            setChangedJournal.updateSnapshots(ctx);
             super.updateSnapshots(ctx);
 
-            if(this.wrapper.container instanceof ChestBlockEntity chest && chest.getBlockState().getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
+            if(container instanceof ChestBlockEntity chest && chest.getBlockState().getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
                 BlockPos otherChestPos = chest.getBlockPos().relative(ChestBlock.getConnectedDirection(chest.getBlockState()));
 
                 if(chest.getLevel().getBlockEntity(otherChestPos) instanceof ChestBlockEntity otherChest) {
-                    VanillaContainerWrapper.internalOf(otherChest).markDirtyJournal.updateSnapshots(ctx);
+                    VanillaContainerWrapper.of(otherChest, null).setChangedJournal.updateSnapshots(ctx);
                 }
             }
         }
@@ -173,36 +214,25 @@ public class VanillaContainerWrapper extends CombinedStorage<Item, ItemResource,
 
             if(!originalState.isEmpty() && originalState.getItem() == currentStack.getItem()) {
                 originalState.setCount(currentStack.getCount());
-                originalState.setTag(currentStack.hasTag() ? currentStack.getTag().copy() : null);
+                originalState.setTag(currentStack.hasTag() ? currentStack.getTag() : null);
+
                 setStack(originalState);
             } else {
                 originalState.setCount(0);
             }
         }
 
-        private boolean canInsert(int slot, ItemStack stack) {
-            if(this.wrapper.container instanceof ShulkerBoxBlockEntity shulker) {
-                return shulker.canPlaceItemThroughFace(slot, stack, null);
+        @Override
+        public String toString() {
+            return "VanillaContainerWrapper[container=" + container + ", slot=" + this.index + "]";
+        }
+
+        private boolean canInsert(int index, ItemStack stack) {
+            if(container instanceof ShulkerBoxBlockEntity shulker) {
+                return shulker.canPlaceItemThroughFace(index, stack, null);
             } else {
-                return this.wrapper.container.canPlaceItem(slot, stack);
+                return container.canPlaceItem(index, stack);
             }
-        }
-    }
-
-    class MarkDirtyJournal extends SnapshotJournal<Boolean> {
-        @Override
-        public Boolean createSnapshot() {
-            return Boolean.TRUE;
-        }
-
-        @Override
-        public void revertToSnapshot(Boolean snapshot) {
-
-        }
-
-        @Override
-        public void onRootCommit(Boolean originalState) {
-            container.setChanged();
         }
     }
 }

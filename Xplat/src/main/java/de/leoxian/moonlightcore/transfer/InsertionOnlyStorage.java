@@ -1,11 +1,11 @@
 package de.leoxian.moonlightcore.transfer;
 
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
 
-public interface InsertionOnlyStorage<V, T extends TransferResource<V>> extends Storage<V, T> {
+public interface InsertionOnlyStorage<T> extends Storage<T> {
 
     @Override
-    default int extract(Transaction tx, T resource, int amount) {
+    default int extract(TransactionContext context, T resource, int maxAmount) {
         return 0;
     }
 

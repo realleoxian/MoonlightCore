@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.mixin;
 
-import de.leoxian.moonlightcore.transfer.SpecialLogicInventory;
+import de.leoxian.moonlightcore.transfer.item.SpecialLogicInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;

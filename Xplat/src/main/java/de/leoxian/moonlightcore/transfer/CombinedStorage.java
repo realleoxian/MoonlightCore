@@ -1,114 +1,106 @@
 package de.leoxian.moonlightcore.transfer;
 
 import com.google.common.collect.Iterators;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
-import org.jetbrains.annotations.NotNull;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
-public class CombinedStorage<V, T extends TransferResource<V>, S extends Storage<V, T>> implements Storage<V, T> {
-    protected S[] storages;
+public class CombinedStorage<T, S extends Storage<T>> implements Storage<T> {
+    protected S[] parts;
     protected final int[] baseIndex;
     protected final int sizeCache;
 
     @SuppressWarnings("unchecked")
-    public CombinedStorage(List<? extends Storage<V, T>> storages) {
-        this((S[]) storages.toArray(Storage[]::new));
+    public CombinedStorage(List<? extends Storage<T>> parts) {
+        this((S[]) parts.toArray(Storage[]::new));
     }
 
     @SafeVarargs
-    public CombinedStorage(S... storages) {
-        this.storages = storages;
-        this.baseIndex = new int[storages.length];
+    public CombinedStorage(S... parts) {
+        this.parts = parts;
+        this.baseIndex = new int[parts.length];
 
-        int index = 0;
-        for(int i = 0; i < storages.length; i++) {
-            this.baseIndex[i] = index;
-            index += storages[i].size();
+        int idx = 0;
+        for(int i = 0; i < parts.length; i++) {
+            this.baseIndex[i] = idx;
+            idx += parts[i].size();
         }
-
-        this.sizeCache = index;
-    }
-
-    public Storage<V, T> getStorageFromIndex(int idx) {
-        return this.storages[idx];
-    }
-
-    public int getStorageIndex(int idx) {
-        Objects.checkIndex(idx, this.sizeCache);
-
-        for(int storageIdx = 0; storageIdx < this.baseIndex.length - 1; storageIdx++) {
-            if(idx < this.baseIndex[storageIdx + 1]) {
-                return storageIdx;
-            }
-        }
-
-        return this.baseIndex.length - 1;
+        this.sizeCache = idx;
     }
 
     @Override
-    public int insert(Transaction tx, T resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public int insert(TransactionContext context, T insertedResource, int maxAmount) {
+        StoragePreconditions.notNegative(maxAmount);
+        int remaining = maxAmount;
 
-        int remaining = amount;
-        for(Storage<V, T> storage : this.storages) {
-            if(remaining <= 0) {
-                break;
+        for(S part : parts) {
+            remaining -= part.insert(context, insertedResource, maxAmount - remaining);
+
+            if(remaining == 0) {
+                 break;
             }
-
-            remaining -= storage.insert(tx, resource, amount);
         }
 
-        return amount - remaining;
-    }
-
-    @Override
-    public int extract(Transaction tx, T resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
-
-        int remaining = amount;
-        for(Storage<V, T> storage : this.storages) {
-            if(remaining <= 0) {
-                break;
-            }
-
-            remaining -= storage.extract(tx, resource, amount);
-        }
-
-        return amount - remaining;
+        return maxAmount - remaining;
     }
 
     @Override
     public boolean supportsInsertion() {
-        for(var storage : this.storages) {
-            if(!storage.supportsInsertion()) {
-                return false;
+        for(S part : parts) {
+            if(part.supportsInsertion()) {
+                return true;
             }
         }
 
-        return true;
+        return false;
+    }
+
+    @Override
+    public int extract(TransactionContext context, T extractedResource, int maxAmount) {
+        StoragePreconditions.notNegative(maxAmount);
+        int remaining = maxAmount;
+
+        for(S part : parts) {
+            remaining -= part.extract(context, extractedResource, maxAmount - remaining);
+
+            if(remaining == 0) {
+                break;
+            }
+        }
+
+        return maxAmount - remaining;
     }
 
     @Override
     public boolean supportsExtraction() {
-        for(var storage : this.storages) {
-            if(!storage.supportsExtraction()) {
-                return false;
+        for(S part : parts) {
+            if(part.supportsExtraction()) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     @Override
-    public @NotNull StorageView<V, T> get(int index) {
-        Objects.checkIndex(index, this.size());
+    public @Nonnull StorageView<T> get(int index) {
+        return null;
+    }
 
-        int handlerIndex = this.getStorageIndex(index);
-        return this.getStorageFromIndex(handlerIndex).get(index - this.baseIndex[handlerIndex]);
+    public int getStorageBaseIndex(int index) {
+        Objects.checkIndex(index, this.sizeCache);
+
+        for(int i = 0; i < this.baseIndex.length; i++) {
+            int nextBase = (i < this.baseIndex.length - 1) ? this.baseIndex[i + 1] : this.sizeCache;
+
+            if(index < nextBase) {
+                return this.baseIndex[i];
+            }
+        }
+
+        // This should never happen
+        throw new IndexOutOfBoundsException();
     }
 
     @Override
@@ -117,43 +109,49 @@ public class CombinedStorage<V, T extends TransferResource<V>, S extends Storage
     }
 
     @Override
-    public @NotNull Iterator<StorageView<V, T>> iterator() {
+    public @Nonnull Iterator<StorageView<T>> iterator() {
         return new CombinedIterator();
     }
 
-    private class CombinedIterator implements Iterator<StorageView<V, T>> {
-        final Iterator<Storage<V, T>> storageIterator = Iterators.forArray(storages);
+    @Override
+    public String toString() {
+        StringJoiner partNames = new StringJoiner(", ");
 
-        Iterator<? extends StorageView<V, T>> currentViewIterator = null;
-
-        CombinedIterator() {
-            this.advanceCurrentViewIterator();
+        for(S part : parts) {
+            partNames.add(part.toString());
         }
+
+        return "CombinedStorage[" + partNames + "]";
+    }
+
+    private class CombinedIterator implements Iterator<StorageView<T>> {
+        final Iterator<S> partIterator = Iterators.forArray(parts);
+        Iterator<? extends StorageView<T>> currentPartIterator = null;
 
         @Override
         public boolean hasNext() {
-            return this.currentViewIterator != null && this.currentViewIterator.hasNext();
+            return currentPartIterator != null && currentPartIterator.hasNext();
         }
 
         @Override
-        public StorageView<V, T> next() {
-            if(!this.hasNext()) {
+        public StorageView<T> next() {
+            if(!hasNext()) {
                 throw new NoSuchElementException();
             }
 
-            StorageView<V, T> returned = this.currentViewIterator.next();
-            if(!this.currentViewIterator.hasNext()) {
-                this.advanceCurrentViewIterator();
+            StorageView<T> returned = currentPartIterator.next();
+            if(!currentPartIterator.hasNext()) {
+                advanceCurrentPartIterator();
             }
 
             return returned;
         }
 
-        private void advanceCurrentViewIterator() {
-            while(storageIterator.hasNext()) {
-                this.currentViewIterator = storageIterator.next().iterator();
+        private void advanceCurrentPartIterator() {
+            while(partIterator.hasNext()) {
+                this.currentPartIterator = partIterator.next().iterator();
 
-                if(!this.currentViewIterator.hasNext()) {
+                if(this.currentPartIterator.hasNext()) {
                     break;
                 }
             }

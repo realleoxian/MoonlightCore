@@ -1,169 +1,170 @@
 package de.leoxian.moonlightcore.transfer.fluid;
 
 import com.google.common.collect.MapMaker;
-import com.google.common.math.IntMath;
+import com.google.common.primitives.Ints;
 import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
-import de.leoxian.moonlightcore.transfer.StorageInternals;
+import de.leoxian.moonlightcore.transfer.StoragePreconditions;
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 
 import java.util.Map;
 
-public class CauldronWrapper extends SnapshotJournal<BlockState> implements SingleSlotStorage<Fluid, FluidResource> {
-    private static final Map<WrapperLocation, CauldronWrapper> WRAPPERS = new MapMaker().concurrencyLevel(1).weakKeys().weakValues().makeMap();
+public class CauldronWrapper extends SnapshotJournal<BlockState> implements SingleSlotStorage<FluidResource> {
+    private static final Map<WrapperLocation, CauldronWrapper> WRAPPERS = new MapMaker().concurrencyLevel(1).weakValues().makeMap();
 
-    public static CauldronWrapper of(Level level, BlockPos pos) {
+    public static CauldronWrapper get(Level level, BlockPos pos) {
         WrapperLocation location = new WrapperLocation(level, pos.immutable());
         return WRAPPERS.computeIfAbsent(location, CauldronWrapper::new);
     }
 
-    private final WrapperLocation location;
+    private final WrapperLocation wrapperLocation;
 
-    CauldronWrapper(WrapperLocation location) {
-        this.location = location;
+    CauldronWrapper(WrapperLocation wrapperLocation) {
+        this.wrapperLocation = wrapperLocation;
     }
 
     @Override
-    public int insert(Transaction tx, FluidResource resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public int insert(TransactionContext context, FluidResource insertedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(insertedResource, maxAmount);
+        CauldronFluidContent insertContent = CauldronFluidContent.getForFluid(insertedResource.getResource());
 
-        if(resource.hasNBT()) {
-            return 0;
+        if(insertContent != null) {
+            int maxLevelsInserted = Ints.saturatedCast(maxAmount / insertContent.amountPerLevel);
+
+            if(getAmount() == 0) {
+                int levelsInserted = Math.min(maxLevelsInserted, insertContent.maxLevel);
+
+                if(levelsInserted > 0) {
+                    updateBlockState(context, insertContent, levelsInserted);
+                }
+
+                return levelsInserted * insertContent.amountPerLevel;
+            }
+
+            CauldronFluidContent currentContent = getCurrentContent();
+            if(insertedResource.isOf(currentContent.fluid)) {
+                int currentLevel = currentContent.currentLevel(createSnapshot());
+                int levelsInserted = Math.min(maxLevelsInserted, currentContent.maxLevel - currentLevel);
+
+                if(levelsInserted > 0) {
+                    updateBlockState(context, currentContent, currentLevel + levelsInserted);
+                }
+
+                return levelsInserted * currentContent.amountPerLevel;
+            }
         }
 
-        CauldronFluidContent insertContent = CauldronFluidContent.getForFluid(resource.get());
-        if(insertContent == null) {
-            return 0;
-        }
-
-        BlockState state = location.getBlockState();
-        CauldronFluidContent currentContent = getContent(state);
-        if(currentContent.fluid != Fluids.EMPTY && !resource.is(currentContent.fluid)) {
-            return 0;
-        }
-
-        int d = IntMath.gcd(insertContent.maxLevel, insertContent.amountPerLevel);
-        int amountIncrements =insertContent.amountPerLevel / d;
-        int levelIncrements = insertContent.maxLevel / d;
-
-        int currentLevel = currentContent.currentLevel(state);
-        int insertedIncrements = Math.min(amount / amountIncrements, (insertContent.maxLevel - currentLevel) / levelIncrements);
-
-        if(insertedIncrements > 0) {
-            setLevel(tx, insertContent, currentLevel + insertedIncrements * levelIncrements);
-        }
-
-        return insertedIncrements * amountIncrements;
+        return 0;
     }
 
     @Override
-    public int extract(Transaction tx, FluidResource resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public int extract(TransactionContext context, FluidResource extractedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(extractedResource, maxAmount);
+        CauldronFluidContent currentContent = getCurrentContent();
 
-        BlockState state = location.getBlockState();
-        CauldronFluidContent currentContent = getContent(state);
+        if(extractedResource.isOf(currentContent.fluid)) {
+            int maxLevelsExtracted = Ints.saturatedCast(maxAmount / currentContent.amountPerLevel);
+            int currentLevel = currentContent.currentLevel(createSnapshot());
+            int levelsExtracted = Math.min(maxLevelsExtracted, currentLevel);
 
-        if(!resource.is(currentContent.fluid) || resource.hasNBT()) {
-            return 0;
+            if(levelsExtracted > 0) {
+                if(levelsExtracted == currentLevel) {
+                    updateSnapshots(context);
+                    wrapperLocation.setState(Blocks.CAULDRON.defaultBlockState());
+                } else {
+                    updateBlockState(context, currentContent, currentLevel - levelsExtracted);
+                }
+            }
+
+            return levelsExtracted * currentContent.amountPerLevel;
         }
 
-        int d = IntMath.gcd(currentContent.maxLevel, currentContent.amountPerLevel);
-        int levelIncrements = currentContent.maxLevel / d;
-        int amountIncrements = currentContent.amountPerLevel / d;
-
-        int currentLevel = currentContent.currentLevel(state);
-        int extractedIncrements = Math.min(amount / amountIncrements, currentLevel / levelIncrements);
-
-        if(extractedIncrements > 0) {
-            setLevel(tx, currentContent, currentLevel - extractedIncrements * levelIncrements);
-        }
-
-        return extractedIncrements * amountIncrements;
-    }
-
-    @Override
-    public void revertToSnapshot(BlockState snapshot) {
-        location.level.setBlock(location.pos, snapshot, 0);
-    }
-
-    @Override
-    public void onRootCommit(BlockState originalState) {
-        BlockState state = location.getBlockState();
-
-        if(originalState == state || CauldronFluidContent.getForBlock(state.getBlock()) == null) {
-            return;
-        }
-
-        location.level.setBlock(location.pos, originalState, 0);
-        location.level.setBlockAndUpdate(location.pos, state);
+        return 0;
     }
 
     @Override
     public BlockState createSnapshot() {
-        return location.getBlockState();
+        return wrapperLocation.getBlockState();
     }
 
-    private void setLevel(Transaction tx, CauldronFluidContent newContent, int fluidLevel) {
-        updateSnapshots(tx);
+    @Override
+    public void revertToSnapshot(BlockState snapshot) {
+        wrapperLocation.setState(snapshot);
+    }
 
-        if(fluidLevel == 0) {
-            this.location.level.setBlock(location.pos, Blocks.CAULDRON.defaultBlockState(), 0);
-        } else {
-            BlockState newState = newContent.block.defaultBlockState();
+    @Override
+    public void onRootCommit(BlockState originalState) {
+        BlockState currentState = createSnapshot();
 
-            if(newContent.levelProperty != null) {
-                newState = newState.setValue(newContent.levelProperty, fluidLevel);
-            }
-
-            this.location.level.setBlock(location.pos, newState, 0);
+        if(currentState == originalState || CauldronFluidContent.getForBlock(currentState.getBlock()) == null) {
+            return;
         }
+
+        wrapperLocation.setState(originalState);
+        wrapperLocation.level.setBlockAndUpdate(wrapperLocation.pos, currentState);
     }
 
-    private CauldronFluidContent getContent(BlockState state) {
-        CauldronFluidContent content = CauldronFluidContent.getForBlock(state.getBlock());
+    @Override
+    public int getCapacity(FluidResource resource) {
+        CauldronFluidContent content = getCurrentContent();
+        return content.maxLevel * content.amountPerLevel;
+    }
 
+    @Override
+    public int getAmount() {
+        CauldronFluidContent content = getCurrentContent();
+        return content.currentLevel(createSnapshot()) * content.amountPerLevel;
+    }
+
+    @Override
+    public boolean isResourceBlank() {
+        return getResource().isBlank();
+    }
+
+    @Override
+    public FluidResource getResource() {
+        CauldronFluidContent content = getCurrentContent();
+        return FluidResource.of(content.fluid);
+    }
+
+    private CauldronFluidContent getCurrentContent() {
+        CauldronFluidContent content = CauldronFluidContent.getForBlock(createSnapshot().getBlock());
         if(content == null) {
-            throw new IllegalStateException("Unexpected error: No cauldron at location " + location);
+            throw new IllegalStateException("Unexpected error: No cauldron at " + this.wrapperLocation);
         }
 
         return content;
     }
 
-    @Override
-    public boolean isResourceValid(FluidResource resource) {
-        StorageInternals.checkNonEmpty(resource);
-        return !resource().hasNBT() && CauldronFluidContent.getForFluid(resource.get()) != null;
-    }
+    private void updateBlockState(TransactionContext ctx, CauldronFluidContent newContent, int level) {
+        updateSnapshots(ctx);
 
-    @Override
-    public int getCapacity(FluidResource resource) {
-        CauldronFluidContent fluidContent = CauldronFluidContent.getForFluid(resource.get());
-        return fluidContent == null ? 0 : fluidContent.maxLevel;
-    }
+        BlockState newState = newContent.block.defaultBlockState();
+        if(newContent.levelProperty != null) {
+            newState = newState.setValue(newContent.levelProperty, level);
+        }
 
-    @Override
-    public FluidResource resource() {
-        BlockState state = location.getBlockState();
-        return FluidResource.of(getContent(state).fluid);
-    }
+        wrapperLocation.level.setBlock(wrapperLocation.pos, newState, 0);
 
-    @Override
-    public int amount() {
-        BlockState state = location.getBlockState();
-        CauldronFluidContent content = getContent(state);
-
-        return content.maxLevel * content.currentLevel(state) / content.maxLevel;
     }
 
     private record WrapperLocation(Level level, BlockPos pos) {
-        public BlockState getBlockState() {
+        void setState(BlockState newState) {
+            level.setBlock(pos, newState, 0);
+        }
+
+        BlockState getBlockState() {
             return level.getBlockState(pos);
+        }
+
+        @Override
+        public @Nonnull String toString() {
+            return "WrapperLocation[x=%d,y=%d,z=%d/Cauldron]".formatted(pos.getX(), pos.getY(), pos.getZ());
         }
     }
 }

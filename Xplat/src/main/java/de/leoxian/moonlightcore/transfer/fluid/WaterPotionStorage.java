@@ -2,48 +2,44 @@ package de.leoxian.moonlightcore.transfer.fluid;
 
 import de.leoxian.moonlightcore.transfer.ExtractionOnlyStorage;
 import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
-import de.leoxian.moonlightcore.transfer.StorageInternals;
-import de.leoxian.moonlightcore.transfer.context.ItemStorageContext;
+import de.leoxian.moonlightcore.transfer.StoragePreconditions;
+import de.leoxian.moonlightcore.transfer.context.ContainerItemContext;
 import de.leoxian.moonlightcore.transfer.item.ItemResource;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import org.jetbrains.annotations.Nullable;
 
-public class WaterPotionStorage implements ExtractionOnlyStorage<Fluid, FluidResource>, SingleSlotStorage<Fluid, FluidResource> {
+public class WaterPotionStorage implements ExtractionOnlyStorage<FluidResource>, SingleSlotStorage<FluidResource> {
     private static final FluidResource CONTAINED_FLUID = FluidResource.of(Fluids.WATER);
     private static final int CONTAINED_AMOUNT = FluidConstants.BOTTLE;
 
-    @Nullable
-    public static WaterPotionStorage find(ItemStorageContext context) {
+    public static @Nullable WaterPotionStorage find(ContainerItemContext context) {
         return isWaterPotion(context) ? new WaterPotionStorage(context) : null;
     }
 
-    private static boolean isWaterPotion(ItemStorageContext context) {
-        ItemResource resource = context.resource();
-        return resource.is(Items.POTION) && PotionUtils.getPotion(resource.getNBT()) == Potions.WATER;
+    private static boolean isWaterPotion(ContainerItemContext context) {
+        ItemResource resource = context.getResource();
+        return resource.isOf(Items.POTION) && PotionUtils.getPotion(resource.getNBT()) == Potions.WATER;
     }
 
-    private final ItemStorageContext context;
+    private final ContainerItemContext context;
 
-    private WaterPotionStorage(ItemStorageContext context) {
+    private WaterPotionStorage(ContainerItemContext context) {
         this.context = context;
     }
 
     @Override
-    public int extract(Transaction tx, FluidResource resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public int extract(TransactionContext context, FluidResource extractedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(extractedResource, maxAmount);
 
-        if(!isWaterPotion()) {
-            return 0;
-        }
+        if(!isWaterPotion()) return 0;
 
-        if(resource.is(CONTAINED_FLUID.get()) && amount >= CONTAINED_AMOUNT) {
-            if(context.exchange(tx, mapToGlassBottle(), 1) == 1) {
+        if(extractedResource.equals(CONTAINED_FLUID) && maxAmount >= CONTAINED_AMOUNT) {
+            if(this.context.exchange(context, mapToGlassBottle(), 1) == 1) {
                 return CONTAINED_AMOUNT;
             }
         }
@@ -52,22 +48,17 @@ public class WaterPotionStorage implements ExtractionOnlyStorage<Fluid, FluidRes
     }
 
     @Override
-    public boolean isResourceValid(FluidResource resource) {
-        return resource.is(CONTAINED_FLUID.get());
-    }
-
-    @Override
-    public FluidResource resource() {
-        if(isWaterPotion()) {
+    public FluidResource getResource() {
+        if (isWaterPotion()) {
             return CONTAINED_FLUID;
         }
 
-        return FluidResource.empty();
+        return FluidResource. blank();
     }
 
     @Override
-    public int amount() {
-        if (isWaterPotion()) {
+    public int getAmount() {
+        if(isWaterPotion()) {
             return CONTAINED_AMOUNT;
         }
 
@@ -75,18 +66,28 @@ public class WaterPotionStorage implements ExtractionOnlyStorage<Fluid, FluidRes
     }
 
     @Override
-    public int getCapacity(FluidResource resource) {
-        return amount();
+    public boolean isResourceBlank() {
+        return getResource().isBlank();
     }
 
-    private ItemResource mapToGlassBottle() {
-        ItemStack newStack = context.resource().toStack();
-        PotionUtils.setPotion(newStack, Potions.EMPTY);
+    @Override
+    public int getCapacity(FluidResource resource) {
+        return getAmount();
+    }
 
-        return ItemResource.of(Items.GLASS_BOTTLE, newStack.getTag());
+    @Override
+    public String toString() {
+        return "WaterPotionStorage[" + this.context + "]";
     }
 
     private boolean isWaterPotion() {
-        return isWaterPotion(context);
+        return isWaterPotion(this.context);
+    }
+
+    private ItemResource mapToGlassBottle() {
+        ItemStack newStack = context.getResource().toStack();
+        PotionUtils.setPotion(newStack, Potions.EMPTY);
+
+        return ItemResource.of(Items.GLASS_BOTTLE, newStack.getTag());
     }
 }

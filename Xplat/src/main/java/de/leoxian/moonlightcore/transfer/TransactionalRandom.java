@@ -1,24 +1,12 @@
-package de.leoxian.moonlightcore.transfer.item;
+package de.leoxian.moonlightcore.transfer;
 
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
 import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
 import net.minecraft.world.level.levelgen.RandomSupport;
 import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
 public class TransactionalRandom extends SnapshotJournal<Long> {
     private long seed = RandomSupport.generateUniqueSeed();
-
-    @Override
-    public Long createSnapshot() {
-        return seed;
-    }
-
-    @Override
-    public void revertToSnapshot(Long snapshot) {
-        seed = snapshot;
-    }
 
     public double nextDouble(TransactionContext ctx) {
         updateSnapshots(ctx);
@@ -28,5 +16,15 @@ public class TransactionalRandom extends SnapshotJournal<Long> {
         seed = random.nextLong();
 
         return rand;
+    }
+
+    @Override
+    public Long createSnapshot() {
+        return this.seed;
+    }
+
+    @Override
+    public void revertToSnapshot(Long snapshot) {
+        this.seed = snapshot;
     }
 }

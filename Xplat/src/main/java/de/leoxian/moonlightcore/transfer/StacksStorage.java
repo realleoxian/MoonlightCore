@@ -3,149 +3,149 @@ package de.leoxian.moonlightcore.transfer;
 import com.mojang.serialization.Codec;
 import de.leoxian.moonlightcore.core.MoonlightCore;
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
-import de.leoxian.moonlightcore.util.NBTSerializable;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
-public abstract class StacksStorage<V, R extends TransferResource<V>, S>  implements Storage<V, R>, NBTSerializable<CompoundTag> {
+public abstract class StacksStorage<T, S> implements Storage<T> {
     public static final String NBT_KEY = MoonlightCore.nbt("stacks");
 
-    private final List<StorageView<V, R>> views;
+    private final List<StorageView<T>> views;
     private final List<StackJournal> snapshotJournals;
 
-    protected final S emptyStack;
     protected final Codec<NonNullList<S>> codec;
-
+    protected final S emptyStack;
+    protected final int size;
     protected NonNullList<S> stacks;
 
     protected StacksStorage(int size, S emptyStack, Codec<S> stackCodec) {
-        this(NonNullList.withSize(size, emptyStack), emptyStack, stackCodec);
+        this(NonNullList.createWithCapacity(size), emptyStack, stackCodec);
     }
 
     protected StacksStorage(NonNullList<S> stacks, S emptyStack, Codec<S> stackCodec) {
         this.emptyStack = emptyStack;
         this.stacks = mutableCopy(stacks);
         this.codec = stackCodec.listOf().xmap(this::mutableCopy, Function.identity());
-        this.snapshotJournals = new ArrayList<>(this.stacks.size());
-        this.views = new ArrayList<>(this.stacks.size());
+        this.snapshotJournals = new ArrayList<>();
+        this.views = new ArrayList<>();
+        this.size = this.stacks.size();
 
-        for(int i = 0; i < this.stacks.size(); i++) {
-            this.snapshotJournals.add(new StackJournal(i));
-            this.views.add(new StackView(i));
+        for(int i = 0; i < stacks.size(); i++) {
+            this.snapshotJournals.set(i, new StackJournal(i));
+            this.views.set(i, new StackView(i));
         }
     }
 
     @Override
-    public int insert(Transaction tx, R resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public int insert(TransactionContext context, T insertedResource, int maxAmount) {
+        StoragePreconditions.notNegative(maxAmount);
+        int remaining = maxAmount;
 
-        int remaining = amount;
-        for(StorageView<V, R> view : views) {
-            if(remaining <= 0) {
+        for(StorageView<T> view : views) {
+            remaining -= view.insert(context, insertedResource, maxAmount);
+
+            if(remaining == 0) {
                 break;
             }
-
-            remaining -= view.insert(tx, resource, amount);
         }
 
-        return amount - remaining;
+        return maxAmount - remaining;
     }
 
     @Override
-    public int extract(Transaction tx, R resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public int extract(TransactionContext context, T extractedResource, int maxAmount) {
+        StoragePreconditions.notNegative(maxAmount);
+        int remaining = maxAmount;
 
-        int remaining = amount;
-        for(StorageView<V, R> view : views) {
-            if(remaining <= 0) {
+        for(StorageView<T> view : views) {
+            remaining -= view.extract(context, extractedResource, maxAmount);
+
+            if(remaining == 0) {
                 break;
             }
-
-            remaining -= view.extract(tx, resource, amount);
         }
 
-        return amount - remaining;
-    }
-
-    public void set(int index, R resource, int amount) {
-        StorageInternals.checkNonNegative(amount);
-        if(resource.isEmpty() && amount > 0) {
-            throw new IllegalArgumentException("Resources is empty but the amount is positive");
-        }
-
-        S oldContent = this.stacks.set(index, getStackFrom(resource, amount));
-        onContentsChanged(index, oldContent);
-    }
-
-    protected abstract R getResourceFrom(S stack);
-
-    protected abstract int getAmountFrom(S stack);
-
-    protected abstract S getStackFrom(R resource, int amount);
-
-    protected abstract S copyOf(S stack);
-
-    protected abstract int getCapacity(int index, R resource);
-
-    protected void onContentsChanged(int index, S previousContent) {}
-
-    @Override
-    public CompoundTag writeToNBT() {
-        CompoundTag tag = new CompoundTag();
-
-        this.codec.encodeStart(NbtOps.INSTANCE, this.stacks)
-                .resultOrPartial(error -> MoonlightCore.LOGGER.error("Failed to encode StacksStorage: {}", error))
-                .ifPresent(nbt -> tag.put(NBT_KEY, nbt));
-
-        return tag;
+        return maxAmount - remaining;
     }
 
     @Override
-    public void readFromNBT(CompoundTag tag) {
-        if(!tag.contains(NBT_KEY, Tag.TAG_LIST)) {
-            return;
-        }
-
-        this.codec.parse(NbtOps.INSTANCE, tag.getCompound(NBT_KEY))
-                .resultOrPartial(error -> MoonlightCore.LOGGER.error("Failed to parse StacksStorage: {}", error))
-                .ifPresent(parsed -> stacks = parsed);
-    }
-
-    @Override
-    public @NotNull StorageView<V, R> get(int index) {
+    public StorageView<T> get(int index) {
+        Objects.checkIndex(index, this.size());
         return this.views.get(index);
     }
 
     @Override
-    public @NotNull Iterator<StorageView<V, R>> iterator() {
+    public @Nonnull Iterator<StorageView<T>> iterator() {
         return this.views.iterator();
     }
 
     @Override
     public int size() {
-        return this.stacks.size();
+        return this.size;
     }
 
-    public NonNullList<S> copyToList() {
-        return mutableCopy(this.stacks);
+    public void writeToNBT(CompoundTag tag) {
+        this.codec.encodeStart(NbtOps.INSTANCE, this.stacks)
+                .resultOrPartial(partial -> MoonlightCore.LOGGER.error("Failed to encode StacksStorage. Error:\n{}", partial))
+                .ifPresent(result -> tag.put(NBT_KEY, result));
     }
+
+    public void readFromNBT(CompoundTag tag) {
+        if(!tag.contains(NBT_KEY)) {
+            return;
+        }
+
+        this.codec.parse(NbtOps.INSTANCE, tag.get(NBT_KEY))
+                .resultOrPartial(partial -> MoonlightCore.LOGGER.error("Failed to decode StacksStorage. Error: \n{}", partial))
+                .ifPresent(stacks -> this.stacks = stacks);
+    }
+
+    public void set(int index, T resource, int amount) {
+        Objects.checkIndex(index, this.size());
+        StoragePreconditions.notNegative(amount);
+
+        S oldContent = this.stacks.set(index, getStackFrom(resource, amount));
+        onContentsChanged(index, oldContent);
+    }
+
+    public S getStack(int index) {
+        Objects.checkIndex(index, this.size());
+        return this.stacks.get(index);
+    }
+
+    public boolean canInsert(int index, T resource) {
+        Objects.checkIndex(index, this.size());
+        return true;
+    }
+
+    public boolean canExtract(int index, T resource) {
+        Objects.checkIndex(index, this.size());
+        return true;
+    }
+
+    protected abstract T getResourceFrom(S stack);
+
+    protected abstract S getStackFrom(T resource, int amount);
+
+    protected abstract S copyOf(S stack);
+
+    protected abstract int getAmountFrom(S stack);
+
+    public abstract int getCapacity(int index, T resource);
+
+    protected void onContentsChanged(int index, S previousContent) {}
 
     @SuppressWarnings("unchecked")
-    private NonNullList<S> mutableCopy(Collection<S> list) {
-        return NonNullList.of(this.emptyStack, (S[]) list.toArray(Object[]::new));
+    private NonNullList<S> mutableCopy(Collection<S> collection) {
+        return NonNullList.of(this.emptyStack, (S[]) collection.toArray(Object[]::new));
     }
 
-    private class StackView implements StorageView<V, R> {
+    private class StackView implements StorageView<T> {
         private final int index;
 
         private StackView(int index) {
@@ -153,18 +153,19 @@ public abstract class StacksStorage<V, R extends TransferResource<V>, S>  implem
         }
 
         @Override
-        public int insert(Transaction tx, R resource, int amount) {
-            StorageInternals.checkNonEmptyNonNegative(resource, amount);
+        public int insert(TransactionContext context, T insertedResource, int maxAmount) {
+            StoragePreconditions.notNegative(maxAmount);
 
-            S currentStack = stacks.get(this.index);
+            S currentStack = stacks.get(index);
+            T currentResource = getResourceFrom(currentStack);
             int currentAmount = getAmountFrom(currentStack);
 
-            if((currentAmount == 0 || isResourceValid(resource))) {
-                int inserted = Math.min(amount, getCapacity(resource) - currentAmount);
+            if((currentAmount == 0 || insertedResource.equals(currentResource)) && canInsert(index, insertedResource)) {
+                int inserted = Math.min(maxAmount, getCapacity(insertedResource) - currentAmount);
 
                 if(inserted > 0) {
-                    snapshotJournals.get(this.index).updateSnapshots(tx);
-                    stacks.set(index, getStackFrom(resource, currentAmount + inserted));
+                    snapshotJournals.get(index).updateSnapshots(context);
+                    stacks.set(index, getStackFrom(insertedResource, currentAmount + inserted));
                     return inserted;
                 }
             }
@@ -173,17 +174,19 @@ public abstract class StacksStorage<V, R extends TransferResource<V>, S>  implem
         }
 
         @Override
-        public int extract(Transaction tx, R resource, int amount) {
-            StorageInternals.checkNonEmptyNonNegative(resource, amount);
+        public int extract(TransactionContext context, T extractedResource, int maxAmount) {
+            StoragePreconditions.notNegative(maxAmount);
 
             S currentStack = stacks.get(index);
-            if(isResourceValid(resource)) {
-                int currentAmount = getAmountFrom(currentStack);
-                int extracted = Math.min(amount, currentAmount);
+            T currentResource = getResourceFrom(currentStack);
+            int currentAmount = getAmountFrom(currentStack);
+
+            if((currentAmount > 0 || extractedResource.equals(currentResource)) && canExtract(index, extractedResource)) {
+                int extracted = Math.min(maxAmount, currentAmount);
 
                 if(extracted > 0) {
-                    snapshotJournals.get(this.index).updateSnapshots(tx);
-                    stacks.set(index, getStackFrom(resource, currentAmount - extracted));
+                    snapshotJournals.get(index).updateSnapshots(context);
+                    stacks.set(index, getStackFrom(extractedResource, currentAmount - extracted));
                     return extracted;
                 }
             }
@@ -192,51 +195,48 @@ public abstract class StacksStorage<V, R extends TransferResource<V>, S>  implem
         }
 
         @Override
-        public boolean isResourceValid(R resource) {
-            S currentStack = stacks.get(this.index);
-            R currentResource = getResourceFrom(currentStack);
-
-            return currentResource.isEmpty() || currentResource.fullyMatches(resource.get(), resource.getNBT());
+        public int getCapacity(T resource) {
+            return StacksStorage.this.getCapacity(index, resource);
         }
 
         @Override
-        public int getCapacity(R resource) {
-            return StacksStorage.this.getCapacity(this.index, resource);
-        }
-
-        @Override
-        public R resource() {
-            S stack = stacks.get(this.index);
-            return getResourceFrom(stack);
-        }
-
-        @Override
-        public int amount() {
-            S stack = stacks.get(this.index);
+        public int getAmount() {
+            S stack = stacks.get(index);
             return getAmountFrom(stack);
+        }
+
+        @Override
+        public boolean isResourceBlank() {
+            return getAmount() == 0;
+        }
+
+        @Override
+        public T getResource() {
+            S stack = stacks.get(index);
+            return getResourceFrom(stack);
         }
     }
 
     private class StackJournal extends SnapshotJournal<S> {
         private final int index;
 
-        private StackJournal(int index) {
+        StackJournal(int index) {
             this.index = index;
         }
 
         @Override
         public S createSnapshot() {
-            return copyOf(stacks.get(this.index));
+            return copyOf(stacks.get(index));
         }
 
         @Override
         public void revertToSnapshot(S snapshot) {
-            stacks.set(this.index, snapshot);
+            stacks.set(index, snapshot);
         }
 
         @Override
         public void onRootCommit(S originalState) {
-            onContentsChanged(this.index, originalState);
+            onContentsChanged(index, originalState);
         }
     }
 }

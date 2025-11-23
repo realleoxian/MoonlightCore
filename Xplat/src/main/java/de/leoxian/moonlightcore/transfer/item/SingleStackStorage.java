@@ -1,56 +1,57 @@
 package de.leoxian.moonlightcore.transfer.item;
 
 import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
-import de.leoxian.moonlightcore.transfer.StorageInternals;
+import de.leoxian.moonlightcore.transfer.StoragePreconditions;
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
-import net.minecraft.world.item.Item;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class SingleStackStorage extends SnapshotJournal<ItemStack> implements SingleSlotStorage<Item, ItemResource> {
-
-    public abstract ItemStack getStack();
+public abstract class SingleStackStorage extends SnapshotJournal<ItemStack> implements SingleSlotStorage<ItemResource> {
 
     public abstract void setStack(ItemStack stack);
 
-    @Override
-    public int insert(Transaction tx, ItemResource resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    public abstract ItemStack getStack();
 
+    @Override
+    public int insert(TransactionContext context, ItemResource insertedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(insertedResource, maxAmount);
         ItemStack currentStack = getStack();
 
-        if(isResourceValid(resource) && canInsert(resource)) {
-            int insertedAmount = Math.min(amount, getCapacity(resource) - currentStack.getCount());
+        if((insertedResource.matches(currentStack) || currentStack.isEmpty()) && canInsert(insertedResource)) {
+            int inserted = Math.min(maxAmount, getCapacity(insertedResource) - currentStack.getCount());
 
-            if(insertedAmount > 0) {
-                updateSnapshots(tx);
+            if(inserted > 0) {
+                updateSnapshots(context);
                 currentStack = getStack();
 
                 if(currentStack.isEmpty()) {
-                    currentStack = resource.toStack(insertedAmount);
+                    currentStack = insertedResource.toStack(inserted);
                 } else {
-                    currentStack.grow(insertedAmount);
+                    currentStack.grow(inserted);
                 }
-
                 setStack(currentStack);
-                return insertedAmount;
+
+                return inserted;
             }
         }
 
         return 0;
     }
 
-    @Override
-    public int extract(Transaction tx, ItemResource resource, int amount) {
-        StorageInternals.checkNonEmptyNonNegative(resource, amount);
+    protected boolean canInsert(ItemResource resource) {
+        return true;
+    }
 
+    @Override
+    public int extract(TransactionContext context, ItemResource extractedResource, int maxAmount) {
+        StoragePreconditions.notBlankNotNegative(extractedResource, maxAmount);
         ItemStack currentStack = getStack();
 
-        if(resource.is(currentStack.getItem()) && canExtract(resource)) {
-            int extracted = Math.min(currentStack.getCount(), amount);
+        if(extractedResource.matches(currentStack) && canExtract(extractedResource)) {
+            int extracted = Math.min(currentStack.getCount(), maxAmount);
 
             if(extracted > 0) {
-                this.updateSnapshots(tx);
+                this.updateSnapshots(context);
                 currentStack = getStack();
                 currentStack.shrink(extracted);
                 setStack(currentStack);
@@ -62,24 +63,28 @@ public abstract class SingleStackStorage extends SnapshotJournal<ItemStack> impl
         return 0;
     }
 
-    @Override
-    public boolean isResourceValid(ItemResource resource) {
-        return resource.isEmpty() || resource.fullyMatches(getStack().getItem(), getStack().getTag());
+    protected boolean canExtract(ItemResource resource) {
+        return true;
     }
 
     @Override
     public int getCapacity(ItemResource resource) {
-        return resource.get().getMaxStackSize();
+        return resource.getResource().getMaxStackSize();
     }
 
     @Override
-    public ItemResource resource() {
-        return ItemResource.of(this.getStack().getItem(), this.getStack().getTag());
+    public boolean isResourceBlank() {
+        return getStack().isEmpty();
     }
 
     @Override
-    public int amount() {
-        return this.getStack().getCount();
+    public ItemResource getResource() {
+        return ItemResource.of(getStack());
+    }
+
+    @Override
+    public int getAmount() {
+        return getStack().getCount();
     }
 
     @Override
@@ -92,14 +97,11 @@ public abstract class SingleStackStorage extends SnapshotJournal<ItemStack> impl
 
     @Override
     public void revertToSnapshot(ItemStack snapshot) {
-        setStack(snapshot);
+        this.setStack(snapshot);
     }
 
-    protected boolean canInsert(ItemResource resource) {
-        return true;
-    }
-
-    protected boolean canExtract(ItemResource resource) {
-        return true;
+    @Override
+    public String toString() {
+        return "SingleStackStorage[" + getStack() + "]";
     }
 }

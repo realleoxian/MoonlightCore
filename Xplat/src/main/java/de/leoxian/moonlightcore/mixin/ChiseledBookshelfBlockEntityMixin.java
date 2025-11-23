@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.mixin;
 
-import de.leoxian.moonlightcore.transfer.SpecialLogicInventory;
+import de.leoxian.moonlightcore.transfer.item.SpecialLogicInventory;
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
 import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
 import net.minecraft.core.NonNullList;

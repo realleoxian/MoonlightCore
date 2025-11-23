@@ -1,22 +1,22 @@
 package de.leoxian.moonlightcore.transfer.transaction;
 
-import org.jetbrains.annotations.Nullable;
+import de.leoxian.moonlightcore.util.nullness.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 public final class Transaction implements TransactionContext, AutoCloseable {
+    private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
     public static Transaction openRoot() {
-        return TransactionManager.getThreadManager().open(null);
+        return TransactionManager.getThreadManager().open(null, STACK_WALKER.getCallerClass());
     }
 
     public static Transaction open(@Nullable TransactionContext parent) {
-        return TransactionManager.getThreadManager().open(parent);
+        return TransactionManager.getThreadManager().open(parent, STACK_WALKER.getCallerClass());
     }
 
-    @Nullable
-    public static Transaction getCurrentUnsafe() {
+    public static @Nullable Transaction getCurrentUnsafe() {
         TransactionManager manager = TransactionManager.getThreadManager();
         int currentDepth = manager.currentDepth;
 
@@ -44,12 +44,14 @@ public final class Transaction implements TransactionContext, AutoCloseable {
 
     final TransactionManager manager;
     private final int nestingDepth;
+    private final Class<?> callerClass;
 
     boolean open = false;
 
-    Transaction(TransactionManager manager, int nestingDepth) {
+    Transaction(TransactionManager manager, int nestingDepth, Class<?> callerClass) {
         this.manager = manager;
         this.nestingDepth = nestingDepth;
+        this.callerClass = callerClass;
     }
 
     public void commit() {
@@ -62,7 +64,7 @@ public final class Transaction implements TransactionContext, AutoCloseable {
 
     @Override
     public Transaction openNested() {
-        return this.manager.open(this);
+        return this.manager.open(this, this.callerClass);
     }
 
     @Override
@@ -81,6 +83,15 @@ public final class Transaction implements TransactionContext, AutoCloseable {
         if(this.manager.currentDepth > -1 && this.open) {
             this.abort();
         }
+    }
+
+    String getDebugName() {
+        return callerClass.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction[depth=%d, thread=%s open%s]".formatted(nestingDepth, manager.thread.getName(), open);
     }
 
     private void close(boolean wasAborted) {

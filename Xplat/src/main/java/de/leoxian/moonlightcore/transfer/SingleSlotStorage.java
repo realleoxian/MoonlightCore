@@ -1,20 +1,64 @@
 package de.leoxian.moonlightcore.transfer;
 
-import de.leoxian.moonlightcore.transfer.transaction.Transaction;
-import org.jetbrains.annotations.NotNull;
+import com.google.common.collect.Iterators;
+import de.leoxian.moonlightcore.transfer.transaction.TransactionContext;
 
 import java.util.Iterator;
 
-public interface SingleSlotStorage<V, T extends TransferResource<V>> extends Storage<V, T>, StorageView<V, T> {
+public interface SingleSlotStorage<T> extends Storage<T>, StorageView<T> {
 
     @Override
-    default int extract(Transaction tx, int index, T resource, int amount) {
-        return this.extract(tx, resource, amount);
+    default int insert(TransactionContext context, int index, T resource, int maxAmount) {
+        return this.insert(context, resource, maxAmount);
     }
 
     @Override
-    default int insert(Transaction tx, int index, T resource, int amount) {
-        return this.insert(tx, resource, amount);
+    default int extract(TransactionContext context, int index, T resource, int maxAmount) {
+        return this.extract(context, resource, maxAmount);
+    }
+
+    @Override
+    default int simulateExtract(TransactionContext context, int index, T resource, int maxAmount) {
+        return this.simulateExtract(context, resource, maxAmount);
+    }
+
+    @Override
+    default int simulateInsert(TransactionContext context, int index, T resource, int maxAmount) {
+        return this.simulateInsert(context, resource, maxAmount);
+    }
+
+    @Override
+    default SingleSlotStorage<T> get(int slot) {
+        if(slot != 0) {
+            throw new IndexOutOfBoundsException("Slot " + slot + " does not exist in a single-slot storage");
+        }
+
+        return this;
+    }
+
+    @Override
+    default int getAmount(int index) {
+        return this.getAmount();
+    }
+
+    @Override
+    default int getCapacity(int index, T resource) {
+        return this.getCapacity(resource);
+    }
+
+    @Override
+    default boolean isBlank(int index) {
+        return this.isResourceBlank();
+    }
+
+    @Override
+    default ResourceStack<T> toStack(int index) {
+        return this.toStack();
+    }
+
+    @Override
+    default Iterator<StorageView<T>> iterator() {
+        return Iterators.singletonIterator(this);
     }
 
     @Override
@@ -22,34 +66,4 @@ public interface SingleSlotStorage<V, T extends TransferResource<V>> extends Sto
         return 1;
     }
 
-    @Override
-    default int getAmount(int index) {
-        return this.amount();
-    }
-
-    @Override
-    default T getResource(int index) {
-        return this.resource();
-    }
-
-    @Override
-    default boolean isResourceValid(int index, T resource) {
-        return this.isResourceValid(resource);
-    }
-
-    @Override
-    default int getLimit(int index, T resource) {
-        return this.getCapacity(resource);
-    }
-
-    @Override
-    default @NotNull StorageView<V, T> get(int index) {
-        return this;
-    }
-
-    @Override
-    default @NotNull Iterator<StorageView<V, T>> iterator() {
-        return StorageInternals.singletonIterator(this);
-    }
-    
 }
