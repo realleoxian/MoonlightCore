@@ -1,11 +1,13 @@
 package de.leoxian.moonlightcore.forge.handler;
 
 import de.leoxian.moonlightcore.event.common.CommonLifecycleEvent;
+import de.leoxian.moonlightcore.event.common.EntityEvent;
 import de.leoxian.moonlightcore.event.common.RegistryCreationEvent;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,6 +56,11 @@ public class ModBusCommonEventHandler {
                 event.create(builder).get();
             }
         });
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onEntityAttributeCreationEvent(EntityAttributeCreationEvent event) {
+        EntityEvent.ATTRIBUTE_CREATION.invoker().onEntityAttributeCreation(event::put);
     }
 
 }
