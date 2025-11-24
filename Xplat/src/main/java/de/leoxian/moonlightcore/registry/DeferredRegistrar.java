@@ -78,11 +78,14 @@ public class DeferredRegistrar<R> {
         }
 
         Registration<T> registration = new Registration<>(fullName, factory);
-        this.registerCallbacks.remove(name).forEach(callback -> {
-            @SuppressWarnings("unchecked")
-            @Nonnull NonnullConsumer<? super T> unsafeCallback = (NonnullConsumer<? super T>) callback;
-            registration.addCallback(unsafeCallback);
-        });
+
+        if(this.registerCallbacks.containsKey(name)) {
+            this.registerCallbacks.remove(name).forEach(callback -> {
+                @SuppressWarnings("unchecked")
+                @Nonnull NonnullConsumer<? super T> unsafeCallback = (NonnullConsumer<? super T>) callback;
+                registration.addCallback(unsafeCallback);
+            });
+        }
 
         this.registrations.put(name, registration);
         return registration.delegate;
