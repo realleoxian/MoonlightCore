@@ -59,8 +59,7 @@ public interface LevelRenderEvent {
           }
 
           public final String name;
-          @Nullable
-          private final RenderType renderType;
+          private final @Nullable RenderType renderType;
 
           Stage(String name, @Nullable RenderType renderType) {
                this.name = "mlcore:" + name;
