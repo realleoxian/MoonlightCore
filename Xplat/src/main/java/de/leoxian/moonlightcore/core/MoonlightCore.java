@@ -1,7 +1,6 @@
 package de.leoxian.moonlightcore.core;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.logging.LogUtils;
 import de.leoxian.moonlightcore.attachment.AttachmentHolder;
 import de.leoxian.moonlightcore.attachment.AttachmentHolderImpl;
 import de.leoxian.moonlightcore.attachment.AttachmentInternals;

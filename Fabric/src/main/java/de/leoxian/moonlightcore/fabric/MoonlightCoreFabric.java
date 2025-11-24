@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.core.*;
@@ -30,9 +31,11 @@ public class MoonlightCoreFabric implements ModInitializer {
          MoonlightCore.initialize();
 
          FabricLoader.getInstance().getEntrypointContainers("moonlightcore", MoonlightCoreInitializer.class).stream().map(EntrypointContainer::getEntrypoint).forEach(MoonlightCoreInitializer::onModInitialize);
-         CommonLifecycleEvent.SETUP.invoker().run();
-
          this.setupRegistryEvents();
+
+         EntityEvent.ATTRIBUTE_CREATION.invoker().onEntityAttributeCreation(FabricDefaultAttributeRegistry::register);
+
+         CommonLifecycleEvent.SETUP.invoker().run();
 
          ServerLifecycleEvents.SERVER_STARTING.register((server) -> ServerLifecycleEvent.ABOUT_TO_START.invoker().onLifecycleState(server));
          ServerLifecycleEvents.SERVER_STARTED.register((server) -> ServerLifecycleEvent.STARTED.invoker().onLifecycleState(server));

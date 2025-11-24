@@ -5,8 +5,12 @@ import de.leoxian.moonlightcore.event.EventFactory;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.level.Level;
+
+import java.util.function.BiConsumer;
 
 public interface EntityEvent {
      /**
@@ -25,6 +29,10 @@ public interface EntityEvent {
       * @see EnterSection#onEnterSection(Entity, SectionPos, SectionPos)
       */
      Event<EnterSection> ENTER_SECTION = EventFactory.create(EnterSection.class);
+    /**
+     * @see AttributeCreation#onEntityAttributeCreation(BiConsumer)
+     */
+    Event<AttributeCreation> ATTRIBUTE_CREATION = EventFactory.create(AttributeCreation.class);
 
      interface LivingDeath {
           /**
@@ -64,5 +72,13 @@ public interface EntityEvent {
            * @param previous The previous chunk where was the entity
            */
           void onEnterSection(Entity entity, SectionPos current, SectionPos previous);
+     }
+
+     interface AttributeCreation {
+         /**
+          * Invoked to register attributes to your own {@link EntityType}s
+          * @param output The output of the event, used to register the attributes
+          */
+         void onEntityAttributeCreation(BiConsumer<EntityType<? extends LivingEntity>, AttributeSupplier> output);
      }
 }
