@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class RegistryEntry<R, T extends R> implements Holder<R>, NonnullSupplier<T> {
+public class RegistryEntry<R, T extends R> implements Holder<R> {
     public static <R, T extends R> RegistryEntry<R, T> create(ResourceKey<? extends Registry<R>> registryType, ResourceLocation name) {
         return create(ResourceKey.create(registryType, name));
     }
@@ -36,11 +36,6 @@ public class RegistryEntry<R, T extends R> implements Holder<R>, NonnullSupplier
     protected RegistryEntry(ResourceKey<R> key) {
         this.key = Objects.requireNonNull(key);
         this.bindReference(false);
-    }
-
-    @Override
-    public T get() {
-        return (T) value();
     }
 
     @Override
