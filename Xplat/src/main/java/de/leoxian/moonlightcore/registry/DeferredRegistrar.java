@@ -46,7 +46,7 @@ public class DeferredRegistrar<R> {
             }
         }
 
-        if(!this.registerCallbacks.isEmpty()) {
+        if(!this.registrations.isEmpty()) {
             logger.info("Registering {} known objects of type {}", registrations.size(), registryType.location());
 
             RegisterEvent.EVENT.subscribe((currentRegistry, output) -> {
