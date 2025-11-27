@@ -1,18 +1,19 @@
 package de.leoxian.moonlightcore.registry;
 
+import com.google.common.collect.ImmutableSet;
 import de.leoxian.moonlightcore.event.common.RegisterEvent;
 import de.leoxian.moonlightcore.platform.PlatformEnvironment;
-import de.leoxian.moonlightcore.util.nullness.Nonnull;
-import de.leoxian.moonlightcore.util.nullness.NonnullConsumer;
-import de.leoxian.moonlightcore.util.nullness.NonnullSupplier;
+import de.leoxian.moonlightcore.util.nullness.*;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public class DeferredRegistrar<R> {
     public static <R> DeferredRegistrar<R> create(Registry<R> registryType, String modId) {
@@ -91,15 +92,65 @@ public class DeferredRegistrar<R> {
         return registration.delegate;
     }
 
+    public <T extends R> void addRegisterCallback(String name, @Nonnull NonnullConsumer<T> callback) {
+        Registration<T> registration = getUncheckedRegistration(name);
+
+        if(registration != null) {
+            registration.addCallback(callback);
+        } else {
+            registerCallbacks.computeIfAbsent(name, k -> new ArrayList<>()).add(callback);
+        }
+    }
+
+    public <T extends R> RegistryEntry<R, T> getEntry(String name) {
+        return this.<T>getRegistration(name).delegate;
+    }
+
+    public @UnmodifiableView Set<RegistryEntry<R, ?>> getEntries() {
+        return ImmutableSet.copyOf(this.registrations.values().stream().map(r -> r.delegate).collect(Collectors.toSet()));
+    }
+
+    public @UnmodifiableView Set<ResourceLocation> getNames() {
+        return getEntries().stream().map(RegistryEntry::getName).collect(Collectors.toSet());
+    }
+
+    public String getModId() {
+        return modId;
+    }
+
+    public ResourceKey<? extends Registry<R>> getRegistryType() {
+        return registryType;
+    }
+
+    private <T extends R> @Nonnull Registration<T> getRegistration(String name) {
+        @Nullable Registration<T> registration = getUncheckedRegistration(name);
+        if(registration == null) {
+            String errorMessage = String.format(
+                    "Unknown registry entry: %s:%s (%s)",
+                    modId,
+                    name,
+                    registryType.location()
+            );
+            throw new IllegalStateException(errorMessage);
+        }
+
+        return registration;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends R> @Nullable Registration<T> getUncheckedRegistration(String name) {
+        return (Registration<T>) this.registrations.get(name);
+    }
+
     private class Registration<T extends R> implements BiConsumer<ResourceKey<? extends Registry<?>>, RegisterEvent.Output> {
         ResourceLocation name;
-        NonnullSupplier<? super T> factory;
+        NonnullSupplier<? extends T> factory;
 
         RegistryEntry<R, T> delegate;
 
         List<NonnullConsumer<? super T>> callbacks = new ArrayList<>();
 
-        private Registration(ResourceLocation name, NonnullSupplier<? super T> factory) {
+        private Registration(ResourceLocation name, NonnullSupplier<? extends T> factory) {
             this.name = name;
             this.factory = factory.lazy();
 
@@ -108,10 +159,12 @@ public class DeferredRegistrar<R> {
 
         @Override
         public void accept(ResourceKey<? extends Registry<?>> resourceKey, RegisterEvent.Output output) {
-            if(resourceKey == registryType) {
-                output.register(name, factory);
-                delegate.bindReference(false);
-            }
+            T entry = factory.get();
+
+            output.register(name, factory);
+            delegate.updateReference(false); // If it was registered then the registry exists, there is no need to throw the error on a missing registry (note for myself)
+            callbacks.forEach(callback -> callback.accept(entry));
+            callbacks.clear();
         }
 
         void addCallback(NonnullConsumer<? super T> callback) {

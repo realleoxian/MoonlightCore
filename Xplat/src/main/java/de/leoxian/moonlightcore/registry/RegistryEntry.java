@@ -1,23 +1,20 @@
 package de.leoxian.moonlightcore.registry;
 
-import com.mojang.datafixers.util.Either;
 import de.leoxian.moonlightcore.util.nullness.NonnullSupplier;
 import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class RegistryEntry<R, T extends R> implements Holder<R> {
+public class RegistryEntry<R, T extends R> implements NonnullSupplier<R> {
     public static <R, T extends R> RegistryEntry<R, T> create(ResourceKey<? extends Registry<R>> registryType, ResourceLocation name) {
         return create(ResourceKey.create(registryType, name));
     }
@@ -35,78 +32,62 @@ public class RegistryEntry<R, T extends R> implements Holder<R> {
 
     protected RegistryEntry(ResourceKey<R> key) {
         this.key = Objects.requireNonNull(key);
-        this.bindReference(false);
+        updateReference(false);
     }
 
     @Override
-    public R value() {
-        this.bindReference(true);
-        return this.holder.value();
+    @SuppressWarnings("unchecked")
+    public T get() {
+        updateReference(true);
+        if(holder == null) {
+            throw new IllegalStateException("Registry entry not present: " + this.key);
+        }
+
+        return (T) holder.value();
     }
 
-    @Override
-    public boolean isBound() {
-        this.bindReference(false);
-        return this.holder != null && this.holder.isBound();
+    public boolean is(ResourceLocation name) {
+        return name.equals(this.key.location());
     }
 
-    @Override
-    public boolean is(ResourceLocation resourceLocation) {
-        return resourceLocation.equals(this.key.location());
+    public boolean is(ResourceKey<R> key) {
+        return this.key == key;
     }
 
-    @Override
-    public boolean is(ResourceKey<R> resourceKey) {
-        return this.key == resourceKey;
-    }
-
-    @Override
     public boolean is(TagKey<R> tagKey) {
-        this.bindReference(false);
-        return this.holder != null && this.holder.is(tagKey);
+        updateReference(false);
+        return holder != null && holder.is(tagKey);
     }
 
-    @Override
-    public boolean is(Predicate<ResourceKey<R>> predicate) {
-        return predicate.test(this.key);
+    public boolean is(Predicate<ResourceKey<R>> filter) {
+        this.updateReference(false);
+        return holder != null && holder.is(filter);
     }
 
-    @Override
     public Stream<TagKey<R>> tags() {
-        this.bindReference(false);
-        return this.holder != null ? this.holder.tags() : Stream.empty();
+        updateReference(false);
+        return holder == null ? Stream.empty() : holder.tags();
     }
 
-    @Override
-    public Either<ResourceKey<R>, R> unwrap() {
-        return Either.left(this.key);
+    public ResourceLocation getName() {
+        return key.location();
     }
 
-    @Override
-    public Optional<ResourceKey<R>> unwrapKey() {
-        return Optional.of(this.key);
+    public ResourceKey<? extends Registry<R>> getRegistryType() {
+        return ResourceKey.createRegistryKey(this.key.registry());
     }
 
-    @Override
-    public Kind kind() {
-        return Kind.REFERENCE;
-    }
-
-    @Override
-    public boolean canSerializeIn(HolderOwner<R> holderOwner) {
-        this.bindReference(false);
-        return this.holder != null && this.holder.canSerializeIn(holderOwner);
+    public Optional<Holder<R>> asHolder() {
+        return Optional.ofNullable(this.holder);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) return true;
-        return obj instanceof Holder<?> h && h.kind() == Kind.REFERENCE && ((Holder.Reference<?>) h).key() == key;
-    }
+        if(obj == this) return true;
+        if(obj.getClass() != this.getClass()) return false;
 
-    @Override
-    public String toString() {
-        return String.format(Locale.ENGLISH, "DeferredHolder[%s]", this.key);
+        RegistryEntry<?, ?> other = (RegistryEntry<?, ?>) obj;
+        return this.key == other.key;
     }
 
     @Override
@@ -114,12 +95,9 @@ public class RegistryEntry<R, T extends R> implements Holder<R> {
         return this.key.hashCode();
     }
 
-    public ResourceLocation getName() {
-        return this.key.location();
-    }
-
-    public ResourceKey<R> getKey() {
-        return key;
+    @Override
+    public String toString() {
+        return "RegistryEntry[" + this.key + "]";
     }
 
     @SuppressWarnings("unchecked")
@@ -127,7 +105,7 @@ public class RegistryEntry<R, T extends R> implements Holder<R> {
         return (Registry<R>) BuiltInRegistries.REGISTRY.get(this.key.registry());
     }
 
-    protected final void bindReference(boolean throwOnMissingRegistry) {
+    protected final void updateReference(boolean throwOnMissingRegistry) {
         if(this.holder != null) {
             return;
         }
@@ -136,7 +114,13 @@ public class RegistryEntry<R, T extends R> implements Holder<R> {
         if(registry != null) {
             this.holder = registry.getHolder(this.key).orElse(null);
         } else if (throwOnMissingRegistry) {
-            throw new IllegalStateException("Registry not present for " + this + ": " + this.key.registry());
+            String errorMessage = String.format(
+                    "Registry not present for %s: %s",
+                    this.key,
+                    this.getRegistryType().location()
+            );
+            throw new IllegalStateException(errorMessage);
         }
     }
+
 }
