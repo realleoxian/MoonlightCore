@@ -1,6 +1,9 @@
-package de.leoxian.moonlightcore.transfer.fluid;
+package de.leoxian.moonlightcore.fluid;
 
 import de.leoxian.moonlightcore.lookup.ApiProviderMap;
+import de.leoxian.moonlightcore.transfer.fluid.CauldronWrapper;
+import de.leoxian.moonlightcore.transfer.fluid.FluidConstants;
+import de.leoxian.moonlightcore.transfer.fluid.FluidStorage;
 import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;

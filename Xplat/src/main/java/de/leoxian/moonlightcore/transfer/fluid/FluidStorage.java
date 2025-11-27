@@ -2,6 +2,7 @@ package de.leoxian.moonlightcore.transfer.fluid;
 
 import de.leoxian.moonlightcore.core.MoonlightCore;
 import de.leoxian.moonlightcore.event.Event;
+import de.leoxian.moonlightcore.fluid.CauldronFluidContent;
 import de.leoxian.moonlightcore.lookup.block.BlockApiLookup;
 import de.leoxian.moonlightcore.lookup.item.ItemApiLookup;
 import de.leoxian.moonlightcore.mixin.accessor.BucketItemAccessor;

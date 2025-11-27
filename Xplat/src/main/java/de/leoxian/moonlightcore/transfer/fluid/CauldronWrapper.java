@@ -2,6 +2,7 @@ package de.leoxian.moonlightcore.transfer.fluid;
 
 import com.google.common.collect.MapMaker;
 import com.google.common.primitives.Ints;
+import de.leoxian.moonlightcore.fluid.CauldronFluidContent;
 import de.leoxian.moonlightcore.transfer.SingleSlotStorage;
 import de.leoxian.moonlightcore.transfer.StoragePreconditions;
 import de.leoxian.moonlightcore.transfer.transaction.SnapshotJournal;
