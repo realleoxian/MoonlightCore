@@ -25,7 +25,7 @@ public interface EntryBuilder<R, T extends R, S extends EntryBuilder<R, T, S>> e
     }
 
     default @Nonnull T getValue() {
-        return (T) get().value();
+        return get().get();
     }
 
 }
