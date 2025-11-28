@@ -1,3 +1,8 @@
+/*
+ * This source code file is subject to the terms of the Mozilla Public License, v. 2.0.
+ * Based on code from Tterrag1098's Registrate (https://github.com/tterrag1098/Registrate).
+ * Modifications by Leoxian, 2025
+ */
 package de.leoxian.moonlightcore.registry.builder;
 
 import de.leoxian.moonlightcore.event.client.RenderingEvents;

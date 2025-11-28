@@ -1,3 +1,7 @@
+/*
+ * This file is licensed under the same terms as the rest of the MoonlightCore project.
+ * See the root LICENSE file for details. (https://github.com/realleoxian/MoonlightCore/blob/dev/LICENSE.md)
+ */
 package de.leoxian.moonlightcore.registry.builder;
 
 import de.leoxian.moonlightcore.registry.DeferredRegistrar;
@@ -64,4 +68,3 @@ public class MobEffectBuilder<T extends MobEffect> extends AbstractBuilder<MobEf
     private record AttributeModifierEntry(Attribute attribute, String uuid, double amount, AttributeModifier.Operation operation) {}
 
 }
-
