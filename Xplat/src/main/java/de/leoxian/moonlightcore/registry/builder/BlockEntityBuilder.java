@@ -8,6 +8,7 @@ package de.leoxian.moonlightcore.registry.builder;
 import de.leoxian.moonlightcore.event.client.RenderingEvents;
 import de.leoxian.moonlightcore.platform.EnvironmentSide;
 import de.leoxian.moonlightcore.registry.DeferredRegistrar;
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 import de.leoxian.moonlightcore.util.nullness.NonnullFunction;
 import de.leoxian.moonlightcore.util.nullness.NonnullSupplier;
 import de.leoxian.moonlightcore.util.nullness.Nullable;
@@ -58,7 +59,11 @@ public class BlockEntityBuilder<T extends BlockEntity> extends AbstractBuilder<B
 
     @Override
     protected BlockEntityType<T> buildEntry() {
-        return BlockEntityType.Builder.of((pos, state) -> factory.create(getValue(), pos, state), validBlocks.stream().map(NonnullSupplier::get).toArray(Block[]::new)).build(null);
+        BlockEntityFactory<T> factory = this.factory;
+        final var supplier = asSupplier();
+        NonnullSupplier<Block[]> validBlocks = () -> this.validBlocks.stream().map(NonnullSupplier::get).toArray(Block[]::new);
+
+        return BlockEntityType.Builder.of((pos, state) -> factory.create(supplier.get(), pos, state), validBlocks.get()).build(null);
     }
 
     private void setupRenderer() {

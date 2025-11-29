@@ -15,6 +15,8 @@ public interface EntryBuilder<R, T extends R, S extends EntryBuilder<R, T, S>> e
 
     RegistryEntry<R, T> buildAndRegister();
 
+    NonnullSupplier<T> asSupplier();
+
     DeferredRegistrar<R> getRegistrar();
 
     String getName();

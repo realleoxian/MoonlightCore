@@ -34,7 +34,9 @@ public class MenuBuilder<T extends AbstractContainerMenu, S extends Screen & Men
 
     @Override
     protected MenuType<T> buildEntry() {
-        MenuType<T> menuType = new MenuType<>((containerId, inventory) -> this.menuFactory.create(getValue(), containerId, inventory), FeatureFlags.DEFAULT_FLAGS);
+        final var supplier = asSupplier();
+
+        MenuType<T> menuType = new MenuType<>((containerId, inventory) -> this.menuFactory.create(supplier.get(), containerId, inventory), FeatureFlags.DEFAULT_FLAGS);
         EnvironmentSide.CLIENT.runIfCurrent(() -> () -> {
             ScreenFactory<T, S> screenFactory = this.screenFactory.get();
             MenuScreens.register(menuType, screenFactory::create);

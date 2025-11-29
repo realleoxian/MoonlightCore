@@ -64,7 +64,7 @@ public class DeferredRegistrar<R> {
                                     registryType.location()
                             );
 
-                            throw new RuntimeException(errorMessage);
+                            throw new RuntimeException(errorMessage, e);
                         }
                     }
                 }

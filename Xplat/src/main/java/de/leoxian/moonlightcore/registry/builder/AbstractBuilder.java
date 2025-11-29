@@ -6,9 +6,12 @@
 package de.leoxian.moonlightcore.registry.builder;
 
 import de.leoxian.moonlightcore.registry.DeferredRegistrar;
+import de.leoxian.moonlightcore.registry.LazyRegistryEntry;
 import de.leoxian.moonlightcore.registry.RegistryEntry;
+import de.leoxian.moonlightcore.util.nullness.NonnullSupplier;
 
 public abstract class AbstractBuilder<R, T extends R, S extends EntryBuilder<R, T, S>> implements EntryBuilder<R, T, S> {
+    private final LazyRegistryEntry<R, T> entrySupplier = new LazyRegistryEntry<>(this);
     private final DeferredRegistrar<R> registrar;
     private final String name;
 
@@ -22,6 +25,10 @@ public abstract class AbstractBuilder<R, T extends R, S extends EntryBuilder<R, 
     @Override
     public RegistryEntry<R, T> buildAndRegister() {
         return getRegistrar().register(name, this::buildEntry);
+    }
+
+    public NonnullSupplier<T> asSupplier() {
+        return entrySupplier;
     }
 
     @Override
