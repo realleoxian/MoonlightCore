@@ -1,12 +1,16 @@
 package de.leoxian.moonlightcore.forge.handler;
 
 import com.mojang.blaze3d.shaders.FogShape;
+import com.mojang.brigadier.CommandDispatcher;
 import de.leoxian.moonlightcore.event.client.ClientTickEvent;
 import de.leoxian.moonlightcore.event.client.HudRenderEvent;
+import de.leoxian.moonlightcore.event.client.RegisterClientCommandEvent;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
@@ -23,6 +27,12 @@ public class ClientEventHandler {
 
           ClientTickEvent.CLIENT_TICK.invoker().onClientTick(phase);
      }
+
+    @SuppressWarnings("unchecked")
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onClientCommandRegistration(RegisterClientCommandsEvent event) {
+        RegisterClientCommandEvent.EVENT.invoker().onClientCommandRegistration((CommandDispatcher<RegisterClientCommandEvent.ClientCommandSourceStack>) (CommandDispatcher<?>) event.getDispatcher(), event.getBuildContext());
+    }
 
      @SubscribeEvent(priority = EventPriority.HIGH)
      public static void onPreHudRendering(RenderGuiEvent.Pre event) {

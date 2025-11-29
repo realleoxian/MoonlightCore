@@ -1,7 +1,9 @@
 package de.leoxian.moonlightcore.forge.handler;
 
+import com.mojang.brigadier.CommandDispatcher;
 import de.leoxian.moonlightcore.event.client.ClientLifecycleEvent;
 import de.leoxian.moonlightcore.event.client.KeyMappingRegistrationEvent;
+import de.leoxian.moonlightcore.event.client.RegisterClientCommandEvent;
 import de.leoxian.moonlightcore.event.client.RenderingEvents;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
@@ -11,6 +13,8 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.Entity;
@@ -21,10 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -57,37 +58,17 @@ public class ModBusClientEventHandler {
         KeyMappingRegistrationEvent.EVENT.invoker().onKeyMappingRegistration(event::register);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBlockColorHandlerRegistration(RegisterColorHandlersEvent.Block event) {
-        RenderingEvents.BLOCK_COLOR_REGISTRATION.invoker().onBlockColorRegistration(new RenderingEvents.BlockColorRegistration.Output() {
-            @Override
-            public void register(ItemColor color, ItemLike... items) {
-
-            }
-
-            @Override
-            public void register(BlockColor color, Block... blocks) {
-                event.register(color, blocks);
-            }
-        });
+        RenderingEvents.BLOCK_COLOR_REGISTRATION.invoker().onBlockColorRegistration(event::register);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onItemColorHandlerRegistration(RegisterColorHandlersEvent.Item event) {
-        RenderingEvents.BLOCK_COLOR_REGISTRATION.invoker().onBlockColorRegistration(new RenderingEvents.BlockColorRegistration.Output() {
-            @Override
-            public void register(ItemColor color, ItemLike... items) {
-                event.register(color, items);
-            }
-
-            @Override
-            public void register(BlockColor color, Block... blocks) {
-
-            }
-        });
+        RenderingEvents.ITEM_COLOR_REGISTRATION.invoker().onItemColorRegistration(event::register);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onRendererRegistration(EntityRenderersEvent.RegisterRenderers event) {
         RenderingEvents.RENDERER_REGISTRATION.invoker().onRendererRegistration(new RenderingEvents.RendererRegistration.Output() {
             @Override
@@ -102,7 +83,7 @@ public class ModBusClientEventHandler {
         });
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onParticleProviderRegistration(RegisterParticleProvidersEvent event) {
         RenderingEvents.PARTICLE_PROVIDER_REGISTRATION.invoker().onParticleProvidersRegistration(new RenderingEvents.ParticleProviderRegistration.Output() {
             @Override

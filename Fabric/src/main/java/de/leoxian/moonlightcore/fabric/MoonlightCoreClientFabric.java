@@ -1,13 +1,12 @@
 package de.leoxian.moonlightcore.fabric;
 
-import de.leoxian.moonlightcore.event.client.ClientLifecycleEvent;
-import de.leoxian.moonlightcore.event.client.ClientTickEvent;
-import de.leoxian.moonlightcore.event.client.KeyMappingRegistrationEvent;
-import de.leoxian.moonlightcore.event.client.RenderingEvents;
+import com.mojang.brigadier.CommandDispatcher;
+import de.leoxian.moonlightcore.event.client.*;
 import de.leoxian.moonlightcore.event.common.TickEvent;
 import de.leoxian.moonlightcore.fabric.api.MoonlightCoreInitializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
@@ -24,6 +23,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.Entity;
@@ -51,19 +51,12 @@ public class MoonlightCoreClientFabric implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register((mc) -> ClientTickEvent.CLIENT_TICK.invoker().onClientTick(TickEvent.Phase.END));
     }
 
+    @SuppressWarnings("unchecked")
     private void setupRenderingEvents() {
-        RenderingEvents.BLOCK_COLOR_REGISTRATION.invoker().onBlockColorRegistration(new RenderingEvents.BlockColorRegistration.Output() {
-            @Override
-            public void register(ItemColor color, ItemLike... items) {
-                ColorProviderRegistry.ITEM.register(color, items);
-            }
-
-            @Override
-            public void register(BlockColor color, Block... blocks) {
-                ColorProviderRegistry.BLOCK.register(color, blocks);
-            }
-        });
-
+        RenderingEvents.BLOCK_COLOR_REGISTRATION.invoker().onBlockColorRegistration(ColorProviderRegistry.BLOCK::register);
+        RenderingEvents.ITEM_COLOR_REGISTRATION.invoker().onItemColorRegistration(ColorProviderRegistry.ITEM::register);
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext) ->
+                RegisterClientCommandEvent.EVENT.invoker().onClientCommandRegistration((CommandDispatcher<RegisterClientCommandEvent.ClientCommandSourceStack>) (CommandDispatcher<?>) dispatcher, buildContext));
         RenderingEvents.BLOCK_RENDER_TYPE_REGISTRATION.invoker().onBlockRendererRegistration(new RenderingEvents.BlockRenderTypeRegistration.Output() {
             @Override
             public void register(RenderType renderType, Block... blocks) {

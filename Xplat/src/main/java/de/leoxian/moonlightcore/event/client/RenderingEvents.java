@@ -3,6 +3,7 @@ package de.leoxian.moonlightcore.event.client;
 import de.leoxian.moonlightcore.event.Event;
 import de.leoxian.moonlightcore.event.EventFactory;
 import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -15,6 +16,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,9 +28,13 @@ import java.util.function.Supplier;
 
 public interface RenderingEvents {
     /**
-     * @see BlockColorRegistration#onBlockColorRegistration(BlockColorRegistration.Output)
+     * @see BlockColorRegistration#onBlockColorRegistration(BiConsumer)
      */
     Event<BlockColorRegistration> BLOCK_COLOR_REGISTRATION = EventFactory.create(BlockColorRegistration.class);
+    /**
+     * @see ItemColorRegistration#onItemColorRegistration(BiConsumer)
+     */
+    Event<ItemColorRegistration> ITEM_COLOR_REGISTRATION = EventFactory.create(ItemColorRegistration.class);
     /**
      * @see BlockRenderTypeRegistration#onBlockRendererRegistration(BlockRenderTypeRegistration.Output)
      */
@@ -48,26 +54,18 @@ public interface RenderingEvents {
 
     interface BlockColorRegistration {
         /**
-         * Invoked for {@link ItemColor}/{@link BlockColor}s registration
-         * @param output The output of the event, that is used to register the colors
+         * Invoked to allow mods to register {@link BlockColor}s
+         * @param output The output of the event, used to register the block colors
          */
-        void onBlockColorRegistration(BlockColorRegistration.Output output);
+        void onBlockColorRegistration(BiConsumer<BlockColor, Block> output);
+    }
 
-        interface Output {
-            /**
-             * Registers a {@link ItemColor} instance for a set of {@link ItemLike}s
-             * @param color The color registered for the given item likes
-             * @param items The items that have the registered color
-             */
-            void register(ItemColor color, ItemLike... items);
-
-            /**
-             * Registers a {@link BlockColor} instance for a set of {@link Block}s
-             * @param color The color registered for the given blocks
-             * @param blocks The blocks that have the registered color
-             */
-            void register(BlockColor color, Block... blocks);
-        }
+    interface ItemColorRegistration {
+        /**
+         * Invoked to allow mods to register {@link ItemColor}s
+         * @param output The output of the event, used to register the item colors
+         */
+        void onItemColorRegistration(BiConsumer<ItemColor, ItemLike> output);
     }
 
     interface BlockRenderTypeRegistration {

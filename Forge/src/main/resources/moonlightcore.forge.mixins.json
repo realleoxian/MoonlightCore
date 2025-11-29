@@ -5,6 +5,7 @@
   "package": "de.leoxian.moonlightcore.forge.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "CommandSourceStackMixin",
     "impl.PacketDispatcherImplMixin"
   ],
   "client": [],
