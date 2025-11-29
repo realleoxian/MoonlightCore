@@ -1,5 +1,6 @@
 package de.leoxian.moonlightcore.registry;
 
+import de.leoxian.moonlightcore.util.nullness.Nonnull;
 import de.leoxian.moonlightcore.util.nullness.NonnullSupplier;
 import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.Holder;
@@ -14,13 +15,14 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class RegistryEntry<R, T extends R> implements NonnullSupplier<R> {
-    public static <R, T extends R> RegistryEntry<R, T> create(ResourceKey<? extends Registry<R>> registryType, ResourceLocation name) {
-        return create(ResourceKey.create(registryType, name));
+public class RegistryEntry<R, T extends R> implements NonnullSupplier<T> {
+
+    public static <R, T extends R> RegistryEntry<R, T> create(ResourceLocation registryType, ResourceLocation name) {
+        return create(ResourceKey.create(ResourceKey.createRegistryKey(registryType), name));
     }
 
-    public static <R, T extends R> RegistryEntry<R, T> create(ResourceLocation registryName, ResourceLocation name) {
-        return create(ResourceKey.createRegistryKey(registryName), name);
+    public static <R, T extends R> RegistryEntry<R, T> create(ResourceKey<? extends Registry<R>> registryType, ResourceLocation name) {
+        return create(ResourceKey.create(registryType, name));
     }
 
     public static <R, T extends R> RegistryEntry<R, T> create(ResourceKey<R> key) {
@@ -28,30 +30,36 @@ public class RegistryEntry<R, T extends R> implements NonnullSupplier<R> {
     }
 
     private final ResourceKey<R> key;
+    private final ResourceKey<? extends Registry<R>> registryType;
+
     private @Nullable Holder<R> holder = null;
+    private @Nullable T value = null;
 
     protected RegistryEntry(ResourceKey<R> key) {
-        this.key = Objects.requireNonNull(key);
+        this.key = Objects.requireNonNull(key, "Registry entry key cannot be null");
+        this.registryType = ResourceKey.createRegistryKey(key.registry());
         updateReference(false);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T get() {
+    public @Nonnull T get() {
         updateReference(true);
-        if(holder == null) {
-            throw new IllegalStateException("Registry entry not present: " + this.key);
-        }
 
-        return (T) holder.value();
+        T ret = this.value;
+        Objects.requireNonNull(ret, () -> "Registry entry not present: " + this);
+        return ret;
     }
 
     public boolean is(ResourceLocation name) {
-        return name.equals(this.key.location());
+        return getName() == name;
     }
 
     public boolean is(ResourceKey<R> key) {
-        return this.key == key;
+        return key == this.key;
+    }
+
+    public boolean is(Predicate<ResourceKey<R>> filter) {
+        return filter.test(key);
     }
 
     public boolean is(TagKey<R> tagKey) {
@@ -59,14 +67,17 @@ public class RegistryEntry<R, T extends R> implements NonnullSupplier<R> {
         return holder != null && holder.is(tagKey);
     }
 
-    public boolean is(Predicate<ResourceKey<R>> filter) {
-        this.updateReference(false);
-        return holder != null && holder.is(filter);
+    public Stream<TagKey<R>> getTags() {
+        updateReference(false);
+        return holder != null ? holder.tags() : Stream.empty();
     }
 
-    public Stream<TagKey<R>> tags() {
-        updateReference(false);
-        return holder == null ? Stream.empty() : holder.tags();
+    public Optional<Holder<R>> asHolder() {
+        return Optional.ofNullable(holder);
+    }
+
+    public ResourceKey<R> getKey() {
+        return key;
     }
 
     public ResourceLocation getName() {
@@ -74,11 +85,7 @@ public class RegistryEntry<R, T extends R> implements NonnullSupplier<R> {
     }
 
     public ResourceKey<? extends Registry<R>> getRegistryType() {
-        return ResourceKey.createRegistryKey(this.key.registry());
-    }
-
-    public Optional<Holder<R>> asHolder() {
-        return Optional.ofNullable(this.holder);
+        return registryType;
     }
 
     @Override
@@ -87,40 +94,37 @@ public class RegistryEntry<R, T extends R> implements NonnullSupplier<R> {
         if(obj.getClass() != this.getClass()) return false;
 
         RegistryEntry<?, ?> other = (RegistryEntry<?, ?>) obj;
-        return this.key == other.key;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.key.hashCode();
+        return other.key == key;
     }
 
     @Override
     public String toString() {
-        return "RegistryEntry[" + this.key + "]";
+        return "RegistryEntry[" + key + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
     }
 
     @SuppressWarnings("unchecked")
-    protected @Nullable Registry<R> getRegistry() {
-        return (Registry<R>) BuiltInRegistries.REGISTRY.get(this.key.registry());
+    Registry<R> getRegistry() {
+        return (Registry<R>) BuiltInRegistries.REGISTRY.get(key.registry());
     }
 
-    protected final void updateReference(boolean throwOnMissingRegistry) {
-        if(this.holder != null) {
+    @SuppressWarnings("unchecked")
+    final void updateReference(boolean throwOnMissingRegistry) {
+        if(holder != null && value != null) {
             return;
         }
 
         Registry<R> registry = getRegistry();
         if(registry != null) {
-            this.holder = registry.getHolder(this.key).orElse(null);
+            holder = registry.getHolder(key).orElse(null);
+            value = (T) registry.getOptional(key).orElse(null);
         } else if (throwOnMissingRegistry) {
-            String errorMessage = String.format(
-                    "Registry not present for %s: %s",
-                    this.key,
-                    this.getRegistryType().location()
-            );
+            String errorMessage = String.format("Registry not present for %s: %s", key.location(), key.registry());
             throw new IllegalStateException(errorMessage);
         }
     }
-
 }
