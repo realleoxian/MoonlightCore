@@ -49,7 +49,7 @@ public class ItemBuilder<T extends Item> extends AbstractBuilder<Item, T, ItemBu
 
     public ItemBuilder<T> color(NonnullSupplier<Supplier<ItemColor>> colorHandler) {
         Objects.requireNonNull(colorHandler, "Color handler may not be null");
-        if(this.colorHandler == null) onRegister(this::setupItemColor);
+        if(this.colorHandler == null) EnvironmentSide.CLIENT.runIfCurrent(() -> this::setupItemColor);
         this.colorHandler = colorHandler;
         return this;
     }
@@ -62,14 +62,12 @@ public class ItemBuilder<T extends Item> extends AbstractBuilder<Item, T, ItemBu
         return factory.apply(properties);
     }
 
-    private void setupItemColor(T entry) {
-        EnvironmentSide.CLIENT.runIfCurrent(() -> () -> {
-            var colorHandler = this.colorHandler;
+    private void setupItemColor() {
+        var colorHandler = this.colorHandler;
 
-            if(colorHandler != null) {
-                RenderingEvents.BLOCK_COLOR_REGISTRATION.subscribe(output -> output.register(colorHandler.get().get(), entry));
-            }
-        });
+        if(colorHandler != null) {
+            RenderingEvents.ITEM_COLOR_REGISTRATION.subscribe(output -> output.accept(colorHandler.get().get(), getValue()));
+        }
     }
 
 }

@@ -57,7 +57,7 @@ public class BlockBuilder<T extends Block> extends AbstractBuilder<Block, T, Blo
 
     public BlockBuilder<T> color(NonnullSupplier<Supplier<BlockColor>> colorHandler) {
         Objects.requireNonNull(colorHandler, "Color handler may not be null");
-        if(this.colorHandler == null) onRegister(this::setupBlockColor);
+        if(this.colorHandler == null) EnvironmentSide.CLIENT.runIfCurrent(() -> this::setupBlockColor);
         this.colorHandler = colorHandler;
         return this;
     }
@@ -93,14 +93,12 @@ public class BlockBuilder<T extends Block> extends AbstractBuilder<Block, T, Blo
         }));
     }
 
-    private void setupBlockColor(T entry) {
-        EnvironmentSide.CLIENT.runIfCurrent(() -> () -> {
-            var colorHandler = this.colorHandler;
+    private void setupBlockColor() {
+        var colorHandler = this.colorHandler;
 
-            if(colorHandler != null) {
-                RenderingEvents.BLOCK_COLOR_REGISTRATION.subscribe(output -> output.register(colorHandler.get().get(), entry));
-            }
-        });
+        if(colorHandler != null) {
+            RenderingEvents.BLOCK_COLOR_REGISTRATION.subscribe(output -> output.accept(colorHandler.get().get(), getValue()));
+        }
     }
 
 }
