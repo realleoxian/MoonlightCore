@@ -22,7 +22,7 @@ public abstract class SnapshotJournal<@Nullable T> {
     public void updateSnapshots(TransactionContext ctx) {
         int depth = ctx.nestingDepth();
 
-        for(int i = this.snapshots.size(); i < depth; i++) {
+        for(int i = this.snapshots.size(); i <= depth; i++) {
             this.snapshots.add((T) NO_SNAPSHOT);
         }
 
