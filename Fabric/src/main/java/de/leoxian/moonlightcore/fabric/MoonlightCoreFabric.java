@@ -56,6 +56,8 @@ public class MoonlightCoreFabric implements ModInitializer {
 
      @SuppressWarnings("unchecked")
      private void setupRegistryEvents() {
+         Set<ResourceLocation> registryOrder = new HashSet<>(BuiltInRegistriesAccessor.getLOADERS().keySet());
+
          RegistryCreationEvent.EVENT.invoker().onRegistryCreation(new RegistryCreationEvent.Output() {
              @Override
              // I hate this code
@@ -79,10 +81,12 @@ public class MoonlightCoreFabric implements ModInitializer {
 
                      builder.buildAndRegister();
                  }
+
+                 registryOrder.add(registry.key().location());
              }
          });
 
-         for(var registryId : BuiltInRegistriesAccessor.getLOADERS().keySet()) {
+         for(var registryId : registryOrder) {
             var registry =  BuiltInRegistries.REGISTRY.get(registryId);
 
             if(registry != null) {
