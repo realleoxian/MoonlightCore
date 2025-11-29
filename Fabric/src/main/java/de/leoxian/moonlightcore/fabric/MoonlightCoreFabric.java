@@ -60,10 +60,10 @@ public class MoonlightCoreFabric implements ModInitializer {
              @Override
              // I hate this code
              public <T> void register(Registry<T> registry, boolean sync) {
-                 ResourceKey<Registry<T>> key = (ResourceKey<Registry<T>>) registry.key();
+                 ResourceKey<? extends Registry<T>> key = registry.key();
 
                  if(registry instanceof MappedRegistry<T>) {
-                     FabricRegistryBuilder<T, MappedRegistry<T>> builder = FabricRegistryBuilder.createSimple(key);
+                     FabricRegistryBuilder<T, MappedRegistry<T>> builder = FabricRegistryBuilder.createSimple((ResourceKey<Registry<T>>) key);
 
                      if(sync) {
                         builder = builder.attribute(RegistryAttribute.SYNCED);
@@ -71,29 +71,22 @@ public class MoonlightCoreFabric implements ModInitializer {
 
                      builder.buildAndRegister();
                  } else if (registry instanceof DefaultedMappedRegistry<T>) {
-                    FabricRegistryBuilder<T, DefaultedMappedRegistry<T>> builder = FabricRegistryBuilder.createDefaulted(key, ((DefaultedRegistry<T>) registry).getDefaultKey());
+                    FabricRegistryBuilder<T, DefaultedMappedRegistry<T>> builder = FabricRegistryBuilder.createDefaulted((ResourceKey<Registry<T>>) key, ((DefaultedRegistry<T>) registry).getDefaultKey());
 
                     if(sync) {
                         builder = builder.attribute(RegistryAttribute.SYNCED);
-
-                        builder.buildAndRegister();
                     }
+
+                     builder.buildAndRegister();
                  }
              }
          });
 
-         Set<ResourceLocation> registryOrder = new HashSet<>();
-         registryOrder.add(Registries.ATTRIBUTE.location());
-         registryOrder.add(Registries.PARTICLE_TYPE.location());
-         registryOrder.addAll(BuiltInRegistriesAccessor.getLOADERS().keySet());
-         registryOrder.addAll(BuiltInRegistries.REGISTRY.keySet().stream().sorted(ResourceLocation::compareTo).toList());
-
-         for(var registryId : registryOrder) {
-            var registryKey = ResourceKey.createRegistryKey(registryId);
+         for(var registryId : BuiltInRegistriesAccessor.getLOADERS().keySet()) {
             var registry =  BuiltInRegistries.REGISTRY.get(registryId);
 
             if(registry != null) {
-                RegisterEvent.EVENT.invoker().onRegistration(registryKey, new RegisterEvent.Output() {
+                RegisterEvent.EVENT.invoker().onRegistration(registry.key(), new RegisterEvent.Output() {
                     @Override
                     public <T> void register(ResourceLocation id, Supplier<T> value) {
                         Registry.register((Registry<? super T>) registry, id, value.get());
