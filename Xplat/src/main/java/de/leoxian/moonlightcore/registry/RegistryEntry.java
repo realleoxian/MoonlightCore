@@ -1,7 +1,6 @@
 package de.leoxian.moonlightcore.registry;
 
 import de.leoxian.moonlightcore.util.nullness.Nonnull;
-import de.leoxian.moonlightcore.util.nullness.NonnullSupplier;
 import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -13,9 +12,10 @@ import net.minecraft.tags.TagKey;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class RegistryEntry<R, T extends R> implements NonnullSupplier<T> {
+public class RegistryEntry<R, T extends R> implements Supplier<@Nonnull T> {
 
     public static <R, T extends R> RegistryEntry<R, T> create(ResourceLocation registryType, ResourceLocation name) {
         return create(ResourceKey.create(ResourceKey.createRegistryKey(registryType), name));
