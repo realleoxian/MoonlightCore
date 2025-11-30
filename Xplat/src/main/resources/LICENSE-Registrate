@@ -9,16 +9,6 @@ The following files in this package are licensed under the Mozilla Public Licens
         - NonnullUnaryOperator
         - Nullable
 
-    from 'de.leoxian.moonlightcore.registry.builder' package:
-        - AbstractBuilder
-        - BlockBuilder
-        - BlockEntityBuilder
-        - EntityBuilder
-        - EntryBuilder
-        - FluidBuilder
-        - ItemBuilder
-        - MenuBuilder
-
 These files contain code based on or derived from the Registrate project by Tterrag1098 (https://github.com/tterrag1098/Registrate/tree/1.20),
 which is licensed under the MPL 2.0. Modifications to these files were made by Leoxian (2025) to integrate them with this project.
 
