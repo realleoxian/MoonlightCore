@@ -9,14 +9,12 @@ import de.leoxian.moonlightcore.config.ConfigManager;
 import de.leoxian.moonlightcore.config.ConfigSerializer;
 import de.leoxian.moonlightcore.config.ModConfigSpec;
 import de.leoxian.moonlightcore.core.network.ModPacketDispatcher;
-import de.leoxian.moonlightcore.event.common.ChunkEvent;
-import de.leoxian.moonlightcore.event.common.PlayerEvent;
-import de.leoxian.moonlightcore.event.common.RegistryCreationEvent;
-import de.leoxian.moonlightcore.event.common.ServerLifecycleEvent;
+import de.leoxian.moonlightcore.event.common.*;
 import de.leoxian.moonlightcore.levelgen.*;
 import de.leoxian.moonlightcore.levelgen.biome.BiomeProvider;
 import de.leoxian.moonlightcore.levelgen.biome.BiomeProviderRegistry;
 import de.leoxian.moonlightcore.lookup.entity.EntityApiLookup;
+import de.leoxian.moonlightcore.misc.BaseSpawnEggItem;
 import de.leoxian.moonlightcore.mixin.accessor.MultiNoiseBiomeSourceAccessor;
 import de.leoxian.moonlightcore.util.MoonlightRegistries;
 import de.leoxian.moonlightcore.util.ServerLifecycleHooks;
@@ -54,6 +52,7 @@ public class MoonlightCore {
         }
         ModConfig.init();
         setupAttachments();
+        BaseSpawnEggItem.setupSpawnEggs();
 
         RegistryCreationEvent.EVENT.subscribe(MoonlightCore::setupModRegistries);
         PlayerEvent.JOIN_SERVER.subscribe(MoonlightCore::onPlayerJoin);
