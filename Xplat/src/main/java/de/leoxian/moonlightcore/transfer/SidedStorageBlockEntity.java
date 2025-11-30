@@ -4,7 +4,6 @@ import de.leoxian.moonlightcore.transfer.fluid.FluidResource;
 import de.leoxian.moonlightcore.transfer.item.ItemResource;
 import de.leoxian.moonlightcore.util.nullness.Nullable;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.Item;
 
 public interface SidedStorageBlockEntity {
 
