@@ -1,7 +1,6 @@
 package de.leoxian.moonlightcore.registry;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
 import de.leoxian.moonlightcore.event.common.RegisterEvent;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -11,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class DeferredRegistrar<R> {
     public static <R> DeferredRegistrar<R> create(Registry<R> registryType, String modId) {
