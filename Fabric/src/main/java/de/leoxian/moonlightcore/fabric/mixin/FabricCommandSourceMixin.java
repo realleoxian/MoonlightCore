@@ -12,34 +12,34 @@ import org.spongepowered.asm.mixin.Mixin;
 import java.util.function.Supplier;
 
 @Mixin(FabricClientCommandSource.class)
-public abstract class FabricCommandSourceMixin implements RegisterClientCommandEvent.ClientCommandSourceStack {
+public interface FabricCommandSourceMixin extends RegisterClientCommandEvent.ClientCommandSourceStack {
     @Override
-    public void mlcore$sendSuccess(Supplier<Component> message, boolean broadcastToAdmins) {
+    default void mlcore$sendSuccess(Supplier<Component> message, boolean broadcastToAdmins) {
         ((FabricClientCommandSource) this).sendFeedback(message.get());
     }
 
     @Override
-    public void mlcore$sendFailure(Component message) {
+    default void mlcore$sendFailure(Component message) {
         ((FabricClientCommandSource) this).sendError(message);
     }
 
     @Override
-    public ClientLevel mlcore$getLevel() {
+    default ClientLevel mlcore$getLevel() {
         return ((FabricClientCommandSource) this).getWorld();
     }
 
     @Override
-    public LocalPlayer mlcore$getPlayer() {
+    default LocalPlayer mlcore$getPlayer() {
         return ((FabricClientCommandSource) this).getPlayer();
     }
 
     @Override
-    public Vec3 mlcore$getPosition() {
+    default Vec3 mlcore$getPosition() {
         return ((FabricClientCommandSource) this).getPosition();
     }
 
     @Override
-    public Vec2 mlcore$getRotation() {
+    default Vec2 mlcore$getRotation() {
         return ((FabricClientCommandSource) this).getRotation();
     }
 }
