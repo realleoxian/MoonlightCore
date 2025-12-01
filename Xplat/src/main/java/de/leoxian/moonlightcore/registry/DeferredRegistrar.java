@@ -53,7 +53,7 @@ public class DeferredRegistrar<R> {
         seenRegisterEvent = true;
     }
 
-    public <T extends R> RegistryEntry<R, T> register(final String name, final Supplier<T> sup) {
+    public <T extends R> RegistryEntry<R, T> register(final String name, final Supplier<? extends T> sup) {
         Preconditions.checkArgument(!seenRegisterEvent, "Cannot register new entries to DeferredRegistrar after RegisterEvent was fired");
         Objects.requireNonNull(name, "RegistryEntry name cannot be null");
         Objects.requireNonNull(sup, "RegistryEntry value cannot be null");
