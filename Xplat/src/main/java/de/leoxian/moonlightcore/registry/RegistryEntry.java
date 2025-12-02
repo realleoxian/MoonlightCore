@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -17,41 +16,35 @@ import java.util.stream.Stream;
 
 public class RegistryEntry<R, T extends R> implements Supplier<@Nonnull T> {
 
-    public static <R, T extends R> RegistryEntry<R, T> create(ResourceLocation registryType, ResourceLocation name) {
-        return create(ResourceKey.create(ResourceKey.createRegistryKey(registryType), name));
-    }
-
-    public static <R, T extends R> RegistryEntry<R, T> create(ResourceKey<? extends Registry<R>> registryType, ResourceLocation name) {
-        return create(ResourceKey.create(registryType, name));
-    }
-
-    public static <R, T extends R> RegistryEntry<R, T> create(ResourceKey<R> key) {
-        return new RegistryEntry<>(key);
-    }
-
     private final ResourceKey<R> key;
-    private final ResourceKey<? extends Registry<R>> registryType;
 
-    private @Nullable Holder<R> holder = null;
+    private @Nullable Holder<R> holder;
+
+    private @Nullable Supplier<? extends T> valueCandidate;
     private @Nullable T value = null;
 
-    protected RegistryEntry(ResourceKey<R> key) {
-        this.key = Objects.requireNonNull(key, "Registry entry key cannot be null");
-        this.registryType = ResourceKey.createRegistryKey(key.registry());
-        updateReference(false);
+    RegistryEntry(ResourceKey<R> key, Supplier<? extends T> valueCandidate) {
+        this.key = key;
+        this.valueCandidate = valueCandidate;
     }
 
     @Override
     public @Nonnull T get() {
-        updateReference(true);
+        T ret = value;
+        if(ret == null) {
+            value = ret = valueCandidate.get();
+            valueCandidate = null;
 
-        T ret = this.value;
-        Objects.requireNonNull(ret, () -> "Registry entry not present: " + this);
+            if(value == null) {
+                throw new IllegalStateException("Invalid registry entry value (" + this + ")");
+            }
+        }
+
         return ret;
     }
 
     public boolean is(ResourceLocation name) {
-        return getName() == name;
+        return key.location() == name;
     }
 
     public boolean is(ResourceKey<R> key) {
@@ -63,21 +56,18 @@ public class RegistryEntry<R, T extends R> implements Supplier<@Nonnull T> {
     }
 
     public boolean is(TagKey<R> tagKey) {
-        updateReference(false);
+        bindReference();
         return holder != null && holder.is(tagKey);
     }
 
     public Stream<TagKey<R>> getTags() {
-        updateReference(false);
+        bindReference();
         return holder != null ? holder.tags() : Stream.empty();
     }
 
     public Optional<Holder<R>> asHolder() {
+        bindReference();
         return Optional.ofNullable(holder);
-    }
-
-    public ResourceKey<R> getKey() {
-        return key;
     }
 
     public ResourceLocation getName() {
@@ -85,7 +75,7 @@ public class RegistryEntry<R, T extends R> implements Supplier<@Nonnull T> {
     }
 
     public ResourceKey<? extends Registry<R>> getRegistryType() {
-        return registryType;
+        return ResourceKey.createRegistryKey(key.registry());
     }
 
     @Override
@@ -98,33 +88,24 @@ public class RegistryEntry<R, T extends R> implements Supplier<@Nonnull T> {
     }
 
     @Override
-    public String toString() {
-        return "RegistryEntry[" + key + "]";
-    }
-
-    @Override
     public int hashCode() {
         return key.hashCode();
     }
 
-    @SuppressWarnings("unchecked")
-    Registry<R> getRegistry() {
-        return (Registry<R>) BuiltInRegistries.REGISTRY.get(key.registry());
+    @Override
+    public String toString() {
+        return "RegistryEntry[" + key + "]";
     }
 
-    @SuppressWarnings("unchecked")
-    final void updateReference(boolean throwOnMissingRegistry) {
-        if(holder != null && value != null) {
+    final void bindReference() {
+        if(holder != null) {
             return;
         }
 
-        Registry<R> registry = getRegistry();
+        @SuppressWarnings("unchecked")
+        Registry<R> registry = (Registry<R>) BuiltInRegistries.REGISTRY.get(key.registry());
         if(registry != null) {
             holder = registry.getHolder(key).orElse(null);
-            value = (T) registry.getOptional(key).orElse(null);
-        } else if (throwOnMissingRegistry) {
-            String errorMessage = String.format("Registry not present for %s: %s", key.location(), key.registry());
-            throw new IllegalStateException(errorMessage);
         }
     }
 }

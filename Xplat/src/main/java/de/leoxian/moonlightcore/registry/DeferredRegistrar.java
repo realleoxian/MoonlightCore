@@ -44,7 +44,7 @@ public class DeferredRegistrar<R> {
 
                     entries.forEach((e, s) -> {
                         output.register(e.getName(), s);
-                        e.updateReference(false);
+                        e.bindReference();
                     });
                 }
             });
@@ -59,7 +59,7 @@ public class DeferredRegistrar<R> {
         Objects.requireNonNull(sup, "RegistryEntry value cannot be null");
 
         final ResourceLocation id = new ResourceLocation(modId, name);
-        RegistryEntry<R, T> entry = RegistryEntry.create(registryType, id);
+        RegistryEntry<R, T> entry = new RegistryEntry<>(ResourceKey.create(registryType, id), sup);
         if(this.entries.putIfAbsent(entry, sup) != null) {
             throw new IllegalArgumentException("Duplicated entry with name: " + id);
         }
