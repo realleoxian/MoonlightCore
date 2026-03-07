@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.mixin.accessor;
+package de.leoxian.moonlightcore.mixin;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.server.level.ChunkMap;
