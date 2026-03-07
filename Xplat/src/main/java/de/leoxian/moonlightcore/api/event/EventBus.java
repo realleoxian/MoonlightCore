@@ -1,0 +1,26 @@
+package de.leoxian.moonlightcore.api.event;
+
+import de.leoxian.moonlightcore.impl.event.EventBusImpl;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.function.Function;
+
+public interface EventBus<T> {
+
+    static <T> EventBus<T> create(Function<T[], T> factory) {
+        return EventBusImpl.create(factory);
+    }
+
+    T invoker();
+
+    EventBus<T> definePhaseOrdering(ResourceLocation previous, ResourceLocation phase);
+
+    void subscribe(EventPriority priority, ResourceLocation phase, T listener);
+
+    void subscribe(EventPriority priority, T listener);
+
+    void subscribe(ResourceLocation phase, T listener);
+
+    void subscribe(T listener);
+
+}
