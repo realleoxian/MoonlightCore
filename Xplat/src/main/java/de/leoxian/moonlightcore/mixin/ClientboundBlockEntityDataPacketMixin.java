@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.mixin;
 
-import de.leoxian.moonlightcore.attachment.AttachmentInternals;
+import de.leoxian.moonlightcore.impl.attachment.AttachmentMapImpl;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -14,11 +14,11 @@ import java.util.function.Function;
 public class ClientboundBlockEntityDataPacketMixin {
 
     @ModifyArg(method = "create(Lnet/minecraft/world/level/block/entity/BlockEntity;)Lnet/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket;",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket;create(Lnet/minecraft/world/level/block/entity/BlockEntity;Ljava/util/function/Function;)Lnet/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket;"))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket;create(Lnet/minecraft/world/level/block/entity/BlockEntity;Ljava/util/function/Function;)Lnet/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket;"))
     private static Function<BlockEntity, CompoundTag> mlcore_stripPersistentAttachmentData(Function<BlockEntity, CompoundTag> getter) {
         return be -> {
             CompoundTag nbt = getter.apply(be);
-            nbt.remove(AttachmentInternals.NBT_TAG);
+            nbt.remove(AttachmentMapImpl.NBT_TAG);
 
             return nbt;
         };

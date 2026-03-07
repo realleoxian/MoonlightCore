@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.mixin.accessor;
+package de.leoxian.moonlightcore.mixin;
 
 import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,7 +9,7 @@ public interface ServerboundCustomPayloadPacketAccessor {
 
     @Accessor
     static int getMAX_PAYLOAD_SIZE() {
-        throw new AssertionError();
+        throw new IllegalStateException("Mixin error");
     }
 
 }

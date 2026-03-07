@@ -1,56 +1,60 @@
 package de.leoxian.moonlightcore.mixin;
 
-import de.leoxian.moonlightcore.attachment.AttachmentHolderImpl;
-import de.leoxian.moonlightcore.attachment.AttachmentSavedState;
-import de.leoxian.moonlightcore.attachment.AttachmentType;
-import de.leoxian.moonlightcore.attachment.sync.AttachmentHolderInfo;
-import de.leoxian.moonlightcore.core.MoonlightCore;
-import de.leoxian.moonlightcore.core.network.clientbound.S2CAttachmentSyncPacket;
-import de.leoxian.moonlightcore.util.PlayerTrackUtils;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceKey;
+import de.leoxian.moonlightcore.impl.apilookup.BlockApiCacheImpl;
+import de.leoxian.moonlightcore.impl.apilookup.ServerLevelApiLookupCache;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceArrayMap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.DimensionType;
-import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.Unique;
 
-import java.util.function.Supplier;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin extends Level implements AttachmentHolderImpl {
+public class ServerLevelMixin implements ServerLevelApiLookupCache {
+    @Unique
+    private final Map<BlockPos, List<WeakReference<BlockApiCacheImpl<?, ?>>>> mlcore$blockApiLookupCaches = new Object2ReferenceArrayMap<>();
+    @Unique
+    private int mlcore$lookupAccessedWithoutCleanup = 0;
 
-    protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
-        super(levelData, dimension, registryAccess, dimensionTypeRegistration, profiler, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
-    }
+    @Override
+    public void mlcore$registerBlockCache(BlockPos blockPos, BlockApiCacheImpl<?, ?> cache) {
+        List<WeakReference<BlockApiCacheImpl<?, ?>>> caches = mlcore$blockApiLookupCaches.computeIfAbsent(blockPos.immutable(), ignored -> new ArrayList<>());
 
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void mlcore_createAttachmentsSavedData(CallbackInfo ci) {
-        ServerLevel self = (ServerLevel) (Object) this;
-
-        self.getDataStorage().computeIfAbsent(
-                (t) -> AttachmentSavedState.read(self, t),
-                () -> new AttachmentSavedState(self), AttachmentSavedState.ID);
+        caches.removeIf(reference -> reference.get() == null);
+        caches.add(new WeakReference<>(cache));
+        mlcore$lookupAccessedWithoutCleanup++;
     }
 
     @Override
-    public void mlcore_sendChangePacket(AttachmentType<?> type, S2CAttachmentSyncPacket packet) {
-        if((Object) this instanceof ServerLevel serverLevel) {
-            PlayerTrackUtils.level(serverLevel).forEach(player -> {
-                if(type.syncPredicate().test(this, player)) {
-                    MoonlightCore.PACKET_DISPATCHER.sendToPlayer(player, packet);
-                }
-            });
+    public void mlcore$invalidateBlockCache(BlockPos blockPos) {
+        List<WeakReference<BlockApiCacheImpl<?, ?>>> caches = mlcore$blockApiLookupCaches.get(blockPos);
+        if(caches != null) {
+            caches.removeIf(reference -> reference.get() == null);
+
+            if(caches.isEmpty()) {
+                mlcore$blockApiLookupCaches.remove(blockPos);
+            } else {
+                caches.forEach(reference -> {
+                    BlockApiCacheImpl<?, ?> cache = reference.get();
+
+                    if(cache != null) {
+                        cache.invalidate();
+                    }
+                });
+            }
         }
-    }
 
-    @Override
-    public AttachmentHolderInfo<?> mlcore_getHolderInfo() {
-        return AttachmentHolderInfo.LevelInfo.INSTANCE;
+        mlcore$lookupAccessedWithoutCleanup++;
+        if(mlcore$lookupAccessedWithoutCleanup > 2 * mlcore$blockApiLookupCaches.size()) {
+            mlcore$blockApiLookupCaches.entrySet().removeIf(entry -> {
+               entry.getValue().removeIf(reference -> reference.get() == null);
+               return entry.getValue().isEmpty();
+            });
+            mlcore$lookupAccessedWithoutCleanup = 0;
+        }
     }
 }

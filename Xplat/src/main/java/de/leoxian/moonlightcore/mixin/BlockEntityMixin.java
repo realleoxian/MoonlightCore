@@ -1,68 +1,46 @@
 package de.leoxian.moonlightcore.mixin;
 
-import de.leoxian.moonlightcore.attachment.AttachmentHolderImpl;
-import de.leoxian.moonlightcore.attachment.AttachmentType;
-import de.leoxian.moonlightcore.attachment.sync.AttachmentHolderInfo;
-import de.leoxian.moonlightcore.core.MoonlightCore;
-import de.leoxian.moonlightcore.core.network.clientbound.S2CAttachmentSyncPacket;
-import de.leoxian.moonlightcore.util.PlayerTrackUtils;
-import de.leoxian.moonlightcore.util.nullness.Nullable;
-import net.minecraft.core.BlockPos;
+import de.leoxian.moonlightcore.api.attachment.AttachmentHolder;
+import de.leoxian.moonlightcore.api.attachment.AttachmentMap;
+import de.leoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;
+import de.leoxian.moonlightcore.impl.attachment.AttachmentMapImpl;
+import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockEntity.class)
-public abstract class BlockEntityMixin implements AttachmentHolderImpl {
-    @Shadow
-    public abstract void setChanged();
+public abstract class BlockEntityMixin implements AttachmentHolder {
+    @Unique
+    private @Nullable AttachmentMap moonlighcore$attachmentsMap = null;
 
-    @Shadow
-    public abstract boolean hasLevel();
+    @Override
+    public AttachmentMap getAttachmentsMap() {
+        if(moonlighcore$attachmentsMap == null) {
+            moonlighcore$attachmentsMap = AttachmentMapImpl.create(new AttachmentsHolderInfo.EntityHolderInfo(((Entity) (Object) this).getId()));
+        }
 
-    @Shadow
-    protected @Nullable Level level;
+        return moonlighcore$attachmentsMap;
+    }
 
-    @Shadow
-    public abstract BlockPos getBlockPos();
+    @Inject(method = "saveAdditional", at = @At("RETURN"))
+    public void moonlightcore$saveAdditional(CompoundTag tag, CallbackInfo ci) {
+        if(moonlighcore$attachmentsMap != null) {
+            moonlighcore$attachmentsMap.writeToNBT(tag);
+        }
+    }
 
     @Inject(method = "load", at = @At("RETURN"))
-    private void mlcore_loadBlockEntityAttachments(CompoundTag tag, CallbackInfo ci) {
-        this.mlcore_readPersistentAttachments(tag);
-    }
-
-    @Inject(method = "saveWithId", at = @At("TAIL"))
-    private void mlcore_saveBlockEntityAttachments(CallbackInfoReturnable<CompoundTag> cir) {
-        this.mlcore_readPersistentAttachments(cir.getReturnValue());
-    }
-
-    @Override
-    public void mlcore_sendChangePacket(AttachmentType<?> type, S2CAttachmentSyncPacket packet) {
-        PlayerTrackUtils.tracking((BlockEntity) (Object) this).forEach(player -> {
-            if(type.syncPredicate().test(this, player)) {
-                MoonlightCore.PACKET_DISPATCHER.sendToPlayer(player, packet);
-            }
-        });
-    }
-
-    @Override
-    public void mlcore_markDirty() {
-        this.setChanged();
-    }
-
-    @Override
-    public AttachmentHolderInfo<?> mlcore_getHolderInfo() {
-        return new AttachmentHolderInfo.BlockEntityInfo(this.getBlockPos());
-    }
-
-    @Override
-    public boolean mlcore_shouldSync() {
-        return !this.hasLevel() || !this.level.isClientSide();
+    public void moonlightcore$load(CompoundTag tag, CallbackInfo ci) {
+        if(moonlighcore$attachmentsMap != null) {
+            moonlighcore$attachmentsMap.readFromNBT(tag);
+        }
     }
 }
