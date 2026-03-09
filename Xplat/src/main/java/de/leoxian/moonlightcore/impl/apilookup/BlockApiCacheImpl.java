@@ -82,6 +82,16 @@ public final class BlockApiCacheImpl<A, C extends @Nullable Object> implements B
             instance = apiProvider.get(level, blockPos, blockState, cachedBlockEntity, context);
         }
 
+        if(instance == null) {
+            for(BlockApiLookup.Provider<A, C> fallback : lookup.getFallbackProviders()) {
+                instance = fallback.get(level, blockPos, blockState, cachedBlockEntity, context);
+
+                if(instance != null) {
+                    break;
+                }
+            }
+        }
+
         return instance;
     }
 

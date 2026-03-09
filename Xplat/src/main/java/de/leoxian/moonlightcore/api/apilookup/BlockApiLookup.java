@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.List;
+
 public interface BlockApiLookup<A, C extends @Nullable Object> extends ApiLookup<A, C> {
 
     static <A, C extends @Nullable Object> BlockApiLookup<A, C> get(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
@@ -20,7 +22,11 @@ public interface BlockApiLookup<A, C extends @Nullable Object> extends ApiLookup
 
     void register(BlockApiLookup.Provider<A, C> provider, Block... blocks);
 
+    void registerFallback(BlockApiLookup.Provider<A, C> fallback);
+
     BlockApiLookup.@Nullable Provider<A, C> getProvider(Block block);
+
+    List<BlockApiLookup.Provider<A, C>> getFallbackProviders();
 
     @FunctionalInterface
     interface Provider<A, C extends @Nullable Object> {

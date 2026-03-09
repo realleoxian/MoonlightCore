@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
+import java.util.List;
+
 public interface ItemApiLookup<A, C extends @Nullable Object> extends ApiLookup<A, C> {
 
     static <A, C extends @Nullable Object> ItemApiLookup<A, C> get(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
@@ -17,7 +19,11 @@ public interface ItemApiLookup<A, C extends @Nullable Object> extends ApiLookup<
 
     void register(ItemApiLookup.Provider<A, C> provider, ItemLike... items);
 
+    void registerFallback(ItemApiLookup.Provider<A, C> provider);
+
     ItemApiLookup.@Nullable Provider<A, C> getProvider(ItemLike itemLike);
+
+    List<ItemApiLookup.Provider<A, C>> getFallbackProviders();
 
     @FunctionalInterface
     interface Provider<A, C extends @Nullable Object> {

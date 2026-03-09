@@ -9,9 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public final class ItemApiLookupImpl<A, C extends @Nullable Object> extends ApiLookupImpl<A, C> implements ItemApiLookup<A, C> {
     private static final ApiLookupRegistry<ItemApiLookup<?, ?>> REGISTRY = ApiLookupRegistryImpl.create(ItemApiLookupImpl::new);
@@ -22,6 +20,7 @@ public final class ItemApiLookupImpl<A, C extends @Nullable Object> extends ApiL
     }
 
     private final Map<Item, ItemApiLookup.Provider<A, C>> providers = new IdentityHashMap<>();
+    private final List<ItemApiLookup.Provider<A, C>> fallbackProviders = new ArrayList<>();
 
     private ItemApiLookupImpl(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
         super(name, apiClass, contextClass);
@@ -35,11 +34,23 @@ public final class ItemApiLookupImpl<A, C extends @Nullable Object> extends ApiL
 
         Item item = itemStack.getItem();
         ItemApiLookup.@Nullable Provider<A, C> provider = getProvider(item);
+
         if(provider == null) {
             return null;
         }
 
-        return provider.get(itemStack, context);
+        A instance = provider.get(itemStack, context);
+        if(instance == null) {
+            for(ItemApiLookup.Provider<A, C> fallback : fallbackProviders) {
+                instance = fallback.get(itemStack, context);
+
+                if(instance != null) {
+                    break;
+                }
+            }
+        }
+
+        return instance;
     }
 
     @Override
@@ -61,11 +72,22 @@ public final class ItemApiLookupImpl<A, C extends @Nullable Object> extends ApiL
     }
 
     @Override
+    public void registerFallback(Provider<A, C> provider) {
+        Objects.requireNonNull(provider, "Fallback ItemApiLookup provider may not be 'null'");
+        fallbackProviders.add(provider);
+    }
+
+    @Override
     public @Nullable Provider<A, C> getProvider(ItemLike itemLike) {
         Objects.requireNonNull(itemLike, "ItemLike cannot be 'null'");
 
         Item item = itemLike.asItem();
         Objects.requireNonNull(item, "ItemLike as item cannot be 'null'");
         return providers.get(item);
+    }
+
+    @Override
+    public List<Provider<A, C>> getFallbackProviders() {
+        return Collections.unmodifiableList(fallbackProviders);
     }
 }

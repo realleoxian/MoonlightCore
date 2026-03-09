@@ -9,9 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public final class EntityApiLookupImpl<A, C extends @Nullable Object> extends ApiLookupImpl<A, C> implements EntityApiLookup<A, C> {
     private static final ApiLookupRegistry<EntityApiLookup<?, ?>> REGISTRY = ApiLookupRegistry.create(EntityApiLookupImpl::new);
@@ -22,6 +20,7 @@ public final class EntityApiLookupImpl<A, C extends @Nullable Object> extends Ap
     }
 
     private final Map<EntityType<?>, EntityApiLookup.Provider<A, C>> providers = new IdentityHashMap<>();
+    private final List<EntityApiLookup.Provider<A, C>> fallbackProviders = new ArrayList<>();
 
     private EntityApiLookupImpl(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
         super(name, apiClass, contextClass);
@@ -40,7 +39,18 @@ public final class EntityApiLookupImpl<A, C extends @Nullable Object> extends Ap
             return null;
         }
 
-        return provider.get(entity, context);
+        A instance = provider.get(entity, context);
+        if(instance == null) {
+            for(EntityApiLookup.Provider<A, C> fallback : fallbackProviders) {
+                instance = fallback.get(entity, context);
+
+                if(instance != null) {
+                    break;
+                }
+            }
+        }
+
+        return instance;
     }
 
     @Override
@@ -61,8 +71,19 @@ public final class EntityApiLookupImpl<A, C extends @Nullable Object> extends Ap
     }
 
     @Override
+    public void registerFallback(Provider<A, C> provider) {
+        Objects.requireNonNull(provider, "Fallback EntityApiLookup provider may not be 'null'");
+        fallbackProviders.add(provider);
+    }
+
+    @Override
     public @Nullable Provider<A, C> getProvider(EntityType<?> entityType) {
         Objects.requireNonNull(entityType, "EntityType cannot be 'null'");
         return providers.get(entityType);
+    }
+
+    @Override
+    public List<Provider<A, C>> getFallbackProviders() {
+        return Collections.unmodifiableList(fallbackProviders);
     }
 }

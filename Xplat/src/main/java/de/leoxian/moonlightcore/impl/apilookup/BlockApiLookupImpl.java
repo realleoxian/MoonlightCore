@@ -11,9 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public final class BlockApiLookupImpl<A, C extends @Nullable Object> extends ApiLookupImpl<A, C> implements BlockApiLookup<A, C> {
     private static final ApiLookupRegistry<BlockApiLookup<?, ?>> REGISTRY = ApiLookupRegistry.create(BlockApiLookupImpl::new);
@@ -24,6 +22,7 @@ public final class BlockApiLookupImpl<A, C extends @Nullable Object> extends Api
     }
 
     private final Map<Block, BlockApiLookup.Provider<A, C>> providers = new IdentityHashMap<>();
+    private final List<BlockApiLookup.Provider<A, C>> fallbackProviders = new ArrayList<>();
 
     private BlockApiLookupImpl(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
         super(name, apiClass, contextClass);
@@ -54,7 +53,18 @@ public final class BlockApiLookupImpl<A, C extends @Nullable Object> extends Api
             return null;
         }
 
-        return provider.get(level, blockPos, blockState, blockEntity, context);
+        A instance = provider.get(level, blockPos, blockState, blockEntity, context);
+        if(instance == null) {
+            for(BlockApiLookup.Provider<A, C> fallback : fallbackProviders) {
+                instance = fallback.get(level, blockPos, blockState, blockEntity, context);
+
+                if(instance != null) {
+                    break;
+                }
+            }
+        }
+
+        return instance;
     }
 
     @Override
@@ -75,8 +85,19 @@ public final class BlockApiLookupImpl<A, C extends @Nullable Object> extends Api
     }
 
     @Override
+    public void registerFallback(Provider<A, C> fallback) {
+        Objects.requireNonNull(fallback, "Fallback BlockApiLookup provider may not be 'null'");
+        fallbackProviders.add(fallback);
+    }
+
+    @Override
     public Provider<A, C> getProvider(Block block) {
         Objects.requireNonNull(block, "Block cannot be 'null'");
         return providers.get(block);
+    }
+
+    @Override
+    public List<Provider<A, C>> getFallbackProviders() {
+        return Collections.unmodifiableList(fallbackProviders);
     }
 }

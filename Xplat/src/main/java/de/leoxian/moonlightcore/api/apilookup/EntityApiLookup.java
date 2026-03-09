@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
+import java.util.List;
+
 public interface EntityApiLookup<A, C extends @Nullable Object> extends ApiLookup<A, C> {
 
     static <A, C extends @Nullable Object> EntityApiLookup<A, C> get(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
@@ -17,7 +19,11 @@ public interface EntityApiLookup<A, C extends @Nullable Object> extends ApiLooku
 
     void register(EntityApiLookup.Provider<A, C> provider, EntityType<?>... entityTypes);
 
+    void registerFallback(EntityApiLookup.Provider<A, C> provider);
+
     EntityApiLookup.@Nullable Provider<A, C> getProvider(EntityType<?> entityType);
+
+    List<EntityApiLookup.Provider<A, C>> getFallbackProviders();
 
     @FunctionalInterface
     interface Provider<A, C extends @Nullable Object> {
