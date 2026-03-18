@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.mixin;
 
-import de.leoxian.moonlightcore.transfer.item.SpecialLogicInventory;
+import de.leoxian.moonlightcore.impl.transfer.item.SpecialLogicInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
@@ -19,12 +19,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin extends BaseContainerBlockEntity implements SpecialLogicInventory {
-    @Shadow
-    protected NonNullList<ItemStack> items;
+
     @Shadow
     int cookingTotalTime;
+
     @Shadow
     int cookingProgress;
+    @Shadow
+    protected NonNullList<ItemStack> items;
 
     @Shadow
     private static int getTotalCookTime(Level level, AbstractFurnaceBlockEntity blockEntity) {
@@ -32,34 +34,40 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BaseContainerBlock
     }
 
     @Unique
-    private boolean mlcore_suppressSpecialLogic = false;
+    private boolean moonlightcore$suppressSpecialLogic = false;
 
     protected AbstractFurnaceBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
 
-    @Inject(method = "setItem", at = @At("HEAD"), cancellable = true)
-    public void mlcore_setStackSupressUpdate(int index, ItemStack stack, CallbackInfo ci) {
-        if(this.mlcore_suppressSpecialLogic) {
-            this.items.set(index, stack);
+    @Inject(
+            method = "setItem",
+            at = @At(
+                    value = "HEAD"
+            ),
+            cancellable = true
+    )
+    public void moonlightcore$SetStackSuppressUpdate(int index, ItemStack stack, CallbackInfo ci) {
+        if (moonlightcore$suppressSpecialLogic) {
+            items.set(index, stack);
             ci.cancel();
         }
     }
 
     @Override
-    public void mlcore_onFinalCommit(int slot, ItemStack oldStack, ItemStack newStack) {
-        if(slot == 0) {
-
-            boolean bl = !newStack.isEmpty() && ItemStack.isSameItemSameTags(newStack, oldStack);
-            if(!bl && this.level instanceof ServerLevel level) {
-                this.cookingTotalTime = getTotalCookTime(level, (AbstractFurnaceBlockEntity) (Object) this);
-                this.cookingProgress = 0;
-            }
-        }
+    public void moonlightcore$setSupress(boolean suppress) {
+        moonlightcore$suppressSpecialLogic = suppress;
     }
 
     @Override
-    public void mlcore_setSuppress(boolean suppress) {
-        this.mlcore_suppressSpecialLogic = suppress;
+    public void moonlightcore$onRootCommit(int slot, ItemStack oldStack, ItemStack newStack) {
+        if (slot == 0) {
+            boolean bl = !newStack.isEmpty() && ItemStack.isSameItemSameTags(newStack, oldStack);
+
+            if (!bl && level instanceof ServerLevel level) {
+                cookingTotalTime = getTotalCookTime(level, (AbstractFurnaceBlockEntity) (Object) this);
+                cookingProgress = 0;
+            }
+        }
     }
 }
