@@ -17,7 +17,7 @@ public final class BlockApiLookupImpl<A, C extends @Nullable Object> extends Api
     private static final ApiLookupRegistry<BlockApiLookup<?, ?>> REGISTRY = ApiLookupRegistry.create(BlockApiLookupImpl::new);
 
     @SuppressWarnings("unchecked")
-    public static <A, C extends @Nullable Object> BlockApiLookup<A, C> get(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
+    public static <A, C extends @Nullable Object> BlockApiLookup<A, C> find(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
         return (BlockApiLookup<A, C>) REGISTRY.create(name, apiClass, contextClass);
     }
 
@@ -29,7 +29,7 @@ public final class BlockApiLookupImpl<A, C extends @Nullable Object> extends Api
     }
 
     @Override
-    public @Nullable A get(Level level, BlockPos blockPos, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity, C context) {
+    public @Nullable A find(Level level, BlockPos blockPos, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity, C context) {
         Objects.requireNonNull(level, "Level may not be 'null'");
         Objects.requireNonNull(blockEntity, "BlockPos may not be 'null'");
         Objects.requireNonNull(context, "API context may not be 'null'");

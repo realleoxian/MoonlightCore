@@ -15,7 +15,7 @@ public final class EntityApiLookupImpl<A, C extends @Nullable Object> extends Ap
     private static final ApiLookupRegistry<EntityApiLookup<?, ?>> REGISTRY = ApiLookupRegistry.create(EntityApiLookupImpl::new);
 
     @SuppressWarnings("unchecked")
-    public static <A, C extends @Nullable Object> EntityApiLookup<A, C> get(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
+    public static <A, C extends @Nullable Object> EntityApiLookup<A, C> find(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
         return (EntityApiLookup<A, C>) REGISTRY.create(name, apiClass, contextClass);
     }
 
@@ -27,7 +27,7 @@ public final class EntityApiLookupImpl<A, C extends @Nullable Object> extends Ap
     }
 
     @Override
-    public @Nullable A get(Entity entity, C context) {
+    public @Nullable A find(Entity entity, C context) {
         Objects.requireNonNull(entity, "Entity cannot be 'null'");
 
         if(!EntitySelector.ENTITY_STILL_ALIVE.test(entity)) {

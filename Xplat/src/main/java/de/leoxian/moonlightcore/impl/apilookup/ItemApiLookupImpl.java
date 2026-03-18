@@ -15,7 +15,7 @@ public final class ItemApiLookupImpl<A, C extends @Nullable Object> extends ApiL
     private static final ApiLookupRegistry<ItemApiLookup<?, ?>> REGISTRY = ApiLookupRegistryImpl.create(ItemApiLookupImpl::new);
 
     @SuppressWarnings("unchecked")
-    public static <A, C extends @Nullable Object> ItemApiLookup<A, C> get(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
+    public static <A, C extends @Nullable Object> ItemApiLookup<A, C> find(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
         return (ItemApiLookup<A, C>) REGISTRY.create(name, apiClass, contextClass);
     }
 
@@ -27,7 +27,7 @@ public final class ItemApiLookupImpl<A, C extends @Nullable Object> extends ApiL
     }
 
     @Override
-    public @Nullable A get(ItemStack itemStack, C context) {
+    public @Nullable A find(ItemStack itemStack, C context) {
         if(itemStack.isEmpty()) {
             return null;
         }

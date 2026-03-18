@@ -13,12 +13,12 @@ import java.util.List;
 
 public interface BlockApiLookup<A, C extends @Nullable Object> extends ApiLookup<A, C> {
 
-    static <A, C extends @Nullable Object> BlockApiLookup<A, C> get(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
-        return BlockApiLookupImpl.get(name, apiClass, contextClass);
+    static <A, C extends @Nullable Object> BlockApiLookup<A, C> find(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
+        return BlockApiLookupImpl.find(name, apiClass, contextClass);
     }
 
     @Nullable
-    A get(Level level, BlockPos blockPos, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity, C context);
+    A find(Level level, BlockPos blockPos, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity, C context);
 
     void register(BlockApiLookup.Provider<A, C> provider, Block... blocks);
 

@@ -10,12 +10,12 @@ import java.util.List;
 
 public interface EntityApiLookup<A, C extends @Nullable Object> extends ApiLookup<A, C> {
 
-    static <A, C extends @Nullable Object> EntityApiLookup<A, C> get(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
-        return EntityApiLookupImpl.get(name, apiClass, contextClass);
+    static <A, C extends @Nullable Object> EntityApiLookup<A, C> find(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
+        return EntityApiLookupImpl.find(name, apiClass, contextClass);
     }
 
     @Nullable
-    A get(Entity entity, C context);
+    A find(Entity entity, C context);
 
     void register(EntityApiLookup.Provider<A, C> provider, EntityType<?>... entityTypes);
 
