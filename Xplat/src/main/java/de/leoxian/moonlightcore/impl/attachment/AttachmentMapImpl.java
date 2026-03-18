@@ -6,8 +6,6 @@ import de.leoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;
 import de.leoxian.moonlightcore.api.attachment.AttachmentMap;
 import de.leoxian.moonlightcore.api.attachment.AttachmentType;
 import de.leoxian.moonlightcore.impl.attachment.sync.AttachmentSyncChange;
-import de.leoxian.moonlightcore.impl.internal.ModInternal;
-import de.leoxian.moonlightcore.impl.internal.ModLoggingMarkers;
 import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -17,13 +15,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-import static de.leoxian.moonlightcore.impl.internal.ModInternal.nbtPrefix;
+import static de.leoxian.moonlightcore.impl.internal.InternalMod.nbtPrefix;
 
 public final class AttachmentMapImpl implements AttachmentMap {
+    private static final Logger LOGGER = LoggerFactory.getLogger("moonlightcore-attachment-api");
     public static final String NBT_TAG = nbtPrefix("attachments");
     private static final String NBT_NAME_TAG = "name";
     private static final String NBT_VALUE_TAG = "value";
@@ -77,8 +78,8 @@ public final class AttachmentMapImpl implements AttachmentMap {
 
             codec.encodeStart(NbtOps.INSTANCE, value).get()
                     .ifRight(partial -> {
-                        ModInternal.LOGGER.warn(ModLoggingMarkers.ATTACHMENT, "Failed to encode attachment type '{}'. Error: ", type.name());
-                        ModInternal.LOGGER.warn(ModLoggingMarkers.ATTACHMENT, partial.message());
+                        LOGGER.warn("Failed to encode attachment type '{}'. Error: ", type.name());
+                        LOGGER.warn(partial.message());
                     }).ifLeft(t -> {
                         CompoundTag attachment = new CompoundTag();
                         attachment.putString(NBT_NAME_TAG, type.name().toString());
@@ -104,7 +105,7 @@ public final class AttachmentMapImpl implements AttachmentMap {
 
             ResourceLocation name = new ResourceLocation(attachmentTag.getString(NBT_NAME_TAG));
             if(!MoonlightCore.ATTACHMENT_TYPES.get().containsKey(name)) {
-                ModInternal.LOGGER.warn(ModLoggingMarkers.ATTACHMENT, "Attachment type '{}' isn't registered, cannot be read", name);
+                LOGGER.warn("Attachment type '{}' isn't registered, cannot be read", name);
                 continue;
             }
 
@@ -117,8 +118,8 @@ public final class AttachmentMapImpl implements AttachmentMap {
             Tag valueTag = attachmentTag.get(NBT_VALUE_TAG);
             codec.parse(NbtOps.INSTANCE, valueTag).get()
                     .ifRight(partial -> {
-                        ModInternal.LOGGER.warn(ModLoggingMarkers.ATTACHMENT, "Failed to decode attachment type '{}'. Error: ", name);
-                        ModInternal.LOGGER.warn(ModLoggingMarkers.ATTACHMENT, partial.message());
+                        LOGGER.warn("Failed to decode attachment type '{}'. Error: ", name);
+                        LOGGER.warn(partial.message());
                     }).ifLeft(val -> attachedData.put(attachmentType, val));
         }
 

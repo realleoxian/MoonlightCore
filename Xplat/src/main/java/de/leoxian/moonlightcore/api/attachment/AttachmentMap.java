@@ -10,6 +10,14 @@ import java.util.function.Supplier;
 
 public interface AttachmentMap {
 
+    static AttachmentMap get(Object obj) {
+        if (!(obj instanceof AttachmentHolder holder)) {
+            throw new IllegalStateException("Can't get attachment map from null holder");
+        }
+
+        return holder.getAttachmentsMap();
+    }
+
     <A> void syncAttachment(Level level, AttachmentType<A> type);
 
     void writeToNBT(CompoundTag tag);

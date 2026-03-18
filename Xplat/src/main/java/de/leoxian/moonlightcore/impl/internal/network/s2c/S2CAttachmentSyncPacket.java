@@ -6,12 +6,12 @@ import de.leoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;
 import de.leoxian.moonlightcore.api.network.NetworkHelper;
 import de.leoxian.moonlightcore.api.network.PacketType;
 import de.leoxian.moonlightcore.impl.attachment.sync.AttachmentSyncChange;
-import de.leoxian.moonlightcore.impl.internal.ModInternal;
+import de.leoxian.moonlightcore.impl.internal.InternalMod;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
 public record S2CAttachmentSyncPacket(AttachmentSyncChange change) {
-    public static final PacketType<S2CAttachmentSyncPacket> TYPE = new PacketType<>(ModInternal.location("attachment_sync"), S2CAttachmentSyncPacket.class, S2CAttachmentSyncPacket::writeToBuffer, S2CAttachmentSyncPacket::readFromBuffer);
+    public static final PacketType<S2CAttachmentSyncPacket> TYPE = new PacketType<>(InternalMod.location("attachment_sync"), S2CAttachmentSyncPacket.class, S2CAttachmentSyncPacket::writeToBuffer, S2CAttachmentSyncPacket::readFromBuffer);
 
     public static void handle(NetworkHelper.PacketContext context, S2CAttachmentSyncPacket packet) {
         context.queueWork(() -> {
