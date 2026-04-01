@@ -1,44 +1,5 @@
-accessWidener v2 named
+accessWidener   v1   named
 
-# FogRenderer
-accessible  class   net/minecraft/client/renderer/FogRenderer$FogData # FogRenderer$FogData
-
-# BlockEntityType
-accessible  class   net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier # BlockEntityType$BlockEntitySupplier
-
-# ParticleEngine
-accessible  class   net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration # ParticleEngine$SpriteParticleRegistration
-accessible  method  net/minecraft/client/particle/ParticleEngine    register    (Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration;)V # register
-accessible  method  net/minecraft/client/particle/ParticleEngine    register    (Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/client/particle/ParticleProvider$Sprite;)V # register
-accessible  method  net/minecraft/client/particle/ParticleEngine    register    (Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/client/particle/ParticleProvider;)V # register
-
-# SurfaceRules
-accessible  class   net/minecraft/world/level/levelgen/SurfaceRules$Context # SurfaceRules$Context
-accessible  class   net/minecraft/world/level/levelgen/SurfaceRules$SurfaceRule # SurfaceRules$SurfaceRule
-
-# OverworldBiomeBuilder
-
-accessible  method  net/minecraft/world/level/biome/OverworldBiomeBuilder addBiomes (Ljava/util/function/Consumer;)V
-
-# Climate
-accessible  class   net/minecraft/world/level/biome/Climate$RTree # Climate$RTree
-accessible  class   net/minecraft/world/level/biome/Climate$RTree$Node # Climate$RTree
-accessible  class   net/minecraft/world/level/biome/Climate$DistanceMetric # Climate$DistanceMetric
-accessible  method  net/minecraft/world/level/biome/Climate$RTree$Node distance ([J)J # Climate$RTree$Node distance
-
-# BuiltInRegistries
-accessible  class   net/minecraft/core/registries/BuiltInRegistries$RegistryBootstrap # RegistryBootstrap
-
-# MenuType
-accessible method net/minecraft/world/inventory/MenuType <init> (Lnet/minecraft/world/inventory/MenuType$MenuSupplier;Lnet/minecraft/world/flag/FeatureFlagSet;)V
-accessible class net/minecraft/world/inventory/MenuType$MenuSupplier
-
-# MenuScreens
-accessible method net/minecraft/client/gui/screens/MenuScreens register (Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;)V
-accessible class net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
-
-# SpawnPlacements
-accessible method net/minecraft/world/entity/SpawnPlacements register (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/SpawnPlacements$Type;Lnet/minecraft/world/level/levelgen/Heightmap$Types;Lnet/minecraft/world/entity/SpawnPlacements$SpawnPredicate;)V
-
-# MobEffect
-accessible method net/minecraft/world/effect/MobEffect <init> (Lnet/minecraft/world/effect/MobEffectCategory;I)V
+# ClientChunkCache
+accessible  class   net/minecraft/client/multiplayer/ClientChunkCache$Storage # Storage
+accessible method net/minecraft/client/world/ClientChunkManager$ClientChunkMap isInRadius (II)Z # isInRadius

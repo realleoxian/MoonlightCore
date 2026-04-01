@@ -16,23 +16,37 @@ configurations {
 }
 
 dependencies {
-    compileOnly(group: 'io.github.llamalad7', name: 'mixinextras-common', version: mixinextrasVersion)
-    compileOnly(group: 'org.spongepowered', name: 'mixin', version: mixinVersion)
+    compileOnly("org.spongepowered:mixin:${mixinVersion}")
+    compileOnly("io.github.llamalad7:mixinextras-common:${mixinextrasVersion}")
 }
 
 legacyForge {
-    mcpVersion = mcVersion
+    mcpVersion = "${mcVersion}"
 
     validateAccessTransformers = true
     accessTransformers.from file("src/main/resources/META-INF/accesstransformer.cfg")
 
     parchment {
-        minecraftVersion = mcVersion
-        mappingsVersion = parchmentVersion
+        minecraftVersion = "${mcVersion}"
+        mappingsVersion = "${parchmentVersion}"
     }
 }
 
 artifacts {
     xplatJava sourceSets.main.java.sourceDirectories.singleFile
     xplatResources sourceSets.main.resources.sourceDirectories.singleFile
+}
+
+publishing {
+    publications {
+        register('xplatJar', MavenPublication) {
+            artifactId base.archivesName.get()
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = "file://" + System.getenv("maven_local")
+        }
+    }
 }

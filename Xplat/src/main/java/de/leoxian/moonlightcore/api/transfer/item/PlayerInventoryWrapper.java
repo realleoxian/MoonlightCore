@@ -15,7 +15,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
 
-public class PlayerInventoryWrapper extends VanillaContainerWrapper {
+public final class PlayerInventoryWrapper extends VanillaContainerWrapper {
 
     public static PlayerInventoryWrapper of(Player player) {
         return (PlayerInventoryWrapper) VanillaContainerWrapper.of(player.getInventory());
@@ -24,7 +24,7 @@ public class PlayerInventoryWrapper extends VanillaContainerWrapper {
     private final DroppedItemsJournal droppedItems = new DroppedItemsJournal();
     private final Inventory inventory;
 
-    protected PlayerInventoryWrapper(Inventory container) {
+    PlayerInventoryWrapper(Inventory container) {
         super(container);
         this.inventory = container;
     }

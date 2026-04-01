@@ -1,73 +1,120 @@
 plugins {
     id 'moonlightcore-loader'
 
-    id 'me.modmuss50.mod-publish-plugin'
     id 'fabric-loom'
+    id 'me.modmuss50.mod-publish-plugin'
 }
 
 dependencies {
-    minecraft(group: 'com.mojang', name: 'minecraft', version: mcVersion)
-    mappings loom.layered {
+    minecraft "com.mojang:minecraft:${mcVersion}"
+    mappings(loom.layered {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${mcVersion}:${parchmentVersion}@zip")
-    }
-    modImplementation(group: 'net.fabricmc', name: 'fabric-loader', version: fabricLoaderVersion)
-    modImplementation(group: 'net.fabricmc.fabric-api', name: 'fabric-api', version: "${fabricApiVersion}+${mcVersion}")
+    })
+    modImplementation("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}+${mcVersion}")
 
-    include implementation(group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1')
-    implementation project(":Xplat")
+    implementation(project(":Xplat"))
 }
 
 loom {
-    accessWidenerPath = project(":Xplat").file("src/main/resources/moonlightcore.accesswidener")
+    mods {
+        create("moonlightcore") {
+            sourceSet sourceSets.main
+        }
+    }
 
     mixin {
         defaultRefmapName = "moonlightcore.refmap.json"
     }
 
     runs {
+        def loomRunDir = file("run").toPath()
+
         client {
             client()
 
-            setConfigName("Fabric Client")
-            runDir("run/client")
+            configName = "Fabric Client"
+            ideConfigGenerated = true
+            runDir = "run/client"
+
+            vmArg "-Dfabric.log.level=info"
         }
         server {
             server()
 
-            setConfigName("Fabric Server")
-            runDir("run/server")
+            configName = "Fabric Server"
+            ideConfigGenerated = true
+            runDir = "run/server"
+
+            vmArg "-Dfabric.log.level=info"
+        }
+        clientDebug {
+            client()
+
+            configName = "Fabric Client Debug"
+            ideConfigGenerated = true
+            runDir = "run/client"
+
+            vmArg "-Dfabric.log.level=debug"
+        }
+        serverDebug {
+            server()
+
+            configName = "Fabric Server Debug"
+            ideConfigGenerated = true
+            runDir = "run/server"
+
+            vmArg "-Dfabric.log.level=debug"
         }
     }
+
+    accessWidenerPath = project(":Xplat").file("src/main/resources/moonlightcore.accesswidener")
 }
 
+artifacts {
+    archives(tasks.remapJar)
+    archives(tasks.remapSourcesJar)
+}
+
+import me.modmuss50.mpp.ReleaseType
 publishMods {
+    type = ReleaseType.of(modVersionType)
     file = tasks.remapJar.archiveFile
     changelog = provider {
-        def changelogFile = rootProject.file("changelog/${mcVersion}-${modVersion}.md")
-
-        if(changelogFile.exists()) {
-            return changelogFile.text
-        }
-
-        return "No changelog provided"
+        def file = file("../Changelog/changelog.md")
+        return file.exists() ? file.text : "No changelog provided"
     }
-    type = STABLE
-    displayName.set("[Fabric] MoonlightCore | ${mcVersion}-${modVersion}")
-    modLoaders.add("fabric")
-    version = project.version.toString()
+    modLoaders = ["fabric"]
+    displayName = "MoonlightCore | Fabric ${mcVersion}"
+    version = project.version
 
     curseforge {
         projectId = "1152824"
         accessToken = System.getenv("CURSEFORGE_API_KEY")
-        minecraftVersions.add(mcVersion)
-        javaVersions.add(JavaVersion.VERSION_17)
+        minecraftVersions = [mcVersion]
+        javaVersions = [JavaVersion.toVersion(modJavaVersion)]
         dryRun = !System.getenv().containsKey("CURSEFORGE_API_KEY")
     }
     modrinth {
         projectId = "6MSffsOL"
         accessToken = System.getenv("MODRINTH_TOKEN")
-        minecraftVersions.add(mcVersion)
-        dryRun.set(!System.getenv().containsKey("MODRINTH_TOKEN"))
+        minecraftVersions = [mcVersion]
+        dryRun = !System.getenv().containsKey("MODRINTH_TOKEN")
+    }
+}
+
+publishing {
+    publications {
+        register("fabricJar", MavenPublication) {
+            artifactId = base.archivesName.get()
+            artifact(tasks.remapJar)
+            artifact(tasks.remapSourcesJar)
+        }
+    }
+    repositories {
+        maven {
+            url = "file://" + System.getenv("maven_local")
+        }
     }
 }

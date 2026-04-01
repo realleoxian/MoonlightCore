@@ -2,7 +2,7 @@ package de.leoxian.moonlightcore.impl.event;
 
 import de.leoxian.moonlightcore.api.event.EventBus;
 import de.leoxian.moonlightcore.api.event.EventPriority;
-import de.leoxian.moonlightcore.impl.internal.ModInternal;
+import de.leoxian.moonlightcore.impl.internal.InternalMod;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public final class EventBusImpl<T> implements EventBus<T> {
-    public static final ResourceLocation DEFAULT_PHASE = new ResourceLocation(ModInternal.MOD_ID, "default");
+    public static final ResourceLocation DEFAULT_PHASE = new ResourceLocation(InternalMod.MOD_ID, "default");
 
     public static <T> EventBus<T> create(Function<T[], T> factory) {
         return new EventBusImpl<>(factory);

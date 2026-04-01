@@ -28,7 +28,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import java.util.Map;
 import java.util.Objects;
 
-public class ComposterWrapper extends SnapshotJournal<BlockState> {
+public final class ComposterWrapper extends SnapshotJournal<BlockState> {
     private static final Map<WrapperLocation, ComposterWrapper> WRAPPERS = new MapMaker().concurrencyLevel(1).weakKeys().weakValues().makeMap();
     private static final ItemResource BONE_MEAL = ItemResource.of(Items.BONE_MEAL);
 

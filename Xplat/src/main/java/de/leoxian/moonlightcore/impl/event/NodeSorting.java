@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import com.google.common.annotations.VisibleForTesting;
-import de.leoxian.moonlightcore.impl.internal.ModLoggingMarkers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +132,7 @@ public class NodeSorting {
                         builder.append("\t").append(node.getDescription()).append("\n");
                     }
 
-                    LOGGER.warn(ModLoggingMarkers.EVENT, builder.toString());
+                    LOGGER.warn(builder.toString());
                 }
             }
 

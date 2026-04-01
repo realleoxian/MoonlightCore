@@ -1,102 +1,109 @@
 plugins {
     id 'moonlightcore-loader'
 
-    id 'me.modmuss50.mod-publish-plugin'
     id 'net.neoforged.moddev.legacyforge'
+    id 'me.modmuss50.mod-publish-plugin'
 }
 
-mixin {
-    add sourceSets.main, 'moonlightcore.refmap.json'
+dependencies {
+    compileOnly(project(":Xplat"))
 
-    config 'moonlightcore.mixins.json'
-    config 'moonlightcore.forge.mixins.json'
+    compileOnly("io.github.llamalad7:mixinextras-common:${mixinextrasVersion}")
+    jarJar(runtimeOnly("io.github.llamalad7:mixinextras-forge:${mixinextrasVersion}"))
+    if(System.getProperty("idea.sync.active") != "true") {
+        annotationProcessor("org.spongepowered:mixin:${mixinVersion}:processor")
+    }
+    annotationProcessor("io.github.llamalad7:mixinextras-common:${mixinextrasVersion}")
 }
 
+import org.slf4j.event.Level
 legacyForge {
-    version = "$mcVersion-$forgeVersion"
+    version = "${mcVersion}-${forgeVersion}"
 
     validateAccessTransformers = true
-    accessTransformers.from project(':Xplat').file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformers.from project(":Xplat").file("src/main/resources/META-INF/accesstransformer.cfg")
+
+    mods {
+        create("moonlightcore") {
+            sourceSet sourceSets.main
+        }
+    }
 
     parchment {
-        minecraftVersion = mcVersion
-        mappingsVersion = parchmentVersion
+        minecraftVersion = "${mcVersion}"
+        mappingsVersion = "${parchmentVersion}"
     }
 
     runs {
         client {
             client()
 
-            ideName = 'Forge Client'
-            gameDirectory = file('run/client')
-
-            systemProperty('forge.logging.console.level', 'debug')
-            systemProperty('fml.earlyprogresswindow', 'false')
+            ideName = "Forge Client"
+            gameDirectory = file("run/client")
+            logLevel = Level.DEBUG
         }
         server {
             server()
 
-            ideName = 'Forge Server'
-            gameDirectory = file('run/server')
-
-            systemProperty('forge.logging.console.level', 'debug')
-            systemProperty('fml.earlyprogresswindow', 'false')
-        }
-    }
-
-    mods {
-        register('moonlightcore') {
-            sourceSet sourceSets.main
+            ideName = "Forge Server"
+            gameDirectory = file("run/server")
+            logLevel = Level.DEBUG
         }
     }
 }
 
-dependencies {
-    compileOnly project(':Xplat')
-    compileOnly(group: 'io.github.llamalad7', name: 'mixinextras-common', version: mixinextrasVersion)
-    jarJar(runtimeOnly(group: 'io.github.llamalad7', name: 'mixinextras-forge', version: mixinextrasVersion))
-
-    if(System.getProperty('idea.sync.active') != 'true') {
-        annotationProcessor(group: 'org.spongepowered', name: 'mixin', version: mixinVersion, classifier: 'processor')
-    }
-    annotationProcessor(group: 'io.github.llamalad7', name: 'mixinextras-common', version: mixinextrasVersion)
+mixin {
+    add sourceSets.main, "moonlightcore.refmap.json"
+    config "moonlightcore.mixins.json"
+    config "moonlightcore.forge.mixins.json"
 }
 
+import me.modmuss50.mpp.ReleaseType
 publishMods {
+    type = ReleaseType.of(modVersionType)
     file = tasks.jar.archiveFile
     changelog = provider {
-        def changelogFile = rootProject.file("changelog/${mcVersion}-${modVersion}.md")
-
-        if(changelogFile.exists()) {
-            return changelogFile.text
-        }
-
-        return "No changelog provided"
+        def file = file("../Changelog/changelog.md")
+        return file.exists() ? file.text : "No changelog provided"
     }
-    type = STABLE
-    displayName.set("[Forge] MoonlightCore | ${mcVersion}-${modVersion}")
-    modLoaders.add("forge")
-    version = project.version.toString()
+    modLoaders = ["forge"]
+    displayName = "MoonlightCore | Forge ${mcVersion}"
+    version = project.version
 
     curseforge {
         projectId = "1152824"
         accessToken = System.getenv("CURSEFORGE_API_KEY")
-        minecraftVersions.add(mcVersion)
-        javaVersions.add(JavaVersion.VERSION_17)
+        minecraftVersions = [mcVersion]
+        javaVersions = [JavaVersion.toVersion(modJavaVersion)]
         dryRun = !System.getenv().containsKey("CURSEFORGE_API_KEY")
     }
     modrinth {
         projectId = "6MSffsOL"
         accessToken = System.getenv("MODRINTH_TOKEN")
-        minecraftVersions.add(mcVersion)
-        dryRun.set(!System.getenv().containsKey("MODRINTH_TOKEN"))
+        minecraftVersions = [mcVersion]
+        dryRun = !System.getenv().containsKey("MODRINTH_TOKEN")
     }
 }
 
-jar {
+publishing {
+    publications {
+        register("forgeJar", MavenPublication) {
+            artifactId = base.archivesName.get()
+            artifact(tasks.jar)
+            artifact(tasks.sourcesJar)
+        }
+    }
+    repositories {
+        maven {
+            url = "file://" + System.getenv("maven_local")
+        }
+    }
+}
+
+tasks.withType(Jar).configureEach {
     manifest.attributes([
-            'MixinConfigs': 'moonlightcore.mixins.json,moonlightcore.forge.mixins.json'
+      "MixinConfigs": "moonlightcore.mixins.json,moonlightcore.forge.mixins.json"
     ])
 
-    finalizedBy('reobfJar')
+    finalizedBy("reobfJar")
 }

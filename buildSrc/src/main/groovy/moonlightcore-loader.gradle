@@ -3,32 +3,33 @@ plugins {
 }
 
 configurations {
-    xplatJava{
+    xplatJava {
         canBeResolved = true
     }
-    xplatResources{
+    xplatResources {
         canBeResolved = true
     }
 }
 
 dependencies {
-    compileOnly(project(':Xplat')) {
+    compileOnly(project(":Xplat")) {
         capabilities {
             requireCapability "de.leoxian.moonlightcore:moonlightcore"
         }
     }
-    xplatJava project(path: ':Xplat', configuration: 'xplatJava')
-    xplatResources project(path: ':Xplat', configuration: 'xplatResources')
+
+    xplatJava project(path: ":Xplat", configuration: "xplatJava")
+    xplatResources project(path: ":Xplat", configuration: "xplatResources")
 }
 
-tasks.named('compileJava', JavaCompile) {
-    dependsOn(configurations.xplatJava)
-    source(configurations.xplatJava)
-}
-
-processResources {
+tasks.withType(ProcessResources).configureEach {
     dependsOn(configurations.xplatResources)
     from(configurations.xplatResources)
+}
+
+tasks.named('compileJava', JavaCompile).configure {
+    dependsOn(configurations.xplatJava)
+    source(configurations.xplatJava)
 }
 
 tasks.named('javadoc', Javadoc).configure {
@@ -36,7 +37,7 @@ tasks.named('javadoc', Javadoc).configure {
     source(configurations.xplatJava)
 }
 
-tasks.named('sourcesJar', Jar) {
+tasks.named('sourcesJar', Jar).configure {
     dependsOn(configurations.xplatJava)
     from(configurations.xplatJava)
     dependsOn(configurations.xplatResources)

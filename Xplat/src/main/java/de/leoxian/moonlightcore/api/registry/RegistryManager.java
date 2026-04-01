@@ -14,6 +14,8 @@ public interface RegistryManager {
 
     <R, T extends R> DeferredObject<R, T> register(ResourceKey<? extends Registry<R>> registryType, ResourceLocation name, Function<ResourceLocation, T> func);
 
+    <R> Supplier<Registry<R>> getRegistry(ResourceKey<? extends Registry<R>> registryType);
+
     default <R, T extends R> DeferredObject<R, T> register(ResourceKey<? extends Registry<R>> registryType, ResourceLocation name, Supplier<T> func) {
         return register(registryType, name, k -> func.get());
     }

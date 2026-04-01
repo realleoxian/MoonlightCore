@@ -1,34 +1,11 @@
 {
-  "required": true,
-  "minVersion": "0.8",
   "refmap": "moonlightcore.refmap.json",
   "package": "de.leoxian.moonlightcore.fabric.mixin",
+  "required": true,
+  "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "BlockItemMixin",
-    "ChunkMapMixin",
-    "ChunkSerializerMixin",
-    "DedicatedServerMixin",
-    "EntityMixin",
-    "ItemEntityMixin",
-    "LivingDeathInvoker",
-    "LivingEntityMixin",
-    "PlayerAdvancementsMixin",
-    "PlayerMixin",
-    "ServerLevelMixin",
-    "ServerPlayerGameModeMixin",
-    "ServerPlayerMixin",
-    "accessor.BuiltInRegistriesAccessor",
-    "impl.PacketDispatcherImplMixin"
-  ],
-  "client": [
-    "FabricCommandSourceMixin",
-    "FogRendererMixin",
-    "GuiMixin",
-    "client.ClientLevelMixin",
-    "client.IntegratedServerMixin",
-    "impl.client.PacketDispatcherImplMixin"
-  ],
+  "mixins": [],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   }

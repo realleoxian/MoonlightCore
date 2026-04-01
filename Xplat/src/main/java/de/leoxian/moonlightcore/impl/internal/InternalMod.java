@@ -60,6 +60,7 @@ public final class InternalMod {
 
     private static void setupRegistries(RegistryCreatorInitializer initializer) {
         initializer.register(RegistryInformation.create(MoonlightCore.Registries.ATTACHMENT_TYPES).synced(true));
+        initializer.register(RegistryInformation.create(MoonlightCore.Registries.DATA_MAP_TYPES).synced(true));
     }
 
 }

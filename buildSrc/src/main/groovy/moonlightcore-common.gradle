@@ -1,17 +1,23 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'idea'
+    id 'com.diffplug.spotless'
 }
 
-group = 'de.leoxian.moonlightcore'
-version = modVersion
+group = "${modGroup}"
+version = "${modVersion}"
+
+if(!modVersionType.equalsIgnoreCase("stable")) {
+    version += "-${modVersionType}"
+}
 
 base {
-    archivesName = "moonlightcore-${project.name.toLowerCase()}-${mcVersion}"
+    archivesName = "moonlightcore-${project.name.toLowerCase(Locale.ROOT)}"
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain.languageVersion = JavaLanguageVersion.of(modJavaVersion)
     withSourcesJar()
     withJavadocJar()
 }
@@ -20,24 +26,23 @@ repositories {
     exclusiveContent {
         forRepository {
             maven {
-                name = 'Sponge'
-                url = 'https://repo.spongepowered.org/repository/maven-public/'
+                name = "Sponge"
+                url = "https://repo.spongepowered.org/repository/maven-public/"
             }
         }
         filter {
-            includeGroupAndSubgroups('org.spongepowered')
+            includeGroupByRegex('org.spongepowered')
         }
     }
-
     exclusiveContent {
         forRepositories(
                 maven {
-                    name = 'ParchmentMC'
-                    url = 'https://maven.parchmentmc.org/'
+                    name = "Parchment"
+                    url = "https://maven.parchmentmc.org/"
                 },
                 maven {
-                    name = 'NeoForge'
-                    url = 'https://maven.neoforged.net/releases'
+                    name = "NeoForge"
+                    url = "https://maven.neoforged.net/releases"
                 }
         )
         filter {
@@ -62,63 +67,80 @@ repositories {
 }
 
 sourcesJar {
-    from(rootProject.file('LICENSE')) {
-        rename { "${it}_MoonlighCore"}
+    from(rootProject.file("LICENSE")) {
+        rename { "${it}_MoonlightCore"}
     }
 
     archiveClassifier = "sources"
 }
 
-jar {
-    from(rootProject.file('LICENSE')) {
-        rename { "${it}_MoonlighCore"}
-    }
-
-    manifest {
-        attributes([
-                'Specification-Title'   : 'moonlightcore',
-                'Specification-Vendor'  : 'Leoxian',
-                'Specification-Version' : project.jar.archiveVersion,
-                'Implementation-Title'  : 'moonlightcore',
-                'Implementation-Version': project.jar.archiveVersion,
-                'Implementation-Vendor' : 'Leoxian',
-                'Built-On-Minecraft'    : mcVersion
-        ])
+spotless {
+    java {
+        removeUnusedImports()
+        formatAnnotations()
     }
 }
 
-processResources {
-    var expandedProps = [
-            'version': modVersion, 'minecraftVersion': mcVersion, 'minecraftVersionRange': mcVersionRange,
-            'forgeVersion': forgeVersion, 'forgeVersionRange': forgeVersionRange, 'fmlVersionRange': fmlVersionRange,
-            'fabricApiVersion': fabricApiVersion, 'fabricLoaderVersion': fabricLoaderVersion
+tasks.withType(Jar).configureEach {
+    from (rootProject.file("LICENSE")) {
+        rename { "${it}_MoonlightCore"}
+    }
+
+    manifest.attributes([
+            "Specification-Title": "MoonlightCore",
+            "Specification-Vendor": "Leoxian",
+            "Specification-Version": "1",
+            "Implementation-Title": "moonlightcore",
+            "Implementation-Vendor": "Leoxian",
+            "Implementation-Version": "${modVersion}-${modVersionType}",
+            "Built-On-Minecraft": "${mcVersion}"
+    ])
+}
+
+tasks.withType(ProcessResources).configureEach {
+    def extendedProps = [
+            modVersion: project.version,
+            mcVersion: mcVersion, mcVersionRange: mcVersionRange,
+            forgeVersion: forgeVersion, forgeVersionRange: forgeVersionRange, fmlVersionRange: fmlVersionRange,
+            fabricApiVersion: fabricApiVersion, fabricLoaderVersion: fabricLoaderVersion,
+            githubUrl: githubUrl
     ]
-
-    var jsonExpandedProps = expandedProps.collectEntries {
-        key, value -> [(key): value instanceof String ? value.replace("\n", "\\\\n") : value]
+    def jsonExtendedProps = extendedProps.collectEntries {
+        key, value -> [(key): value.replace("\n", "\\\\n")]
     }
 
-    filesMatching(['META-INF/mods.toml']) {
-        expand expandedProps
+    filesMatching(["pack.mcmeta", "fabric.mod.json", "*.mixins.json"]) {
+        expand(jsonExtendedProps)
     }
 
-    filesMatching(['pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
-        expand jsonExpandedProps
+    filesMatching(["META-INF/mods.toml"]) {
+        expand(extendedProps)
     }
 
-    inputs.properties(expandedProps)
+    inputs.properties(extendedProps)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            artifactId base.archivesName.get()
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url = "file://" + System.getenv("maven_local")
-        }
+tasks.withType(AbstractArchiveTask).configureEach {
+    setPreserveFileTimestamps(false)
+    setReproducibleFileOrder(true)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add("-Xlint:unchecked")
+    options.encoding = "UTF-8"
+    options.release = JavaLanguageVersion.of(modJavaVersion).asInt()
+    options.deprecation = true
+}
+
+tasks.withType(Javadoc).configureEach {
+    def stdJavadocDocletOptions = options as StandardJavadocDocletOptions
+    stdJavadocDocletOptions.addStringOption("Xdoclint:none", "-quiet")
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }

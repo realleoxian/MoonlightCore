@@ -7,6 +7,7 @@ import de.leoxian.moonlightcore.api.registry.RegistryCreatorInitializer;
 import de.leoxian.moonlightcore.api.registry.RegistryManager;
 import net.minecraft.resources.ResourceLocation;
 
+import java.nio.file.Path;
 import java.util.function.Consumer;
 
 public interface MoonlightCoreRuntime<C extends ModLoadingRuntimeContext> {
@@ -28,5 +29,9 @@ public interface MoonlightCoreRuntime<C extends ModLoadingRuntimeContext> {
     EnvSide getEnvironmentSide();
 
     boolean isDevelopmentWorkspace();
+
+    Path getGameDirectory();
+
+    Path getConfigDirectory();
 
 }

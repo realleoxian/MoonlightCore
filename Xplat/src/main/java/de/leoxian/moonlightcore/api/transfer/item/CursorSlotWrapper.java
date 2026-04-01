@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 
-public class CursorSlotWrapper extends SingleStackStorage {
+public final class CursorSlotWrapper extends SingleStackStorage {
     private static final Map<AbstractContainerMenu, CursorSlotWrapper> WRAPPERS = new MapMaker().concurrencyLevel(1).weakKeys().weakValues().makeMap();
 
     public static CursorSlotWrapper get(AbstractContainerMenu containerMenu) {

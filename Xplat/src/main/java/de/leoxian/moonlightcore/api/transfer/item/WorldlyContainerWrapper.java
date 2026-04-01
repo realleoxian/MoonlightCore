@@ -5,11 +5,11 @@ import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.world.WorldlyContainer;
 
-class WorldlyContainerWrapper extends VanillaContainerWrapper {
+final class WorldlyContainerWrapper extends VanillaContainerWrapper {
     private final VanillaContainerWrapper containerWrapper;
     private final @Nullable Direction side;
 
-    protected WorldlyContainerWrapper(WorldlyContainer container, VanillaContainerWrapper wrapper, @Nullable Direction side) {
+    WorldlyContainerWrapper(WorldlyContainer container, VanillaContainerWrapper wrapper, @Nullable Direction side) {
         super(container);
         this.containerWrapper = wrapper;
         this.side = side;

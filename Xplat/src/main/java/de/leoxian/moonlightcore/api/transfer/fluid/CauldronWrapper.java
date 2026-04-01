@@ -19,7 +19,7 @@ import net.minecraft.world.level.material.Fluids;
 
 import java.util.Map;
 
-public class CauldronWrapper extends SnapshotJournal<BlockState> implements Storage<FluidResource> {
+public final class CauldronWrapper extends SnapshotJournal<BlockState> implements Storage<FluidResource> {
     private static final Map<WrapperLocation, CauldronWrapper> WRAPPERS = new MapMaker().concurrencyLevel(1).weakKeys().weakValues().makeMap();
 
     public static CauldronWrapper get(Level level, BlockPos blockPos) {
