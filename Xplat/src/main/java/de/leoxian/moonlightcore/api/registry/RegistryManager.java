@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.api.registry;
 
-
+import de.leoxian.moonlightcore.api.MoonlightCore;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +9,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface RegistryManager {
+
+    static RegistryManager get() {
+        return MoonlightCore.getRegistryManager();
+    }
 
     <R> RegistryHelper<R> createHelper(ResourceKey<? extends Registry<R>> registryType, String namespace);
 

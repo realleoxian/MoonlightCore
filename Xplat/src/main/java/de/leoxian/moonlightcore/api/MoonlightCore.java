@@ -2,6 +2,7 @@ package de.leoxian.moonlightcore.api;
 
 import de.leoxian.moonlightcore.api.attachment.AttachmentType;
 import de.leoxian.moonlightcore.api.command.CommandsRegistrar;
+import de.leoxian.moonlightcore.api.network.NetworkHelper;
 import de.leoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
 import de.leoxian.moonlightcore.api.registry.RegistryManager;
 import de.leoxian.moonlightcore.api.runtime.ModLoadingRuntimeContext;
@@ -17,7 +18,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class MoonlightCore {
-    private static final MoonlightCoreRuntime<ModLoadingRuntimeContext> RUNTIME = MoonlightCoreRuntimeFactory.createFactory().make();
+    static final MoonlightCoreRuntime<ModLoadingRuntimeContext> RUNTIME = MoonlightCoreRuntimeFactory.createFactory().make();
 
     public static final Supplier<Registry<AttachmentType<?>>> ATTACHMENT_TYPE_REGISTRY = RegistryManager.get().getRegistry(Registries.ATTACHMENT_TYPE);
 
@@ -39,6 +40,14 @@ public final class MoonlightCore {
 
     public static boolean isModLoaded(String modId) {
         return RUNTIME.isModLoaded(modId);
+    }
+
+    public static NetworkHelper getNetworkHelper() {
+        return RUNTIME.getNetworkHelper();
+    }
+
+    public static RegistryManager getRegistryManager() {
+        return RUNTIME.getRegistryManager();
     }
 
     public static boolean isDevelopmentWorkspace() {

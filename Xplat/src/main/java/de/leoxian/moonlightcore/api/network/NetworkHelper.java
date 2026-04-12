@@ -1,7 +1,7 @@
 package de.leoxian.moonlightcore.api.network;
 
 import de.leoxian.moonlightcore.api.EnvSide;
-import de.leoxian.moonlightcore.api.runtime.MoonlightCoreRuntime;
+import de.leoxian.moonlightcore.api.MoonlightCore;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +14,7 @@ public interface NetworkHelper {
     String DEFAULT_NETWORK_VERSION = "1";
 
     static NetworkHelper get() {
-        return MoonlightCoreRuntime.RUNTIME.getNetworkHelper();
+        return MoonlightCore.getNetworkHelper();
     }
 
     NetworkHelper clientOnly(String namespace);

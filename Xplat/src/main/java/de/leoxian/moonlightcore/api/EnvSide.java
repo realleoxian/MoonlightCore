@@ -11,7 +11,7 @@ public enum EnvSide {
     SERVER
     ;
 
-    private static final EnvSide CURRENT = MoonlightCoreRuntime.RUNTIME.getEnvironmentSide();
+    private static final EnvSide CURRENT = MoonlightCore.RUNTIME.getEnvironmentSide();
 
     public static <T> T runForSide(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
         return switch (CURRENT) {
