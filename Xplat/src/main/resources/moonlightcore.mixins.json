@@ -1,6 +1,6 @@
 {
   "refmap": "moonlightcore.refmap.json",
-  "package": "de.leoxian.moonlightcore.mixin",
+  "package": "de.realleoxian.moonlightcore.mixin",
   "required": true,
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17",
