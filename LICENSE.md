@@ -1,58 +1,65 @@
-# License
-Copyright 2025 © Leoxian
+GNU LESSER GENERAL PUBLIC LICENSE
 
-This license only applies to the source code, assets and wiki present in this repository. The compiled mod comes under 
-its own separated license. By downloading, running, forking, contributing to or otherwise interacting with this repository,
-you agree to the license set out below.
+Version 3, 29 June 2007
 
-TL;DR Feel free to use, modify and share MoonlightCore for any non-commercial purpose, but your must include this license and
-give credit. No making money from it, I'm not responsible for any issues, and by contributing you agree that i can use your work
-with proper attribution. ALl forks must keep this license up-to-date
+Copyright © 2007 Free Software Foundation, Inc. <https://fsf.org/>
 
-## Start of license
+Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
 
-### 0. Used terms
+This version of the GNU Lesser General Public License incorporates the terms and conditions of version 3 of the GNU General Public License, supplemented by the additional permissions listed below.
+0. Additional Definitions.
 
-- 'Leoxian' The author of the Minecraft mod 'MoonlightCore', also known as 'RealLeoxian', 'LeoWGC', 'WonejoMB', 'Wonejo'
-- 'MoonlightCore', 'MlCore' The minecraft mod 'MoonlightCore'
-- 'Original Repository' refers to the official repository maintained by Leoxian at its primary location
-- 'Fork' Refers to any copy, derivative, or modified version of this repository'
-- 'You' The user of this repository, wo may or may not own a GitHub account
+As used herein, “this License” refers to version 3 of the GNU Lesser General Public License, and the “GNU GPL” refers to version 3 of the GNU General Public License.
 
-### 1. Warranty and Usage
+“The Library” refers to a covered work governed by this License, other than an Application or a Combined Work as defined below.
 
-You are free to use, study, and modify this repository for any public or private purpose. You may also create forks
-of the repository for personal or community use. See the ['Distribution' section](#2-distribution) for more information
-about code distribution.
+An “Application” is any work that makes use of an interface provided by the Library, but which is not otherwise based on the Library. Defining a subclass of a class defined by the Library is deemed a mode of using an interface provided by the Library.
 
-THIS REPOSITORY IS PROVIDED "AS IS" WITHOUT ANY WARRANTIES, EXPRESS OR IMPLIED. 
-LEOXIAN SHALL NOT BE HELD RESPONSIBLE FOR ANY DAMAGES, LOSSES, OR MISUSE RESULTING FROM THE USE OF THIS REPOSITORY.
+A “Combined Work” is a work produced by combining or linking an Application with the Library. The particular version of the Library with which the Combined Work was made is also called the “Linked Version”.
 
-### 2. Distribution
+The “Minimal Corresponding Source” for a Combined Work means the Corresponding Source for the Combined Work, excluding any source code for portions of the Combined Work that, considered in isolation, are based on the Application, and not on the Linked Version.
 
-You may distribute original or modified versions of this repository provided that:
+The “Corresponding Application Code” for a Combined Work means the object code and/or source code for the Application, including any data and utility programs needed for reproducing the Combined Work from the Application, but excluding the System Libraries of the Combined Work.
+1. Exception to Section 3 of the GNU GPL.
 
-1. This complete license file is included unchanged
-2. Clear attribution is given to the original repository maintained by Leoxian
-3. Any modifications are clearly documented
-4. The distributed repository complies with all sections of this license
+You may convey a covered work under sections 3 and 4 of this License without being bound by section 3 of the GNU GPL.
+2. Conveying Modified Versions.
 
-### 3. Commercial use
+If you modify a copy of the Library, and, in your modifications, a facility refers to a function or data to be supplied by an Application that uses the facility (other than as an argument passed when the facility is invoked), then you may convey a copy of the modified version:
 
-This repository, in whole or in part, and any modifications, copies or forks thereof may not be used
-for any commercial purposes including, but not limited to, URL shorteners such as adf.ly, selling copies
-of or access to code or assets, or selling modified or complied versions of this repository.
+    a) under this License, provided that you make a good faith effort to ensure that, in the event an Application does not supply the function or data, the facility still operates, and performs whatever part of its purpose remains meaningful, or
+    b) under the GNU GPL, with none of the additional permissions of this License applicable to that copy.
 
-### 4. Contributing
+3. Object Code Incorporating Material from Library Header Files.
 
-By contributing to this repository, you grant Leoxian the right to modify, use, and distribute your work 
-under this license. You will receive attribution unless you decline, and you acknowledge Leoxian's final
-authority over the project.
+The object code form of an Application may incorporate material from a header file that is part of the Library. You may convey such object code under terms of your choice, provided that, if the incorporated material is not limited to numerical parameters, data structure layouts and accessors, or small macros, inline functions and templates (ten or fewer lines in length), you do both of the following:
 
-### 5. Changes to this license
+    a) Give prominent notice with each copy of the object code that the Library is used in it and that the Library and its use are covered by this License.
+    b) Accompany the object code with a copy of the GNU GPL and this license document.
 
-This license may be modified by Leoxian at any time. All forks must use the most current version of this license
-from the original repository. It is the responsibility of fork maintainers to keep their license copy updated.
-If a fork's license is not current, the most recent version from Leoxian's original repository takes precedence.
+4. Combined Works.
 
-## End of license
+You may convey a Combined Work under terms of your choice that, taken together, effectively do not restrict modification of the portions of the Library contained in the Combined Work and reverse engineering for debugging such modifications, if you also do each of the following:
+
+    a) Give prominent notice with each copy of the Combined Work that the Library is used in it and that the Library and its use are covered by this License.
+    b) Accompany the Combined Work with a copy of the GNU GPL and this license document.
+    c) For a Combined Work that displays copyright notices during execution, include the copyright notice for the Library among these notices, as well as a reference directing the user to the copies of the GNU GPL and this license document.
+    d) Do one of the following:
+        0) Convey the Minimal Corresponding Source under the terms of this License, and the Corresponding Application Code in a form suitable for, and under terms that permit, the user to recombine or relink the Application with a modified version of the Linked Version to produce a modified Combined Work, in the manner specified by section 6 of the GNU GPL for conveying Corresponding Source.
+        1) Use a suitable shared library mechanism for linking with the Library. A suitable mechanism is one that (a) uses at run time a copy of the Library already present on the user's computer system, and (b) will operate properly with a modified version of the Library that is interface-compatible with the Linked Version.
+    e) Provide Installation Information, but only if you would otherwise be required to provide such information under section 6 of the GNU GPL, and only to the extent that such information is necessary to install and execute a modified version of the Combined Work produced by recombining or relinking the Application with a modified version of the Linked Version. (If you use option 4d0, the Installation Information must accompany the Minimal Corresponding Source and Corresponding Application Code. If you use option 4d1, you must provide the Installation Information in the manner specified by section 6 of the GNU GPL for conveying Corresponding Source.)
+
+5. Combined Libraries.
+
+and convey such a combined library under terms of your choice, if you do both of the following:
+
+    a) Accompany the combined library with a copy of the same work based on the Library, uncombined with any other library facilities, conveyed under the terms of this License.
+    b) Give prominent notice with the combined library that part of it is a work based on the Library, and explaining where to find the accompanying uncombined form of the same work.
+
+6. Revised Versions of the GNU Lesser General Public License.
+
+The Free Software Foundation may publish revised and/or new versions of the GNU Lesser General Public License from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
+
+Each version is given a distinguishing version number. If the Library as you received it specifies that a certain numbered version of the GNU Lesser General Public License “or any later version” applies to it, you have the option of following the terms and conditions either of that published version or of any later version published by the Free Software Foundation. If the Library as you received it does not specify a version number of the GNU Lesser General Public License, you may choose any version of the GNU Lesser General Public License ever published by the Free Software Foundation.
+
+If the Library as you received it specifies that a proxy can decide whether future versions of the GNU Lesser General Public License shall apply, that proxy's public statement of acceptance of any version is permanent authorization for you to choose that version for the Library.
