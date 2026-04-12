@@ -11,7 +11,7 @@ public enum EventResult {
     ;
 
     public final boolean cancelFurtherProcessing;
-    private Boolean value;
+    private final Boolean value;
 
     EventResult(boolean cancelFurtherProcessing, @Nullable Boolean value) {
         this.cancelFurtherProcessing = cancelFurtherProcessing;
