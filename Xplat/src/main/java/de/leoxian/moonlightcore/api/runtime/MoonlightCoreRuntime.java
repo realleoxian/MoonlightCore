@@ -1,24 +1,24 @@
 package de.leoxian.moonlightcore.api.runtime;
 
 import de.leoxian.moonlightcore.api.EnvSide;
-import de.leoxian.moonlightcore.api.command.CommandsRegistrarContext;
+import de.leoxian.moonlightcore.api.command.CommandsRegistrar;
 import de.leoxian.moonlightcore.api.network.NetworkHelper;
-import de.leoxian.moonlightcore.api.registry.RegistryCreatorInitializer;
+import de.leoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
 import de.leoxian.moonlightcore.api.registry.RegistryManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
 public interface MoonlightCoreRuntime<C extends ModLoadingRuntimeContext> {
+    void initializeMod(String modId, C context, Runnable initializer);
 
-    MoonlightCoreRuntime<ModLoadingRuntimeContext> RUNTIME = MoonlightCoreRuntimeFactory.createFactory().make();
+    void commands(String namespace, CommandsRegistrar registrar);
 
-    void initializeMod(ResourceLocation name, C context, Runnable initializer);
+    void registryInformation(String namespace, Consumer<RegistryInformationRegistrar> initializer);
 
-    void commands(String namespace, Consumer<CommandsRegistrarContext> initializer);
-
-    void registryCreator(String namespace, Consumer<RegistryCreatorInitializer> initializer);
+    void addServerReloadListener(ResourceLocation name, PreparableReloadListener reloadListener);
 
     boolean isModLoaded(String modId);
 
@@ -33,5 +33,4 @@ public interface MoonlightCoreRuntime<C extends ModLoadingRuntimeContext> {
     Path getGameDirectory();
 
     Path getConfigDirectory();
-
 }

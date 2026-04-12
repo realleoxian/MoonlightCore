@@ -1,24 +1,63 @@
 package de.leoxian.moonlightcore.api;
 
 import de.leoxian.moonlightcore.api.attachment.AttachmentType;
-import de.leoxian.moonlightcore.api.datamap.DataMapType;
+import de.leoxian.moonlightcore.api.command.CommandsRegistrar;
+import de.leoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
+import de.leoxian.moonlightcore.api.registry.RegistryManager;
+import de.leoxian.moonlightcore.api.runtime.ModLoadingRuntimeContext;
+import de.leoxian.moonlightcore.api.runtime.MoonlightCoreRuntime;
+import de.leoxian.moonlightcore.api.runtime.MoonlightCoreRuntimeFactory;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 
+import java.nio.file.Path;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static de.leoxian.moonlightcore.impl.internal.InternalMod.internalRegistryKey;
-import static de.leoxian.moonlightcore.impl.internal.InternalMod.supplyRegistry;
+public final class MoonlightCore {
+    private static final MoonlightCoreRuntime<ModLoadingRuntimeContext> RUNTIME = MoonlightCoreRuntimeFactory.createFactory().make();
 
-public class MoonlightCore {
+    public static final Supplier<Registry<AttachmentType<?>>> ATTACHMENT_TYPE_REGISTRY = RegistryManager.get().getRegistry(Registries.ATTACHMENT_TYPE);
 
-    public static final Supplier<Registry<AttachmentType<?>>> ATTACHMENT_TYPES = supplyRegistry(Registries.ATTACHMENT_TYPES);
-    public static final Supplier<Registry<DataMapType<?,?>>> DATA_MAP_TYPES = supplyRegistry(Registries.DATA_MAP_TYPES);
-
-    public static final class Registries {
-        public static final ResourceKey<Registry<AttachmentType<?>>> ATTACHMENT_TYPES = internalRegistryKey("attachment_types");
-        public static final ResourceKey<Registry<DataMapType<?, ?>>> DATA_MAP_TYPES = internalRegistryKey("data_map_types");
-
+    public static void initializeMod(String modId, ModLoadingRuntimeContext context, Runnable initializer) {
+        RUNTIME.initializeMod(modId, context, initializer);
     }
 
+    public static void commands(String namespace, CommandsRegistrar registrar) {
+        RUNTIME.commands(namespace, registrar);
+    }
+
+    public static void registryInformation(String namespace, Consumer<RegistryInformationRegistrar> initializer) {
+        RUNTIME.registryInformation(namespace, initializer);
+    }
+
+    public static void addServerReloadListener(ResourceLocation name, PreparableReloadListener reloadListener) {
+        RUNTIME.addServerReloadListener(name, reloadListener);
+    }
+
+    public static boolean isModLoaded(String modId) {
+        return RUNTIME.isModLoaded(modId);
+    }
+
+    public static boolean isDevelopmentWorkspace() {
+        return RUNTIME.isDevelopmentWorkspace();
+    }
+
+    public static Path getGameDirectory() {
+        return RUNTIME.getGameDirectory();
+    }
+
+    public static Path getConfigDirectory() {
+        return RUNTIME.getConfigDirectory();
+    }
+
+    private MoonlightCore() {}
+
+    public static final class Registries {
+        public static final ResourceKey<Registry<AttachmentType<?>>> ATTACHMENT_TYPE = ResourceKey.createRegistryKey(new ResourceLocation("moonlightcore", "attachment_type"));
+
+        private Registries() {}
+    }
 }
