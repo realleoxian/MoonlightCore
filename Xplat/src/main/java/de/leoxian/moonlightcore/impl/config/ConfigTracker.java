@@ -1,0 +1,68 @@
+package de.leoxian.moonlightcore.impl.config;
+
+import de.leoxian.moonlightcore.api.config.ModConfig;
+import de.leoxian.moonlightcore.api.event.EventPriority;
+import de.leoxian.moonlightcore.api.event.ServerPlayerNetworkEvents;
+import de.leoxian.moonlightcore.api.network.NetworkHelper;
+import de.leoxian.moonlightcore.impl.internal.network.s2c.S2CModConfigSyncPacket;
+import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+
+public final class ConfigTracker {
+    private static final Logger LOGGER = LoggerFactory.getLogger("moonlightcore-config-api");
+    private static final EnumMap<ModConfig.Type, Map<ResourceLocation, ModConfig>> REGISTERED_CONFIGS = new EnumMap<>(ModConfig.Type.class);
+    private static final ConfigFileWatcherThread WATCHER_THREAD;
+
+    static {
+        for (ModConfig.Type type : ModConfig.Type.values()) {
+            REGISTERED_CONFIGS.put(type, new HashMap<>());
+        }
+
+        try {
+            WATCHER_THREAD = new ConfigFileWatcherThread();
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't create Config File Watcher", e);
+        }
+
+        ServerPlayerNetworkEvents.LOGGED_IN.subscribe(EventPriority.HIGHEST, (server, player, handler) -> {
+            REGISTERED_CONFIGS.get(ModConfig.Type.SERVER).values().forEach((config) -> {
+                try {
+                    byte[] data = Files.readAllBytes(config.getFilePath());
+                    NetworkHelper.get().sendToPlayer(player, new S2CModConfigSyncPacket(config.getId(), data));
+                } catch (IOException e) {
+                    LOGGER.error("Failed to send config sync packet for {}", config.getId());
+                }
+            });
+        });
+    }
+
+    public static void startTracking() {
+        if (WATCHER_THREAD.isAlive()) {
+            return;
+        }
+
+        WATCHER_THREAD.start();
+    }
+
+    public static @Nullable ModConfig getConfig(ModConfig.Type type, ResourceLocation id) {
+        return REGISTERED_CONFIGS.get(type).get(id);
+    }
+
+    @ApiStatus.Internal
+    static void register(ModConfig config) {
+        if (REGISTERED_CONFIGS.get(config.getType()).putIfAbsent(config.getId(), config) != null) {
+            throw new IllegalStateException("Duplicated mod config with id '" + config.getId() + "'");
+        }
+
+        WATCHER_THREAD.addCallback(config, () -> ((ModConfigImpl) config).needsReload.compareAndSet(false, true));
+    }
+}

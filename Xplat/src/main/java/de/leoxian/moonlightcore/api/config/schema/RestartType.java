@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.api.config;
+package de.leoxian.moonlightcore.api.config.schema;
 
 public enum RestartType {
     NONE,
