@@ -22,6 +22,10 @@ public final class MoonlightCore {
 
     public static final Supplier<Registry<AttachmentType<?>>> ATTACHMENT_TYPE_REGISTRY = RegistryManager.get().getRegistry(Registries.ATTACHMENT_TYPE);
 
+    public static void onRuntimeInitialized(Runnable action) {
+        RUNTIME.onRuntimeInitialized(action);
+    }
+
     public static void initializeMod(String modId, ModLoadingRuntimeContext context, Runnable initializer) {
         RUNTIME.initializeMod(modId, context, initializer);
     }

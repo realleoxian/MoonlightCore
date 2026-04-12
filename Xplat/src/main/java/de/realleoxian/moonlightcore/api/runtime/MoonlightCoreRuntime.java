@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.util.function.Consumer;
 
 public interface MoonlightCoreRuntime<C extends ModLoadingRuntimeContext> {
+    void onRuntimeInitialized(Runnable action);
+
     void initializeMod(String modId, C context, Runnable initializer);
 
     void commands(String namespace, CommandsRegistrar registrar);
