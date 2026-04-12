@@ -21,6 +21,10 @@ import java.util.function.Consumer;
 public final class MoonlightCoreClient {
     private static final MoonlightCoreClientRuntime<ModLoadingRuntimeContext> RUNTIME = MoonlightCoreClientRuntimeFactory.createFactory().make();
 
+    public static void onClientRuntimeInitialized(Runnable action) {
+        RUNTIME.onClientRuntimeInitialized(action);
+    }
+
     public static void initializeClientMod(String modId, ModLoadingRuntimeContext context, Runnable initializer) {
         RUNTIME.initializeClientMod(modId, context, initializer);
     }

@@ -15,6 +15,8 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import java.util.function.Consumer;
 
 public interface MoonlightCoreClientRuntime<C extends ModLoadingRuntimeContext> {
+    void onClientRuntimeInitialized(Runnable action);
+
     void initializeClientMod(String modId, C context, Runnable initializer);
 
     void commands(String namespace, ClientCommandsRegistrar initializer);
