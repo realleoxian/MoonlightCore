@@ -1,6 +1,5 @@
 package de.leoxian.moonlightcore.api.misc;
 
-import de.leoxian.moonlightcore.impl.util.DelayedExecutorImpl;
 import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
 
 import java.time.Duration;
@@ -17,7 +16,7 @@ public class DelayedRunner {
     }
 
     public DelayedRunner(Duration delay) {
-        this (delay, DelayedExecutorImpl.get());
+        this (delay, IDelayedExecutor.get());
     }
 
     public synchronized void run(Runnable action) {
