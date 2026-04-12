@@ -6,12 +6,12 @@ import de.leoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;
 import de.leoxian.moonlightcore.api.network.NetworkHelper;
 import de.leoxian.moonlightcore.api.network.PacketType;
 import de.leoxian.moonlightcore.impl.attachment.sync.AttachmentSyncChange;
-import de.leoxian.moonlightcore.impl.internal.InternalMod;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public record S2CAttachmentSyncPacket(AttachmentSyncChange change) {
-    public static final PacketType<S2CAttachmentSyncPacket> TYPE = new PacketType<>(InternalMod.location("attachment_sync"), S2CAttachmentSyncPacket.class, S2CAttachmentSyncPacket::writeToBuffer, S2CAttachmentSyncPacket::readFromBuffer);
+    public static final PacketType<S2CAttachmentSyncPacket> TYPE = new PacketType<>(new ResourceLocation("moonlightcore", "attachment_sync"), S2CAttachmentSyncPacket.class, S2CAttachmentSyncPacket::writeToBuffer, S2CAttachmentSyncPacket::readFromBuffer);
 
     public static void handle(NetworkHelper.PacketContext context, S2CAttachmentSyncPacket packet) {
         context.queueWork(() -> {
@@ -34,7 +34,7 @@ public record S2CAttachmentSyncPacket(AttachmentSyncChange change) {
     public static S2CAttachmentSyncPacket readFromBuffer(FriendlyByteBuf byteBuf) {
         byte holderType = byteBuf.readByte();
         AttachmentsHolderInfo<?, ?> holderInfo = AttachmentsHolderInfo.Type.getDecoder(holderType).read(byteBuf);
-        AttachmentType<?> attachmentType = MoonlightCore.ATTACHMENT_TYPES.get().get(byteBuf.readResourceLocation());
+        AttachmentType<?> attachmentType = MoonlightCore.ATTACHMENT_TYPE_REGISTRY.get().get(byteBuf.readResourceLocation());
         byte[] data = byteBuf.readByteArray();
 
         return new S2CAttachmentSyncPacket(new AttachmentSyncChange(holderInfo, attachmentType, data));

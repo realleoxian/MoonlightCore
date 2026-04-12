@@ -21,11 +21,9 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static de.leoxian.moonlightcore.impl.internal.InternalMod.nbtPrefix;
-
 public final class AttachmentMapImpl implements AttachmentMap {
     private static final Logger LOGGER = LoggerFactory.getLogger("moonlightcore-attachment-api");
-    public static final String NBT_TAG = nbtPrefix("attachments");
+    public static final String NBT_TAG = "moonlightcore:attachments";
     private static final String NBT_NAME_TAG = "name";
     private static final String NBT_VALUE_TAG = "value";
 
@@ -104,12 +102,12 @@ public final class AttachmentMapImpl implements AttachmentMap {
             CompoundTag attachmentTag = attachmentsTag.getCompound(i);
 
             ResourceLocation name = new ResourceLocation(attachmentTag.getString(NBT_NAME_TAG));
-            if(!MoonlightCore.ATTACHMENT_TYPES.get().containsKey(name)) {
+            if(!MoonlightCore.ATTACHMENT_TYPE_REGISTRY.get().containsKey(name)) {
                 LOGGER.warn("Attachment type '{}' isn't registered, cannot be read", name);
                 continue;
             }
 
-            AttachmentType<Object> attachmentType = (AttachmentType<Object>) MoonlightCore.ATTACHMENT_TYPES.get().get(name);
+            AttachmentType<Object> attachmentType = (AttachmentType<Object>) MoonlightCore.ATTACHMENT_TYPE_REGISTRY.get().get(name);
             Codec<Object> codec;
             if((codec = attachmentType.codec()) == null) {
                 continue;
@@ -132,7 +130,7 @@ public final class AttachmentMapImpl implements AttachmentMap {
     public <A> @Nullable A set(AttachmentType<A> type, @Nullable A newValue) {
         Objects.requireNonNull(type, "Attachment type cannot be 'null'");
 
-        if(!MoonlightCore.ATTACHMENT_TYPES.get().containsKey(type.name())) {
+        if(!MoonlightCore.ATTACHMENT_TYPE_REGISTRY.get().containsKey(type.name())) {
             throw new IllegalArgumentException("Unregistered attachment type: " + type.name());
         }
 
