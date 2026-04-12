@@ -3,3 +3,7 @@ accessWidener   v1   named
 # ClientChunkCache
 accessible  class   net/minecraft/client/multiplayer/ClientChunkCache$Storage # Storage
 accessible method net/minecraft/client/world/ClientChunkManager$ClientChunkMap isInRadius (II)Z # isInRadius
+
+# Camera
+accessible method net/minecraft/client/render/Camera setRotation (FF)V # setRotation
+accessible method net/minecraft/client/Camera setPosition (Lnet/minecraft/world/phys/Vec3;)V # setPosition
