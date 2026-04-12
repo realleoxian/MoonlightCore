@@ -21,6 +21,9 @@
     "TrackedEntityAccessor"
   ],
   "client": [
+    "client.CameraMixin",
+    "client.KeyboardHandlerMixin",
+    "client.MouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
