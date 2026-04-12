@@ -1,5 +1,7 @@
 package de.leoxian.moonlightcore.impl.apilookup;
 
+import de.leoxian.moonlightcore.api.apilookup.ApiLookupRegistry;
+import de.leoxian.moonlightcore.api.apilookup.item.ItemApiLookup;
 import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

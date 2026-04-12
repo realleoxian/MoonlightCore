@@ -1,5 +1,6 @@
 package de.leoxian.moonlightcore.impl.apilookup;
 
+import de.leoxian.moonlightcore.api.apilookup.ApiLookupRegistry;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.UnmodifiableView;
 
