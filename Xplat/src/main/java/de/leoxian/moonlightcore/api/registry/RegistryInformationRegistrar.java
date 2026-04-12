@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.api.registry;
 
-public interface RegistryCreatorInitializer {
+public interface RegistryInformationRegistrar {
 
     void register(RegistryInformation<?> information);
 
