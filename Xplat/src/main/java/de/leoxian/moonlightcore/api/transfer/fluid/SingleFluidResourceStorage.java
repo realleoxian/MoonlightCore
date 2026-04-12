@@ -1,7 +1,7 @@
 package de.leoxian.moonlightcore.api.transfer.fluid;
 
 import de.leoxian.moonlightcore.api.transfer.storage.SingleResourceStorage;
-import de.leoxian.moonlightcore.api.util.NBTUtils;
+import de.leoxian.moonlightcore.api.misc.NBTUtils;
 import net.minecraft.nbt.CompoundTag;
 
 public abstract class SingleFluidResourceStorage extends SingleResourceStorage<FluidResource> {

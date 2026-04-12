@@ -3,8 +3,7 @@ package de.leoxian.moonlightcore.api.transfer.storage;
 import com.mojang.serialization.Codec;
 import de.leoxian.moonlightcore.api.transfer.transaction.SnapshotJournal;
 import de.leoxian.moonlightcore.api.transfer.transaction.TransactionContext;
-import de.leoxian.moonlightcore.api.util.NBTUtils;
-import de.leoxian.moonlightcore.impl.internal.InternalMod;
+import de.leoxian.moonlightcore.api.misc.NBTUtils;
 import de.leoxian.moonlightcore.impl.transfer.StoragePreconditions;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +15,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 public abstract class StacksStorage<T, S> implements Storage<T> {
-    protected static final String TAG_STACKS = InternalMod.nbtPrefix("stacks");
+    protected static final String TAG_STACKS = "moonlightcore:stacks";
 
     private final List<StackJournal> snapshotJournals = new ArrayList<>();
     private final NonNullList<S> stacks;

@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.api.transfer.context;
 
-import de.leoxian.moonlightcore.api.apilookup.ItemApiLookup;
+import de.leoxian.moonlightcore.api.apilookup.item.ItemApiLookup;
 import de.leoxian.moonlightcore.api.transfer.item.CursorSlotWrapper;
 import de.leoxian.moonlightcore.api.transfer.item.ItemResource;
 import de.leoxian.moonlightcore.api.transfer.item.PlayerInventoryWrapper;
@@ -13,7 +13,6 @@ import de.leoxian.moonlightcore.impl.transfer.context.PlayerItemAccessContext;
 import de.leoxian.moonlightcore.impl.transfer.context.StackItemAccessContext;
 import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
