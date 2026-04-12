@@ -7,7 +7,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.List;
 
 public interface ApiLookupRegistry<A> {
-
     static <A> ApiLookupRegistry<A> create(ApiLookupRegistry.LookupFactory<A> lookupFactory) {
         return ApiLookupRegistryImpl.create(lookupFactory);
     }
@@ -21,5 +20,5 @@ public interface ApiLookupRegistry<A> {
     interface LookupFactory<A> {
         A create(ResourceLocation name, Class<?> apiClass, Class<?> contextClass);
     }
-
 }
+

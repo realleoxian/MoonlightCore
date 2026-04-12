@@ -1,7 +1,8 @@
-package de.leoxian.moonlightcore.api.apilookup;
+package de.leoxian.moonlightcore.api.apilookup.entity;
 
-import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
+import de.leoxian.moonlightcore.api.apilookup.ApiLookup;
 import de.leoxian.moonlightcore.impl.apilookup.EntityApiLookupImpl;
+import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -9,7 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import java.util.List;
 
 public interface EntityApiLookup<A, C extends @Nullable Object> extends ApiLookup<A, C> {
-
     static <A, C extends @Nullable Object> EntityApiLookup<A, C> find(ResourceLocation name, Class<A> apiClass, Class<C> contextClass) {
         return EntityApiLookupImpl.find(name, apiClass, contextClass);
     }
@@ -23,14 +23,12 @@ public interface EntityApiLookup<A, C extends @Nullable Object> extends ApiLooku
 
     EntityApiLookup.@Nullable Provider<A, C> getProvider(EntityType<?> entityType);
 
-    List<EntityApiLookup.Provider<A, C>> getFallbackProviders();
+    List<Provider<A, C>> getFallbackProviders();
 
     @FunctionalInterface
     interface Provider<A, C extends @Nullable Object> {
-
         @Nullable
         A get(Entity entity, C context);
-
     }
-
 }
+

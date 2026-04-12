@@ -16,8 +16,8 @@
 
 package de.leoxian.moonlightcore.impl.apilookup;
 
-import de.leoxian.moonlightcore.api.apilookup.BlockApiCache;
-import de.leoxian.moonlightcore.api.apilookup.BlockApiLookup;
+import de.leoxian.moonlightcore.api.apilookup.block.BlockApiCache;
+import de.leoxian.moonlightcore.api.apilookup.block.BlockApiLookup;
 import de.leoxian.moonlightcore.api.event.EventPriority;
 import de.leoxian.moonlightcore.api.event.ServerBlockEntityEvents;
 import de.leoxian.moonlightcore.impl.util.annotation.Nullable;

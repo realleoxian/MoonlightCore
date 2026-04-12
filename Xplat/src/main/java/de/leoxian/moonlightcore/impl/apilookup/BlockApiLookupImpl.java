@@ -1,7 +1,7 @@
 package de.leoxian.moonlightcore.impl.apilookup;
 
 import de.leoxian.moonlightcore.api.apilookup.ApiLookupRegistry;
-import de.leoxian.moonlightcore.api.apilookup.BlockApiLookup;
+import de.leoxian.moonlightcore.api.apilookup.block.BlockApiLookup;
 import de.leoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
