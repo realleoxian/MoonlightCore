@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.api.util;
+package de.leoxian.moonlightcore.api.misc;
 
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
