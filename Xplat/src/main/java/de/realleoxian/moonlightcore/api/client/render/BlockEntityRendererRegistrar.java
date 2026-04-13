@@ -4,6 +4,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import java.util.function.Supplier;
+
 public interface BlockEntityRendererRegistrar {
-    <BE extends BlockEntity> void register(BlockEntityType<BE> blockEntityType, BlockEntityRendererProvider<BE> provider);
+    <BE extends BlockEntity> void register(Supplier<BlockEntityType<BE>> blockEntityType, BlockEntityRendererProvider<BE> provider);
 }

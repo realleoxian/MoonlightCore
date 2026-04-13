@@ -3,7 +3,6 @@ package de.realleoxian.moonlightcore.api.client.runtime;
 import de.realleoxian.moonlightcore.api.client.command.ClientCommandsRegistrar;
 import de.realleoxian.moonlightcore.api.client.keymapping.KeyMappingRegistrar;
 import de.realleoxian.moonlightcore.api.client.model.ModelLayerRegistrar;
-import de.realleoxian.moonlightcore.api.client.model.plugin.ModelLoadPlugin;
 import de.realleoxian.moonlightcore.api.client.particle.ParticleProviderRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.*;
 import de.realleoxian.moonlightcore.api.client.render.color.BlockColorRegistrar;
@@ -38,6 +37,4 @@ public interface MoonlightCoreClientRuntime<C extends ModLoadingRuntimeContext> 
     void keyMappings(String namespace, Consumer<KeyMappingRegistrar> registrar);
 
     void registerPreparableReloadListener(ResourceLocation name, PreparableReloadListener listener);
-
-    void registerModelLoadPlugin(ResourceLocation name, ModelLoadPlugin plugin);
 }
