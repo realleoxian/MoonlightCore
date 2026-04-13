@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public abstract class CommonMoonlightCoreRuntime<C extends ModLoadingRuntimeContext> implements MoonlightCoreRuntime<C> {
+public abstract class XplatMoonlightCoreRuntime<C extends ModLoadingRuntimeContext> implements MoonlightCoreRuntime<C> {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private final Deque<Runnable> initializeActions = new ArrayDeque<>();
