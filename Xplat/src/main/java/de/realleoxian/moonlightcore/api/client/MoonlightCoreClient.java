@@ -3,7 +3,6 @@ package de.realleoxian.moonlightcore.api.client;
 import de.realleoxian.moonlightcore.api.client.command.ClientCommandsRegistrar;
 import de.realleoxian.moonlightcore.api.client.keymapping.KeyMappingRegistrar;
 import de.realleoxian.moonlightcore.api.client.model.ModelLayerRegistrar;
-import de.realleoxian.moonlightcore.api.client.model.plugin.ModelLoadPlugin;
 import de.realleoxian.moonlightcore.api.client.particle.ParticleProviderRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.BlockEntityRendererRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.ChunkRenderLayerRegistrar;
@@ -16,10 +15,11 @@ import de.realleoxian.moonlightcore.api.runtime.ModLoadingRuntimeContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 
+import java.util.ServiceLoader;
 import java.util.function.Consumer;
 
 public final class MoonlightCoreClient {
-    private static final MoonlightCoreClientRuntime<ModLoadingRuntimeContext> RUNTIME = MoonlightCoreClientRuntimeFactory.createFactory().make();
+    private static final MoonlightCoreClientRuntime<ModLoadingRuntimeContext> RUNTIME = create();
 
     public static void onClientRuntimeInitialized(Runnable action) {
         RUNTIME.onClientRuntimeInitialized(action);
@@ -69,8 +69,15 @@ public final class MoonlightCoreClient {
         RUNTIME.registerPreparableReloadListener(name, listener);
     }
 
-    public static void registerModelLoadPlugin(ResourceLocation name, ModelLoadPlugin plugin) {
-        RUNTIME.registerModelLoadPlugin(name, plugin);
+    public static MoonlightCoreClientRuntime<ModLoadingRuntimeContext> getRUNTIME() {
+        return RUNTIME;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static MoonlightCoreClientRuntime<ModLoadingRuntimeContext> create() {
+        var loader = ServiceLoader.load(MoonlightCoreClientRuntimeFactory.class);
+        var factory = loader.findFirst().orElseThrow();
+        return (MoonlightCoreClientRuntime<ModLoadingRuntimeContext>) factory.make();
     }
 
     private MoonlightCoreClient() {}

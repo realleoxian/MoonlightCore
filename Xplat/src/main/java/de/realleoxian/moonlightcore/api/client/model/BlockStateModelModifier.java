@@ -1,4 +1,4 @@
-package de.realleoxian.moonlightcore.api.client.model.plugin;
+package de.realleoxian.moonlightcore.api.client.model;
 
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.level.block.Block;
