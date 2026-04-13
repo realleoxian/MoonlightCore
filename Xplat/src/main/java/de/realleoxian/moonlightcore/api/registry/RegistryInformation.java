@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 public interface RegistryInformation<T> {
-
     static <T> RegistryInformation<T> create() {
         return RegistryInformationImpl.create();
     }
@@ -28,5 +27,4 @@ public interface RegistryInformation<T> {
     ResourceLocation defaultKey();
 
     boolean isSync();
-
 }

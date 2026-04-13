@@ -1,7 +1,7 @@
 package de.realleoxian.moonlightcore.impl.attachment;
 
 import com.mojang.serialization.Codec;
-import de.realleoxian.moonlightcore.api.MoonlightCore;
+import de.realleoxian.moonlightcore.api.MoonlightCoreRegistries;
 import de.realleoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;
 import de.realleoxian.moonlightcore.api.attachment.AttachmentMap;
 import de.realleoxian.moonlightcore.api.attachment.AttachmentType;
@@ -102,12 +102,12 @@ public final class AttachmentMapImpl implements AttachmentMap {
             CompoundTag attachmentTag = attachmentsTag.getCompound(i);
 
             ResourceLocation name = new ResourceLocation(attachmentTag.getString(NBT_NAME_TAG));
-            if(!MoonlightCore.ATTACHMENT_TYPE_REGISTRY.get().containsKey(name)) {
+            if(!MoonlightCoreRegistries.attachmentTypes().containsKey(name)) {
                 LOGGER.warn("Attachment type '{}' isn't registered, cannot be read", name);
                 continue;
             }
 
-            AttachmentType<Object> attachmentType = (AttachmentType<Object>) MoonlightCore.ATTACHMENT_TYPE_REGISTRY.get().get(name);
+            AttachmentType<Object> attachmentType = (AttachmentType<Object>) MoonlightCoreRegistries.attachmentTypes().get(name);
             Codec<Object> codec;
             if((codec = attachmentType.codec()) == null) {
                 continue;
@@ -130,7 +130,7 @@ public final class AttachmentMapImpl implements AttachmentMap {
     public <A> @Nullable A set(AttachmentType<A> type, @Nullable A newValue) {
         Objects.requireNonNull(type, "Attachment type cannot be 'null'");
 
-        if(!MoonlightCore.ATTACHMENT_TYPE_REGISTRY.get().containsKey(type.name())) {
+        if(!MoonlightCoreRegistries.attachmentTypes().containsKey(type.name())) {
             throw new IllegalArgumentException("Unregistered attachment type: " + type.name());
         }
 

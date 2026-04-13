@@ -1,6 +1,7 @@
 package de.realleoxian.moonlightcore.impl.internal.network.s2c;
 
 import de.realleoxian.moonlightcore.api.MoonlightCore;
+import de.realleoxian.moonlightcore.api.MoonlightCoreRegistries;
 import de.realleoxian.moonlightcore.api.attachment.AttachmentType;
 import de.realleoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
@@ -34,7 +35,7 @@ public record S2CAttachmentSyncPacket(AttachmentSyncChange change) {
     public static S2CAttachmentSyncPacket readFromBuffer(FriendlyByteBuf byteBuf) {
         byte holderType = byteBuf.readByte();
         AttachmentsHolderInfo<?, ?> holderInfo = AttachmentsHolderInfo.Type.getDecoder(holderType).read(byteBuf);
-        AttachmentType<?> attachmentType = MoonlightCore.ATTACHMENT_TYPE_REGISTRY.get().get(byteBuf.readResourceLocation());
+        AttachmentType<?> attachmentType = MoonlightCoreRegistries.attachmentTypes().get(byteBuf.readResourceLocation());
         byte[] data = byteBuf.readByteArray();
 
         return new S2CAttachmentSyncPacket(new AttachmentSyncChange(holderInfo, attachmentType, data));

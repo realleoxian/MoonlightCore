@@ -1,23 +1,22 @@
 package de.realleoxian.moonlightcore.api.registry;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface RegistryHelper<R> {
+public interface RegistryHelper {
+    <R> Registrar<R> createHelper(ResourceKey<? extends Registry<R>> registryType);
 
-    <T extends R> DeferredObject<R, T> register(String name, Function<ResourceLocation, T> func);
+    <R> Supplier<Registry<R>> getRegistry(ResourceKey<? extends Registry<R>> registryType);
 
-    default <T extends R> DeferredObject<R, T> register(String name, Supplier<T> sup) {
-        return register(name, k -> sup.get());
+    public interface Registrar<R> {
+        <T extends R> DeferredObject<R, T> register(String name, Function<ResourceLocation, T> func);
+
+        default <T extends R> DeferredObject<R, T> register(String name, Supplier<T> sup) {
+            return register(name, k -> sup.get());
+        }
     }
-
-    @UnmodifiableView
-    Set<DeferredObject<R, ?>> getDeferredObjects();
-
-    String namespace();
-
 }

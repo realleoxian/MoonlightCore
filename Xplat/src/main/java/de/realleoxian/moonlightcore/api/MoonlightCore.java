@@ -1,26 +1,21 @@
 package de.realleoxian.moonlightcore.api;
 
-import de.realleoxian.moonlightcore.api.attachment.AttachmentType;
 import de.realleoxian.moonlightcore.api.command.CommandsRegistrar;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
+import de.realleoxian.moonlightcore.api.registry.RegistryHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
-import de.realleoxian.moonlightcore.api.registry.RegistryManager;
 import de.realleoxian.moonlightcore.api.runtime.ModLoadingRuntimeContext;
 import de.realleoxian.moonlightcore.api.runtime.MoonlightCoreRuntime;
 import de.realleoxian.moonlightcore.api.runtime.MoonlightCoreRuntimeFactory;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 import java.nio.file.Path;
+import java.util.ServiceLoader;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public final class MoonlightCore {
-    static final MoonlightCoreRuntime<ModLoadingRuntimeContext> RUNTIME = MoonlightCoreRuntimeFactory.createFactory().make();
-
-    public static final Supplier<Registry<AttachmentType<?>>> ATTACHMENT_TYPE_REGISTRY = RegistryManager.get().getRegistry(Registries.ATTACHMENT_TYPE);
+    static final MoonlightCoreRuntime<ModLoadingRuntimeContext> RUNTIME = create();
 
     public static void onRuntimeInitialized(Runnable action) {
         RUNTIME.onRuntimeInitialized(action);
@@ -30,8 +25,12 @@ public final class MoonlightCore {
         RUNTIME.initializeMod(modId, context, initializer);
     }
 
-    public static void commands(String namespace, CommandsRegistrar registrar) {
-        RUNTIME.commands(namespace, registrar);
+    public static void commands(CommandsRegistrar registrar) {
+        RUNTIME.commands(registrar);
+    }
+
+    public static void registry(String namespace, Consumer<RegistryHelper> initializer) {
+        RUNTIME.registry(namespace, initializer);
     }
 
     public static void registryInformation(String namespace, Consumer<RegistryInformationRegistrar> initializer) {
@@ -50,10 +49,6 @@ public final class MoonlightCore {
         return RUNTIME.getNetworkHelper();
     }
 
-    public static RegistryManager getRegistryManager() {
-        return RUNTIME.getRegistryManager();
-    }
-
     public static boolean isDevelopmentWorkspace() {
         return RUNTIME.isDevelopmentWorkspace();
     }
@@ -66,11 +61,16 @@ public final class MoonlightCore {
         return RUNTIME.getConfigDirectory();
     }
 
-    private MoonlightCore() {}
-
-    public static final class Registries {
-        public static final ResourceKey<Registry<AttachmentType<?>>> ATTACHMENT_TYPE = ResourceKey.createRegistryKey(new ResourceLocation("moonlightcore", "attachment_type"));
-
-        private Registries() {}
+    public static MoonlightCoreRuntime<ModLoadingRuntimeContext> getRuntime() {
+        return RUNTIME;
     }
+
+    @SuppressWarnings("unchecked")
+    private static MoonlightCoreRuntime<ModLoadingRuntimeContext> create() {
+        var loader = ServiceLoader.load(MoonlightCoreRuntimeFactory.class);
+        var factory = loader.findFirst().orElseThrow();
+        return (MoonlightCoreRuntime<ModLoadingRuntimeContext>) factory.make();
+    }
+
+    private MoonlightCore() {}
 }

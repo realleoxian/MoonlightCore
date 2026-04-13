@@ -1,6 +1,5 @@
 package de.realleoxian.moonlightcore.api.registry;
 
-import de.realleoxian.moonlightcore.api.datamap.DataMapHolder;
 import de.realleoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -11,8 +10,7 @@ import net.minecraft.tags.TagKey;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public interface DeferredObject<R, T extends R> extends Supplier<T>, DataMapHolder {
-
+public interface DeferredObject<R, T extends R> extends Supplier<T> {
     T get();
 
     boolean is(Predicate<ResourceKey<R>> filter);
@@ -29,5 +27,4 @@ public interface DeferredObject<R, T extends R> extends Supplier<T>, DataMapHold
     ResourceLocation name();
 
     ResourceKey<? extends Registry<R>> registryKey();
-
 }
