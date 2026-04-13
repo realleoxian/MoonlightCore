@@ -11,8 +11,6 @@ import net.minecraft.world.entity.player.Player;
 import java.util.function.BiConsumer;
 
 public interface NetworkHelper {
-    String DEFAULT_NETWORK_VERSION = "1";
-
     static NetworkHelper get() {
         return MoonlightCore.getNetworkHelper();
     }
@@ -21,46 +19,33 @@ public interface NetworkHelper {
 
     NetworkHelper serverOnly(String namespace);
 
-    PacketRegistrar registrar(String namespace, String networkVersion, HandlerThread handlerThread);
+    NetworkHelper protocolVersion(String namespace, String protocolVersion);
 
-    <MSG> void registerPacketReceiver(PacketType<MSG> type, BiConsumer<MSG, PacketContext> receiver);
+    NetworkHelper handlerThread(String namespace, HandlerThread handlerThread);
 
-    <MSG> void sendTo(PacketSender sender, MSG packet);
+    PacketRegistrar registrar(String namespace);
 
     <MSG> void sendToServer(MSG packet);
 
     <MSG> void sendToPlayer(ServerPlayer player, MSG packet);
 
-    <MSG> void sendToPlayers(Iterable<? extends ServerPlayer> players, MSG packet);
+    default <MSG> void sendToPlayers(Iterable<? extends ServerPlayer> players, MSG packet) {
+        players.forEach(p -> sendToPlayer(p, packet));
+    }
 
     boolean canServerReceive(ResourceLocation packet);
 
-    boolean canPlayerReceive(Player player, ResourceLocation packet);
-
-    default PacketRegistrar registrar(String namespace, String networkVersion) {
-        return registrar(namespace, networkVersion, HandlerThread.MAIN);
-    }
-
-    default PacketRegistrar registrar(String namespace, HandlerThread handlerThread) {
-        return registrar(namespace, DEFAULT_NETWORK_VERSION, handlerThread);
-    }
-
-    default PacketRegistrar registrar(String namespace) {
-        return registrar(namespace, DEFAULT_NETWORK_VERSION, HandlerThread.NETWORK);
-    }
+    boolean canPlayerReceive(ServerPlayer player, ResourceLocation packet);
 
     interface PacketRegistrar {
+        <MSG> void bidirectional(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler);
 
-        <MSG> void bidirectional(PacketType<MSG> type, BiConsumer<PacketContext, MSG> context);
+        <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler);
 
-        <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext, MSG> context);
-
-        <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext, MSG> context);
-
+        <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler);
     }
 
     interface PacketContext {
-
         void queueWork(Runnable task);
 
         Player player();
@@ -74,7 +59,6 @@ public interface NetworkHelper {
         default void disconnect(Component message) {
             handler().disconnect(message);
         }
-
     }
 
     enum HandlerThread {
