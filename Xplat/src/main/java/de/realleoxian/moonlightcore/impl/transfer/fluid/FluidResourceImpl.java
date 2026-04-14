@@ -85,17 +85,6 @@ public class FluidResourceImpl implements FluidResource {
     }
 
     @Override
-    public CompoundTag toNBT() {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putString(TAG_FLUID, BuiltInRegistries.FLUID.getKey(fluid).toString());
-        if(tag != null) {
-            nbt.put(TAG_TAG, tag);
-        }
-
-        return nbt;
-    }
-
-    @Override
     public void writeToBuffer(FriendlyByteBuf byteBuf) {
         if(isBlank()) {
             byteBuf.writeBoolean(false);

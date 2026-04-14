@@ -206,7 +206,7 @@ public final class TransactionManager {
         @Override
         public Transaction getOpenTransaction(int depth) {
             validateThread();
-            return TransactionContext.this.getOpenTransaction(depth);
+            return TransactionManager.this.getOpenTransaction(depth);
         }
 
         @Override
