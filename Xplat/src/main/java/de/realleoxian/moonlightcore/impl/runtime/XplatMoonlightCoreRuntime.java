@@ -19,8 +19,8 @@ public abstract class XplatMoonlightCoreRuntime<C extends ModLoadingRuntimeConte
         this.initialized = true;
 
         try {
-            Runnable action;
-            while ((action = initializeActions.pop()) != null) {
+            while (!initializeActions.isEmpty()) {
+                Runnable action = this.initializeActions.remove();
                 action.run();
             }
         } catch (RuntimeException e) {
