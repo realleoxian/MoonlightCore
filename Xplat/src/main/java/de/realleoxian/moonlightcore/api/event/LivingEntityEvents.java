@@ -7,7 +7,7 @@ public final class LivingEntityEvents {
     /**
      * @see Hurt#onEntityHurt(LivingEntity, DamageSource, float)
      */
-    public static final EventBus<Hurt> HURT = EventBus.create((listeners) -> (entity, source, amount) -> {
+    public static final EventBus<Hurt> HURT = EventBus.create(Hurt.class, (listeners) -> (entity, source, amount) -> {
         for(Hurt listener : listeners) {
             EventResult result = listener.onEntityHurt(entity, source, amount);
 
@@ -21,7 +21,7 @@ public final class LivingEntityEvents {
     /**
      * @see Death#onEntityDeath(LivingEntity, DamageSource)
      */
-    public static final EventBus<Death> DEATH = EventBus.create((listeners) -> (entity, source) -> {
+    public static final EventBus<Death> DEATH = EventBus.create(Death.class, (listeners) -> (entity, source) -> {
         for(Death listener : listeners) {
             EventResult result = listener.onEntityDeath(entity, source);
 
@@ -35,7 +35,7 @@ public final class LivingEntityEvents {
     /**
      * @see Attack#onEntityAttack(LivingEntity, DamageSource, float)
      */
-    public static final EventBus<Attack> ATTACK = EventBus.create((listeners) -> (entity, source, amount) -> {
+    public static final EventBus<Attack> ATTACK = EventBus.create(Attack.class, (listeners) -> (entity, source, amount) -> {
         for(Attack listener : listeners) {
             EventResult result = listener.onEntityAttack(entity, source, amount);
 

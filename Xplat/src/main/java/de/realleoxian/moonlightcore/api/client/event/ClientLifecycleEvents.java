@@ -7,7 +7,7 @@ public final class ClientLifecycleEvents {
     /**
      * @see Started#onClientStarted(Minecraft)
      */
-    public static final EventBus<Started> STARTED = EventBus.create((listeners) -> (client) -> {
+    public static final EventBus<Started> STARTED = EventBus.create(Started.class, (listeners) -> (client) -> {
        for(ClientLifecycleEvents.Started listener : listeners) {
            listener.onClientStarted(client);
        }
@@ -15,7 +15,7 @@ public final class ClientLifecycleEvents {
     /**
      * @see Stopping#onClientStopping(Minecraft)
      */
-    public static final EventBus<Stopping> STOPPING = EventBus.create((listeners) -> (client) -> {
+    public static final EventBus<Stopping> STOPPING = EventBus.create(Stopping.class, (listeners) -> (client) -> {
         for(ClientLifecycleEvents.Stopping listener : listeners) {
             listener.onClientStopping(client);
         }

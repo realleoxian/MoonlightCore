@@ -7,7 +7,7 @@ public final class ClientTickEvents {
     /**
      * @see Start#onStartClientTick(Minecraft)
      */
-    public static final EventBus<Start> TICK_START = EventBus.create((listeners) -> (client) -> {
+    public static final EventBus<Start> TICK_START = EventBus.create(Start.class, (listeners) -> (client) -> {
         for(ClientTickEvents.Start listener : listeners) {
             listener.onStartClientTick(client);
         }
@@ -15,7 +15,7 @@ public final class ClientTickEvents {
     /**
      * @see End#onEndClientTick(Minecraft)
      */
-    public static final EventBus<End> TICK_END = EventBus.create((listeners) -> (client) -> {
+    public static final EventBus<End> TICK_END = EventBus.create(End.class, (listeners) -> (client) -> {
         for(ClientTickEvents.End listener : listeners) {
             listener.onEndClientTick(client);
         }

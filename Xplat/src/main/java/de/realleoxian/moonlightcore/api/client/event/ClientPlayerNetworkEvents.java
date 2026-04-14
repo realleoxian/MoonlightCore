@@ -8,7 +8,7 @@ public final class ClientPlayerNetworkEvents {
     /**
      * @see LoggedIn#onPlayerLoggedIn(LocalPlayer, ClientPacketListener)
      */
-    public static final EventBus<ClientPlayerNetworkEvents.LoggedIn> LOGGED_IN = EventBus.create((listeners) -> (player, handler) -> {
+    public static final EventBus<ClientPlayerNetworkEvents.LoggedIn> LOGGED_IN = EventBus.create(LoggedIn.class, (listeners) -> (player, handler) -> {
         for(ClientPlayerNetworkEvents.LoggedIn listener : listeners) {
             listener.onPlayerLoggedIn(player, handler);
         }
@@ -16,7 +16,7 @@ public final class ClientPlayerNetworkEvents {
     /**
      * @see LoggedOut#onPlayerLoggedOut(LocalPlayer, ClientPacketListener)
      */
-    public static final EventBus<ClientPlayerNetworkEvents.LoggedOut> LOGGED_OUT = EventBus.create((listeners) -> (player, handler) -> {
+    public static final EventBus<ClientPlayerNetworkEvents.LoggedOut> LOGGED_OUT = EventBus.create(LoggedOut.class, (listeners) -> (player, handler) -> {
         for(ClientPlayerNetworkEvents.LoggedOut listener : listeners) {
             listener.onPlayerLoggedOut(player, handler);
         }

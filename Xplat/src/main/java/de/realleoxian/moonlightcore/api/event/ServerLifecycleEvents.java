@@ -6,7 +6,7 @@ public final class ServerLifecycleEvents {
     /**
      * @see Starting#onServerStarting(MinecraftServer)
      */
-    public static final EventBus<Starting> STARTING = EventBus.create((listeners) -> (server) -> {
+    public static final EventBus<Starting> STARTING = EventBus.create(Starting.class, (listeners) -> (server) -> {
        for(ServerLifecycleEvents.Starting listener : listeners) {
            listener.onServerStarting(server);
        }
@@ -14,7 +14,7 @@ public final class ServerLifecycleEvents {
     /**
      * @see Started#onServerStarted(MinecraftServer)
      */
-    public static final EventBus<Started> STARTED = EventBus.create((listeners) -> (server) -> {
+    public static final EventBus<Started> STARTED = EventBus.create(Started.class, (listeners) -> (server) -> {
         for(ServerLifecycleEvents.Started listener : listeners) {
             listener.onServerStarted(server);
         }
@@ -22,7 +22,7 @@ public final class ServerLifecycleEvents {
     /**
      * @see Stopping#onServerStopping(MinecraftServer)
      */
-    public static final EventBus<Stopping> STOPPING = EventBus.create((listeners) -> (server) -> {
+    public static final EventBus<Stopping> STOPPING = EventBus.create(Stopping.class, (listeners) -> (server) -> {
         for(ServerLifecycleEvents.Stopping listener : listeners) {
             listener.onServerStopping(server);
         }
@@ -30,7 +30,7 @@ public final class ServerLifecycleEvents {
     /**
      * @see Stopped#onServerStopped(MinecraftServer)
      */
-    public static final EventBus<Stopped> STOPPED = EventBus.create((listeners) -> (server) -> {
+    public static final EventBus<Stopped> STOPPED = EventBus.create(Stopped.class, (listeners) -> (server) -> {
         for(ServerLifecycleEvents.Stopped listener : listeners) {
             listener.onServerStopped(server);
         }

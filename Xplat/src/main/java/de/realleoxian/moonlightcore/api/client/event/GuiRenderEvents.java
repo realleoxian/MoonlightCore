@@ -4,9 +4,9 @@ import de.realleoxian.moonlightcore.api.event.EventBus;
 import de.realleoxian.moonlightcore.api.event.EventResult;
 import net.minecraft.client.gui.GuiGraphics;
 
-public final class GuiRenderEvent {
-    public static final EventBus<Start> GUI_RENDER_START = EventBus.create((listeners) -> (graphics, partialTick) -> {
-       for (GuiRenderEvent.Start listener : listeners) {
+public final class GuiRenderEvents {
+    public static final EventBus<Start> GUI_RENDER_START = EventBus.create(Start.class, (listeners) -> (graphics, partialTick) -> {
+       for (GuiRenderEvents.Start listener : listeners) {
            EventResult result = listener.onGuiRenderStart(graphics, partialTick);
 
            if (result.cancelFurtherProcessing) {
@@ -16,13 +16,13 @@ public final class GuiRenderEvent {
 
         return EventResult.TRUE;
     });
-    public static final EventBus<End> GUI_RENDER_END = EventBus.create((listeners) -> (graphics, partialTick) -> {
-        for (GuiRenderEvent.End listener : listeners) {
+    public static final EventBus<End> GUI_RENDER_END = EventBus.create(End.class, (listeners) -> (graphics, partialTick) -> {
+        for (GuiRenderEvents.End listener : listeners) {
             listener.onGuiRenderEnd(graphics, partialTick);
         }
     });
 
-    private GuiRenderEvent() {}
+    private GuiRenderEvents() {}
 
     public interface Start {
         EventResult onGuiRenderStart(GuiGraphics graphics, float partialTick);

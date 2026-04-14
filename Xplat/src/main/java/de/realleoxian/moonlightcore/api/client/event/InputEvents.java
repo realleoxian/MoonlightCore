@@ -3,12 +3,12 @@ package de.realleoxian.moonlightcore.api.client.event;
 import de.realleoxian.moonlightcore.api.event.EventBus;
 
 public final class InputEvents {
-    public static final EventBus<KeyInput> KEY_INPUT = EventBus.create((listeners) -> (keyCode, action, modifier, scancode) -> {
+    public static final EventBus<KeyInput> KEY_INPUT = EventBus.create(KeyInput.class, (listeners) -> (keyCode, action, modifier, scancode) -> {
         for (KeyInput listener : listeners) {
             listener.onKeyInput(keyCode, action, modifier, scancode);
         }
     });
-    public static final EventBus<MouseInput> MOUSE_INPUT = EventBus.create((listeners) -> (button, action, modifiers) -> {
+    public static final EventBus<MouseInput> MOUSE_INPUT = EventBus.create(MouseInput.class, (listeners) -> (button, action, modifiers) -> {
        for (MouseInput listener : listeners) {
            listener.onMouseInput(button, action, modifiers);
        }

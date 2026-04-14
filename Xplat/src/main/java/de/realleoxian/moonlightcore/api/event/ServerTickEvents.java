@@ -9,7 +9,7 @@ public final class ServerTickEvents {
     /**
      * @see Start#onServerTickStart(MinecraftServer, BooleanSupplier)
      */
-    public static final EventBus<Start> START = EventBus.create((listeners) -> (server, hasTime) -> {
+    public static final EventBus<Start> START = EventBus.create(Start.class, (listeners) -> (server, hasTime) -> {
        for(Start listener : listeners) {
            listener.onServerTickStart(server, hasTime);
        }
@@ -17,7 +17,7 @@ public final class ServerTickEvents {
     /**
      * @see End#onServerTickEnd(MinecraftServer, BooleanSupplier)
      */
-    public static final EventBus<End> END = EventBus.create((listeners) -> (server, hasTime) -> {
+    public static final EventBus<End> END = EventBus.create(End.class, (listeners) -> (server, hasTime) -> {
         for(End listener : listeners) {
             listener.onServerTickEnd(server, hasTime);
         }

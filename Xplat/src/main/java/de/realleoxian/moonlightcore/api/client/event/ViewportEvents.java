@@ -11,7 +11,7 @@ public final class ViewportEvents {
     /**
      * @see RenderFog#onRenderFog(GameRenderer, Camera, RenderFog.Context, float)
      */
-    public static final EventBus<RenderFog> RENDER_FOG = EventBus.create((listeners) -> (renderer, camera, context, partialTick) -> {
+    public static final EventBus<RenderFog> RENDER_FOG = EventBus.create(RenderFog.class, (listeners) -> (renderer, camera, context, partialTick) -> {
         for (RenderFog listener : listeners) {
             EventResult result = listener.onRenderFog(renderer, camera, context, partialTick);
 
@@ -25,7 +25,7 @@ public final class ViewportEvents {
     /**
      * @see ComputeFogColor#onComputeFogColor(GameRenderer, Camera, ComputeFogColor.Context, float)
      */
-    public static final EventBus<ComputeFogColor> COMPUTE_FOG_COLOR = EventBus.create((listeners) -> (renderer, camera, context, partialTick) -> {
+    public static final EventBus<ComputeFogColor> COMPUTE_FOG_COLOR = EventBus.create(ComputeFogColor.class, (listeners) -> (renderer, camera, context, partialTick) -> {
        for (ComputeFogColor listener : listeners) {
            EventResult result = listener.onComputeFogColor(renderer, camera, context, partialTick);
 
@@ -39,7 +39,7 @@ public final class ViewportEvents {
     /**
      * @see ComputeCameraAngle#onComputeCameraAngle(GameRenderer, Camera, ComputeCameraAngle.Context, float)
      */
-    public static final EventBus<ComputeCameraAngle> COMPUTE_CAMERA_ANGLE = EventBus.create((listeners) -> (renderer, camera, context, partialTick) -> {
+    public static final EventBus<ComputeCameraAngle> COMPUTE_CAMERA_ANGLE = EventBus.create(ComputeCameraAngle.class, (listeners) -> (renderer, camera, context, partialTick) -> {
         for (ComputeCameraAngle listener : listeners) {
             EventResult result = listener.onComputeCameraAngle(renderer, camera, context, partialTick);
 

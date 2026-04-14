@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface BlockStateModelModifier {
-    void onBlockStateModelModifier(Context context);
+    void applyBlockStateModels(Context context);
 
     interface Context {
         void replace(BlockState state, BakedModel model);

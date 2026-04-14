@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 public final class ModelEvents {
-    public static final EventBus<RegisterModelsLocation> REGISTER_MODELS_LOCATION = EventBus.create((listeners) -> (context) -> {
+    public static final EventBus<RegisterModelsLocation> REGISTER_MODELS_LOCATION = EventBus.create(RegisterModelsLocation.class, (listeners) -> (context) -> {
         for (RegisterModelsLocation listener : listeners) {
             listener.onRegisterModelsLocation(context);
         }
     });
-    public static final EventBus<ModifyUnbakedModel> MODIFY_UNBAKED_MODEL = EventBus.create((listeners) -> (context) -> {
+    public static final EventBus<ModifyUnbakedModel> MODIFY_UNBAKED_MODEL = EventBus.create(ModifyUnbakedModel.class, (listeners) -> (context) -> {
         for (ModifyUnbakedModel listener : listeners) {
             @Nullable UnbakedModel modified = listener.onModifyUnbakedModel(context);
 
@@ -31,7 +31,7 @@ public final class ModelEvents {
 
         return null;
     });
-    public static final EventBus<ModifyBeforeModelBake> MODIFY_BEFORE_MODEL_BAKE = EventBus.create((listeners) -> (context) -> {
+    public static final EventBus<ModifyBeforeModelBake> MODIFY_BEFORE_MODEL_BAKE = EventBus.create(ModifyBeforeModelBake.class, (listeners) -> (context) -> {
        for (ModifyBeforeModelBake listener : listeners) {
            @Nullable UnbakedModel modified = listener.onModifyBeforeBake(context);
 
@@ -42,7 +42,7 @@ public final class ModelEvents {
 
         return null;
     });
-    public static final EventBus<ModifyModelBakeResult> MODIFY_MODEL_BAKE_RESULT = EventBus.create((listeners) -> (context) -> {
+    public static final EventBus<ModifyModelBakeResult> MODIFY_MODEL_BAKE_RESULT = EventBus.create(ModifyModelBakeResult.class, (listeners) -> (context) -> {
         for (ModifyModelBakeResult listener : listeners) {
             @Nullable BakedModel modified = listener.onModifyBakeResult(context);
 
@@ -53,7 +53,7 @@ public final class ModelEvents {
 
         return null;
     });
-    public static final EventBus<ModifyAfterBake> MODIFY_AFTER_BAKE = EventBus.create((listeners) -> (context) -> {
+    public static final EventBus<ModifyAfterBake> MODIFY_AFTER_BAKE = EventBus.create(ModifyAfterBake.class, (listeners) -> (context) -> {
         for (ModifyAfterBake listener : listeners) {
             listener.onModifyAfterBake(context);
         }
@@ -101,10 +101,6 @@ public final class ModelEvents {
             ResourceLocation getId();
 
             Function<Material, TextureAtlasSprite> getSpriteGetter();
-
-            ModelBakery getModelBakery();
-
-            ModelState getTransform();
         }
     }
 
@@ -118,8 +114,6 @@ public final class ModelEvents {
             ModelBakery getModelBakery();
 
             Function<Material, TextureAtlasSprite> getSpriteGetter();
-
-            ModelState getTransform();
         }
     }
 
@@ -130,7 +124,7 @@ public final class ModelEvents {
         interface Context {
             void setModel(ResourceLocation location, BakedModel model);
 
-            void registerBlockStateModifier(Block block, BlockStateModelModifier modelModifier);
+            void modifyBlockStateModels(Block block, BlockStateModelModifier modelModifier);
 
             ModelBakery getModelBakery();
 

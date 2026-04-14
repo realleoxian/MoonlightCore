@@ -6,9 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.Function;
 
 public interface EventBus<T> {
-
-    static <T> EventBus<T> create(Function<T[], T> factory) {
-        return EventBusImpl.create(factory);
+    static <T> EventBus<T> create(Class<T> eventClass, Function<T[], T> factory) {
+        return EventBusImpl.create(eventClass, factory);
     }
 
     T invoker();
@@ -22,5 +21,4 @@ public interface EventBus<T> {
     void subscribe(ResourceLocation phase, T listener);
 
     void subscribe(T listener);
-
 }

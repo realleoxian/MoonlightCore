@@ -8,7 +8,7 @@ public final class ItemTossEvents {
     /**
      * @see Pre#onPreItemToss(Player, ItemStack)
      */
-    public static final EventBus<ItemTossEvents.Pre> PRE_ITEM_TOSS = EventBus.create((listeners) -> (player, stack) -> {
+    public static final EventBus<ItemTossEvents.Pre> PRE_ITEM_TOSS = EventBus.create(Pre.class, (listeners) -> (player, stack) -> {
         for(ItemTossEvents.Pre listener : listeners) {
             EventResult result = listener.onPreItemToss(player, stack);
 
@@ -22,7 +22,7 @@ public final class ItemTossEvents {
     /**
      * @see Post#onItemToss(Player, ItemEntity)
      */
-    public static final EventBus<ItemTossEvents.Post> POST_ITEM_TOSS = EventBus.create((listeners) -> (player, item) -> {
+    public static final EventBus<ItemTossEvents.Post> POST_ITEM_TOSS = EventBus.create(Post.class, (listeners) -> (player, item) -> {
        for(ItemTossEvents.Post listener : listeners) {
            listener.onItemToss(player, item);
        }

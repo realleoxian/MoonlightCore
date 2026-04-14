@@ -7,7 +7,7 @@ public final class ServerBlockEntityEvents {
     /**
      * @see Load#onBlockEntityLoad(ServerLevel, BlockEntity)
      */
-    public static final EventBus<ServerBlockEntityEvents.Load> LOAD = EventBus.create((listeners) -> (level, blockEntity) -> {
+    public static final EventBus<ServerBlockEntityEvents.Load> LOAD = EventBus.create(Load.class, (listeners) -> (level, blockEntity) -> {
         for(Load listener : listeners) {
             listener.onBlockEntityLoad(level, blockEntity);
         }
@@ -15,7 +15,7 @@ public final class ServerBlockEntityEvents {
     /**
      * @see Unload#onBlockEntityUnload(ServerLevel, BlockEntity)
      */
-    public static final EventBus<ServerBlockEntityEvents.Unload> UNLOAD = EventBus.create((listeners) -> (level, blockEntity) -> {
+    public static final EventBus<ServerBlockEntityEvents.Unload> UNLOAD = EventBus.create(Unload.class, (listeners) -> (level, blockEntity) -> {
        for(Unload listener : listeners) {
            listener.onBlockEntityUnload(level, blockEntity);
        }

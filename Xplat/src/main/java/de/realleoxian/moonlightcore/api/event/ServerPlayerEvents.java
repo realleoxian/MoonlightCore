@@ -9,7 +9,7 @@ public final class ServerPlayerEvents {
     /**
      * @see Clone#onPlayerClone(ServerPlayer, ServerPlayer, boolean)
      */
-    public static final EventBus<Clone> CLONE = EventBus.create((listeners) -> (oldPlayer, newPlayer, wasDeath) -> {
+    public static final EventBus<Clone> CLONE = EventBus.create(Clone.class, (listeners) -> (oldPlayer, newPlayer, wasDeath) -> {
        for(Clone listener : listeners) {
            listener.onPlayerClone(oldPlayer, newPlayer, wasDeath);
        }
@@ -17,7 +17,7 @@ public final class ServerPlayerEvents {
     /**
      * @see AfterRespawn#onPlayerRespawn(ServerPlayer, ServerPlayer)
      */
-    public static final EventBus<AfterRespawn> AFTER_RESPAWN = EventBus.create((listeners) -> (oldPlayer, newPlayer) -> {
+    public static final EventBus<AfterRespawn> AFTER_RESPAWN = EventBus.create(AfterRespawn.class, (listeners) -> (oldPlayer, newPlayer) -> {
        for(AfterRespawn listener : listeners) {
            listener.onPlayerRespawn(oldPlayer, newPlayer);
        }
@@ -25,7 +25,7 @@ public final class ServerPlayerEvents {
     /**
      * @see OpenMenu#onPlayerOpenMenu(ServerPlayer, AbstractContainerMenu)
      */
-    public static final EventBus<OpenMenu> OPEN_MENU = EventBus.create((listeners) -> (player, menu) -> {
+    public static final EventBus<OpenMenu> OPEN_MENU = EventBus.create(OpenMenu.class, (listeners) -> (player, menu) -> {
         for(OpenMenu listener : listeners) {
             listener.onPlayerOpenMenu(player, menu);
         }
@@ -33,7 +33,7 @@ public final class ServerPlayerEvents {
     /**
      * @see CloseMenu#onPlayerCloseMenu(ServerPlayer, AbstractContainerMenu)
      */
-    public static final EventBus<CloseMenu> CLOSE_MENU = EventBus.create((listeners) -> (player, menu) -> {
+    public static final EventBus<CloseMenu> CLOSE_MENU = EventBus.create(CloseMenu.class, (listeners) -> (player, menu) -> {
        for(CloseMenu listener : listeners) {
            listener.onPlayerCloseMenu(player, menu);
        }
@@ -41,7 +41,7 @@ public final class ServerPlayerEvents {
     /**
      * @see ChangeDimension#onPlayerChangeDimension(ServerPlayer, ResourceKey, ResourceKey)
      */
-    public static final EventBus<ChangeDimension> CHANGE_DIMENSION = EventBus.create((listeners) -> (player, from, to) -> {
+    public static final EventBus<ChangeDimension> CHANGE_DIMENSION = EventBus.create(ChangeDimension.class, (listeners) -> (player, from, to) -> {
         for(ChangeDimension listener : listeners) {
             listener.onPlayerChangeDimension(player, from, to);
         }

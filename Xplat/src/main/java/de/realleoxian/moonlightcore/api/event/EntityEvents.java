@@ -4,17 +4,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 public final class EntityEvents {
-    public static final EventBus<Addition> ADDITION = EventBus.create((listeners) -> (level, entity) -> {
+    public static final EventBus<Addition> ADDITION = EventBus.create(Addition.class, (listeners) -> (level, entity) -> {
         for(Addition listener : listeners) {
             listener.onEntityAddition(level, entity);
         }
     });
-    public static final EventBus<Remove> REMOVE = EventBus.create((listeners) -> (level, entity) -> {
+    public static final EventBus<Remove> REMOVE = EventBus.create(Remove.class, (listeners) -> (level, entity) -> {
         for(Remove listener : listeners) {
             listener.onEntityRemove(level, entity);
         }
     });
-    public static final EventBus<EnterSection> ENTER_SECTION = EventBus.create((listeners) -> (level, entity, packedPreviousSection, packedCurrentSection) -> {
+    public static final EventBus<EnterSection> ENTER_SECTION = EventBus.create(EnterSection.class, (listeners) -> (level, entity, packedPreviousSection, packedCurrentSection) -> {
        for(EnterSection listener : listeners) {
            listener.onEntityEnterSection(level, entity, packedPreviousSection, packedCurrentSection);
        }

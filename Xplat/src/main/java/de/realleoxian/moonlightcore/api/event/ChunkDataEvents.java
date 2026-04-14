@@ -8,7 +8,7 @@ public final class ChunkDataEvents {
     /**
      * @see Load#onChunkDataLoad(ServerLevel, ChunkAccess, CompoundTag)
      */
-    public static final EventBus<ChunkDataEvents.Load> LOAD = EventBus.create((listeners) -> (level, chunkAccess, tag) -> {
+    public static final EventBus<ChunkDataEvents.Load> LOAD = EventBus.create(Load.class, (listeners) -> (level, chunkAccess, tag) -> {
        for(ChunkDataEvents.Load listener : listeners) {
            listener.onChunkDataLoad(level, chunkAccess, tag);
        }
@@ -16,7 +16,7 @@ public final class ChunkDataEvents {
     /**
      * @see Save#onChunkDataSave(ServerLevel, ChunkAccess, CompoundTag)
      */
-    public static final EventBus<ChunkDataEvents.Save> SAVE = EventBus.create((listeners) -> (level, chunkAccess, tag) -> {
+    public static final EventBus<ChunkDataEvents.Save> SAVE = EventBus.create(Save.class, (listeners) -> (level, chunkAccess, tag) -> {
        for(ChunkDataEvents.Save listener : listeners) {
            listener.onChunkDataSave(level, chunkAccess, tag);
        }

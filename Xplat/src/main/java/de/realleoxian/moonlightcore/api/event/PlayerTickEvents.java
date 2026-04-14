@@ -6,7 +6,7 @@ public final class PlayerTickEvents {
     /**
      * @see Start#onStartPlayerTick(Player)
      */
-    public static final EventBus<Start> TICK_START = EventBus.create((listeners) -> (player) -> {
+    public static final EventBus<Start> TICK_START = EventBus.create(Start.class, (listeners) -> (player) -> {
        for(Start listener : listeners) {
            listener.onStartPlayerTick(player);
        }
@@ -14,7 +14,7 @@ public final class PlayerTickEvents {
     /**
      * @see End#onEndPlayerTick(Player)
      */
-    public static final EventBus<End> TICK_END = EventBus.create((listeners) -> (player) -> {
+    public static final EventBus<End> TICK_END = EventBus.create(End.class, (listeners) -> (player) -> {
         for(End listener : listeners) {
             listener.onEndPlayerTick(player);
         }

@@ -6,14 +6,15 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
 
 public final class EventBusImpl<T> implements EventBus<T> {
     public static final ResourceLocation DEFAULT_PHASE = new ResourceLocation("moonlightcore", "default");
 
-    public static <T> EventBus<T> create(Function<T[], T> factory) {
-        return new EventBusImpl<>(factory);
+    public static <T> EventBus<T> create(Class<T> eventClass, Function<T[], T> factory) {
+        return new EventBusImpl<>(eventClass, factory);
     }
 
     private final Object lock = new Object();
@@ -21,10 +22,12 @@ public final class EventBusImpl<T> implements EventBus<T> {
     private final Map<ResourceLocation, Phase> phases = new HashMap<>();
     private final List<Phase> sortedPhases = new ArrayList<>();
 
+    private final Class<T> eventClass;
     private final Function<T[], T> invokerFactory;
     private T invoker = null;
 
-    private EventBusImpl(Function<T[], T> invokerFactory) {
+    private EventBusImpl(Class<T> eventClass, Function<T[], T> invokerFactory) {
+        this.eventClass = eventClass;
         this.invokerFactory = invokerFactory;
     }
 
@@ -100,7 +103,7 @@ public final class EventBusImpl<T> implements EventBus<T> {
 
     @SuppressWarnings("unchecked")
     private T buildInvoker() {
-        if(invoker != null) {
+        if (invoker != null) {
             throw new IllegalStateException("Event invoker wasn't invalidated, cannot build a new one");
         }
 
@@ -111,8 +114,8 @@ public final class EventBusImpl<T> implements EventBus<T> {
 
             phaseListeners.stream().map(Listener::listener).forEach(sorted::add);
         }
-
-        T[] listenerArray = (T[]) sorted.toArray(Object[]::new);
+        T[] listenerArray = (T[]) Array.newInstance(this.eventClass, sorted.size());
+        listenerArray = sorted.toArray(listenerArray);
         invoker = invokerFactory.apply(listenerArray);
         return invoker;
     }

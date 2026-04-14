@@ -8,7 +8,7 @@ public final class ClientChunkEvents {
     /**
      * @see Load#onChunkLoad(ClientLevel, ChunkAccess)
      */
-    public static final EventBus<ClientChunkEvents.Load> LOAD = EventBus.create((listeners) -> (level, chunkAccess) -> {
+    public static final EventBus<ClientChunkEvents.Load> LOAD = EventBus.create(Load.class, (listeners) -> (level, chunkAccess) -> {
         for(ClientChunkEvents.Load listener : listeners) {
             listener.onChunkLoad(level, chunkAccess);
         }
@@ -16,7 +16,7 @@ public final class ClientChunkEvents {
     /**
      * @see Unload#onChunkUnload(ClientLevel, ChunkAccess)
      */
-    public static final EventBus<ClientChunkEvents.Unload> UNLOAD = EventBus.create((listeners) -> (level, chunkAccess) -> {
+    public static final EventBus<ClientChunkEvents.Unload> UNLOAD = EventBus.create(Unload.class, (listeners) -> (level, chunkAccess) -> {
         for(ClientChunkEvents.Unload listener : listeners) {
             listener.onChunkUnload(level, chunkAccess);
         }

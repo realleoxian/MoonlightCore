@@ -7,7 +7,7 @@ public interface ItemPickupEvent {
     /**
      * @see ItemPickupEvent#onItemPickup(Player, ItemEntity)
      */
-    EventBus<ItemPickupEvent> EVENT = EventBus.create((listeners) -> (player, item) -> {
+    EventBus<ItemPickupEvent> EVENT = EventBus.create(ItemPickupEvent.class, (listeners) -> (player, item) -> {
         for(ItemPickupEvent listener : listeners) {
             if(listener.onItemPickup(player, item).isFalse()) {
                 return EventResult.FALSE;

@@ -8,7 +8,7 @@ public interface VanillaGameEvent {
     /**
      * @see #onVanillaGameEvent(ServerLevel, GameEvent, Vec3, GameEvent.Context)
      */
-    EventBus<VanillaGameEvent> EVENT = EventBus.create((listeners) -> (level, event, position, context) -> {
+    EventBus<VanillaGameEvent> EVENT = EventBus.create(VanillaGameEvent.class, (listeners) -> (level, event, position, context) -> {
        for(VanillaGameEvent listener : listeners) {
            EventResult result = listener.onVanillaGameEvent(level, event, position, context);
 

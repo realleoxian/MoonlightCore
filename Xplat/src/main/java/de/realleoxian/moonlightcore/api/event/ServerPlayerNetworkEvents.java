@@ -8,7 +8,7 @@ public final class ServerPlayerNetworkEvents {
     /**
      * @see LoggedIn#onPlayerLoggedIn(MinecraftServer, ServerPlayer, ServerGamePacketListenerImpl)
      */
-    public static final EventBus<LoggedIn> LOGGED_IN = EventBus.create((listeners) -> (server, player, handler) -> {
+    public static final EventBus<LoggedIn> LOGGED_IN = EventBus.create(LoggedIn.class, (listeners) -> (server, player, handler) -> {
        for(LoggedIn listener : listeners) {
            listener.onPlayerLoggedIn(server, player, handler);
        }
@@ -16,7 +16,7 @@ public final class ServerPlayerNetworkEvents {
     /**
      * @see LoggedOut#onPlayerLoggedOut(MinecraftServer, ServerPlayer, ServerGamePacketListenerImpl)
      */
-    public static final EventBus<LoggedOut> LOGGED_OUT = EventBus.create((listeners) -> (server, player, handler) -> {
+    public static final EventBus<LoggedOut> LOGGED_OUT = EventBus.create(LoggedOut.class, (listeners) -> (server, player, handler) -> {
         for(LoggedOut listener : listeners) {
             listener.onPlayerLoggedOut(server, player, handler);
         }
