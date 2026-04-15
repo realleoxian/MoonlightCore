@@ -18,8 +18,6 @@ public interface ConfigSchema {
 
     void accept(LoadedConfig config);
 
-    void doSync(ServerPlayer player);
-
     Collection<ConfigProperty<?>> getRootProperties();
 
     Collection<ConfigSection> getSections();

@@ -4,7 +4,7 @@ import de.realleoxian.moonlightcore.api.config.ModConfig;
 import de.realleoxian.moonlightcore.api.event.EventPriority;
 import de.realleoxian.moonlightcore.api.event.ServerPlayerNetworkEvents;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
-import de.realleoxian.moonlightcore.impl.internal.network.s2c.S2CModConfigSyncPacket;
+import de.realleoxian.moonlightcore.core.network.s2c.S2CModConfigSyncPacket;
 import de.realleoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
@@ -46,10 +46,6 @@ public final class ConfigTracker {
     }
 
     public static void startTracking() {
-        if (WATCHER_THREAD.isAlive()) {
-            return;
-        }
-
         WATCHER_THREAD.start();
     }
 

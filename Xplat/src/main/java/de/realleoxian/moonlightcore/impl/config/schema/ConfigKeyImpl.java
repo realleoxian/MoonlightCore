@@ -91,7 +91,7 @@ public final class ConfigKeyImpl implements ConfigKey {
 
     @Override
     public String getLastComponent() {
-        return this.components[componentCount];
+        return this.components[componentCount - 1];
     }
 
     @Override

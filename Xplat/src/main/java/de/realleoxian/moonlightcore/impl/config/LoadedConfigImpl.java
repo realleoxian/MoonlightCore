@@ -8,6 +8,7 @@ import de.realleoxian.moonlightcore.api.misc.PathUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,10 +62,13 @@ public class LoadedConfigImpl implements LoadedConfig {
 
     @Override
     public void save(ModConfig config) {
-        List<String> serialized = new ArrayList<>();
         ConfigSchema schema = config.getSchema();
-        for (ConfigProperty<?> property : schema.getRootProperties()) saveProperty(serialized, property);
-        for (ConfigSection section : schema.getSections()) saveSection(serialized, section);
+
+        List<String> serialized = new ArrayList<>();
+        for (ConfigProperty<?> property : schema.getRootProperties())
+            saveProperty(serialized, property);
+        for (ConfigSection section : schema.getSections())
+            saveSection(serialized, section);
 
         try {
             PathUtils.writeUsingTempFile(config.getFilePath(), serialized);

@@ -32,7 +32,6 @@ public final class ModConfigImpl implements ModConfig {
             throw new IllegalStateException("Config schema hasn't been built");
 
         ModConfig config = new ModConfigImpl(type, id, new ConfigSchemaImpl(builder));
-        ConfigTracker.register(config);
         config.register();
         return o;
     }
@@ -60,10 +59,8 @@ public final class ModConfigImpl implements ModConfig {
     }
 
     @Override
-    public void register() { // TODO: Invoke this
-        if (Files.exists(this.filePath)) {
-            loadIfNeeded();
-        }
+    public void register() {
+        if (Files.exists(this.filePath)) loadIfNeeded();
         this.schema.setParent(this);
         this.schema.save();
 

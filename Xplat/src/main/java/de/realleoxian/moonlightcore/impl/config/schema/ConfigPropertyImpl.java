@@ -69,8 +69,7 @@ public class ConfigPropertyImpl<T> implements ConfigProperty<T> {
     public T get() {
         T ret = this.cached;
         if (ret == null) {
-            Objects.requireNonNull(this.parent, "Cannot retrieve the current loaded value of property '" + this.key + "' with a 'null' mod config parent");
-
+            Objects.requireNonNull(this.parent, "Mod Config parent cannot be 'null'");
             this.parent.lock.lock();
             ret = this.cached = this.loadedConfig.getRaw(this);
             if (ret == null) throw new IllegalArgumentException("Couldn't find any valid value for property '" + this.key + "'");

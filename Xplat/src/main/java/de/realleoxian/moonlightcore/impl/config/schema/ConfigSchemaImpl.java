@@ -5,7 +5,6 @@ import de.realleoxian.moonlightcore.api.config.internal.LoadedConfig;
 import de.realleoxian.moonlightcore.api.config.schema.*;
 import de.realleoxian.moonlightcore.impl.config.DefaultedLoadedConfig;
 import de.realleoxian.moonlightcore.impl.config.ModConfigImpl;
-import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,11 +35,6 @@ public class ConfigSchemaImpl implements ConfigSchema {
     }
 
     @Override
-    public void doSync(ServerPlayer player) {
-        // TODO:
-    }
-
-    @Override
     public Collection<ConfigProperty<?>> getRootProperties() {
         return Collections.unmodifiableCollection(this.rootProperties.values());
     }
@@ -54,6 +48,7 @@ public class ConfigSchemaImpl implements ConfigSchema {
     public void setParent(ModConfigImpl parent) {
         Objects.requireNonNull(parent, "Cannot set a 'null' parent");
         this.parent = parent;
+        update();
     }
 
     public void save() {
