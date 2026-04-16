@@ -1,6 +1,6 @@
 package de.realleoxian.moonlightcore.mixin.client;
 
-import de.realleoxian.moonlightcore.impl.client.camerashake.CameraShakeHandlerImpl;
+import de.realleoxian.moonlightcore.impl.client.screenshake.ScreenshakeHandlerImpl;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
@@ -19,7 +19,7 @@ public class CameraMixin {
             )
     )
     private void moonlightcore$setup(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
-        CameraShakeHandlerImpl.cameraTick((Camera) (Object) this);
+        ScreenshakeHandlerImpl.cameraTick((Camera) (Object) this);
     }
 
 }
