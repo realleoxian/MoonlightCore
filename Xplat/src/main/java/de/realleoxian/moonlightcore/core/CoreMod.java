@@ -1,4 +1,4 @@
-package de.realleoxian.moonlightcore.impl.internal;
+package de.realleoxian.moonlightcore.core;
 
 import de.realleoxian.moonlightcore.api.MoonlightCore;
 import de.realleoxian.moonlightcore.api.MoonlightCoreRegistries;
@@ -8,21 +8,21 @@ import de.realleoxian.moonlightcore.api.registry.RegistryInformation;
 import de.realleoxian.moonlightcore.impl.attachment.AttachmentInternalHooks;
 import de.realleoxian.moonlightcore.impl.config.ConfigTracker;
 import de.realleoxian.moonlightcore.impl.fluid.CauldronFluidContentImpl;
-import de.realleoxian.moonlightcore.impl.internal.network.s2c.S2CAttachmentSyncPacket;
-import de.realleoxian.moonlightcore.impl.internal.network.s2c.S2CModConfigSyncPacket;
+import de.realleoxian.moonlightcore.core.network.s2c.S2CAttachmentSyncPacket;
+import de.realleoxian.moonlightcore.core.network.s2c.S2CModConfigSyncPacket;
 
-public final class InternalMod {
+public final class CoreMod {
     private static final String MOD_ID = "moonlightcore";
     private static boolean init = false;
 
     public static void initialize() {
         if(init) return;
 
-        MoonlightCore.registryInformation(MOD_ID, InternalMod::setupRegistries);
+        MoonlightCore.registryInformation(MOD_ID, CoreMod::setupRegistries);
         MoonlightCore.registry(MOD_ID, MoonlightCoreRegistries::setup);
+        ConfigTracker.startTracking();
         AttachmentInternalHooks.init();
         CauldronFluidContentImpl.init();
-        ConfigTracker.startTracking();
         setupNetworkPackets(NetworkHelper.get());
         init = true;
     }
@@ -38,5 +38,5 @@ public final class InternalMod {
         registrar.register(RegistryInformation.create(MoonlightCoreRegistries.Keys.ATTACHMENT_TYPE).synced(true));
     }
 
-    private InternalMod() {}
+    private CoreMod() {}
 }

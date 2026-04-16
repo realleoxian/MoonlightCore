@@ -31,17 +31,6 @@ public final class ModelEvents {
 
         return null;
     });
-    public static final EventBus<ModifyBeforeModelBake> MODIFY_BEFORE_MODEL_BAKE = EventBus.create(ModifyBeforeModelBake.class, (listeners) -> (context) -> {
-       for (ModifyBeforeModelBake listener : listeners) {
-           @Nullable UnbakedModel modified = listener.onModifyBeforeBake(context);
-
-           if (modified != null) {
-               return modified;
-           }
-       }
-
-        return null;
-    });
     public static final EventBus<ModifyModelBakeResult> MODIFY_MODEL_BAKE_RESULT = EventBus.create(ModifyModelBakeResult.class, (listeners) -> (context) -> {
         for (ModifyModelBakeResult listener : listeners) {
             @Nullable BakedModel modified = listener.onModifyBakeResult(context);
@@ -88,19 +77,6 @@ public final class ModelEvents {
             ResourceLocation getId();
 
             ModelBakery getModelBakery();
-        }
-    }
-
-    public interface ModifyBeforeModelBake {
-        UnbakedModel onModifyBeforeBake(ModifyBeforeModelBake.Context context);
-
-        @ApiStatus.NonExtendable
-        interface Context {
-            UnbakedModel getOrLoadModel(ResourceLocation location);
-
-            ResourceLocation getId();
-
-            Function<Material, TextureAtlasSprite> getSpriteGetter();
         }
     }
 

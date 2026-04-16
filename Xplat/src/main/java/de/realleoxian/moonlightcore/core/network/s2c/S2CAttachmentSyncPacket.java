@@ -1,6 +1,5 @@
-package de.realleoxian.moonlightcore.impl.internal.network.s2c;
+package de.realleoxian.moonlightcore.core.network.s2c;
 
-import de.realleoxian.moonlightcore.api.MoonlightCore;
 import de.realleoxian.moonlightcore.api.MoonlightCoreRegistries;
 import de.realleoxian.moonlightcore.api.attachment.AttachmentType;
 import de.realleoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;

@@ -5,7 +5,7 @@ import de.realleoxian.moonlightcore.api.network.PacketDecoder;
 import de.realleoxian.moonlightcore.api.network.PacketEncoder;
 import de.realleoxian.moonlightcore.api.network.PlayerTrackUtils;
 import de.realleoxian.moonlightcore.impl.attachment.sync.AttachmentSyncChange;
-import de.realleoxian.moonlightcore.impl.internal.network.s2c.S2CAttachmentSyncPacket;
+import de.realleoxian.moonlightcore.core.network.s2c.S2CAttachmentSyncPacket;
 import de.realleoxian.moonlightcore.impl.util.annotation.Nullable;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;

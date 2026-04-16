@@ -1,4 +1,4 @@
-package de.realleoxian.moonlightcore.impl.internal.network.s2c;
+package de.realleoxian.moonlightcore.core.network.s2c;
 
 import de.realleoxian.moonlightcore.api.config.ModConfig;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
