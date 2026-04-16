@@ -1,44 +1,30 @@
 package de.realleoxian.moonlightcore.api.client.event;
 
 import de.realleoxian.moonlightcore.api.event.EventBus;
+import de.realleoxian.moonlightcore.api.network.PacketSender;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 
 public final class ClientPlayerNetworkEvents {
-    /**
-     * @see LoggedIn#onPlayerLoggedIn(LocalPlayer, ClientPacketListener)
-     */
-    public static final EventBus<ClientPlayerNetworkEvents.LoggedIn> LOGGED_IN = EventBus.create(LoggedIn.class, (listeners) -> (player, handler) -> {
+    public static final EventBus<ClientPlayerNetworkEvents.LoggedIn> LOGGED_IN = EventBus.create(LoggedIn.class, (listeners) -> (handler, sender, client) -> {
         for(ClientPlayerNetworkEvents.LoggedIn listener : listeners) {
-            listener.onPlayerLoggedIn(player, handler);
+            listener.onPlayerLoggedIn(handler, sender, client);
         }
     });
-    /**
-     * @see LoggedOut#onPlayerLoggedOut(LocalPlayer, ClientPacketListener)
-     */
-    public static final EventBus<ClientPlayerNetworkEvents.LoggedOut> LOGGED_OUT = EventBus.create(LoggedOut.class, (listeners) -> (player, handler) -> {
+    public static final EventBus<ClientPlayerNetworkEvents.LoggedOut> LOGGED_OUT = EventBus.create(LoggedOut.class, (listeners) -> (handler, client) -> {
         for(ClientPlayerNetworkEvents.LoggedOut listener : listeners) {
-            listener.onPlayerLoggedOut(player, handler);
+            listener.onPlayerLoggedOut(handler, client);
         }
     });
 
     private ClientPlayerNetworkEvents() {}
 
     public interface LoggedIn {
-        /**
-         * Invoked when a player logs into a Minecraft server
-         * @param player    The player that logged into the server
-         * @param handler   The client connection handler
-         */
-        void onPlayerLoggedIn(LocalPlayer player, ClientPacketListener handler);
+        void onPlayerLoggedIn(ClientPacketListener handler, PacketSender sender, Minecraft client);
     }
 
     public interface LoggedOut {
-        /**
-         * Invoked when a player logs out from a Minecraft server
-         * @param player    The player that logged out from the server
-         * @param handler   The client connection handler
-         */
-        void onPlayerLoggedOut(LocalPlayer player, ClientPacketListener handler);
+        void onPlayerLoggedOut(ClientPacketListener handler, Minecraft client);
     }
 }
