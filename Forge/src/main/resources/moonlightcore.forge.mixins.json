@@ -6,13 +6,21 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ChunkMapMixin",
-    "CommandSourceStackMixin",
-    "MinecraftServerMixin",
-    "PlayerListMixin"
+    "ChunkSerializerMixin",
+    "LevelChunkMixin",
+    "PlayerListMixin",
+    "ServerGamePacketListenerImplMixin",
+    "ServerLevelEntityCallbacksMixin",
+    "ServerPlayerMixin"
   ],
   "client": [
     "client.ClientChunkCacheMixin",
-    "client.MinecraftMixin"
+    "client.ClientLevelEntityCallbacksMixin",
+    "client.ClientPacketListenerMixin",
+    "client.CommandSourceStackMixin",
+    "client.LevelChunkMixin",
+    "client.MinecraftMixin",
+    "client.ModelBakeryMixin"
   ],
   "injectors": {
     "defaultRequire": 1
