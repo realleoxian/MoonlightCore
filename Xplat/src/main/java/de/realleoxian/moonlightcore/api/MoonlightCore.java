@@ -7,6 +7,7 @@ import de.realleoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
 import de.realleoxian.moonlightcore.api.runtime.ModLoadingRuntimeContext;
 import de.realleoxian.moonlightcore.api.runtime.MoonlightCoreRuntime;
 import de.realleoxian.moonlightcore.api.runtime.MoonlightCoreRuntimeFactory;
+import de.realleoxian.moonlightcore.api.server.permission.PermissionHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 
@@ -47,6 +48,10 @@ public final class MoonlightCore {
 
     public static NetworkHelper getNetworkHelper() {
         return RUNTIME.getNetworkHelper();
+    }
+
+    public static PermissionHelper getPermissionHelper(){
+        return RUNTIME.getPermissionHelper();
     }
 
     public static boolean isDevelopmentWorkspace() {

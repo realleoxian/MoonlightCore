@@ -5,6 +5,7 @@ import de.realleoxian.moonlightcore.api.command.CommandsRegistrar;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
+import de.realleoxian.moonlightcore.api.server.permission.PermissionHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 
@@ -27,6 +28,8 @@ public interface MoonlightCoreRuntime<C extends ModLoadingRuntimeContext> {
     boolean isModLoaded(String modId);
 
     NetworkHelper getNetworkHelper();
+
+    PermissionHelper getPermissionHelper();
 
     EnvSide getEnvironmentSide();
 
