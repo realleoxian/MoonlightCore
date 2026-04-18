@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public final class ConfigTracker {
     private static final Logger LOGGER = LoggerFactory.getLogger("moonlightcore-config-api");
@@ -49,8 +50,8 @@ public final class ConfigTracker {
         WATCHER_THREAD.start();
     }
 
-    public static @Nullable ModConfig getConfig(ModConfig.Type type, ResourceLocation id) {
-        return REGISTERED_CONFIGS.get(type).get(id);
+    public static Optional<ModConfig> getConfig(ModConfig.Type type, ResourceLocation id) {
+        return Optional.ofNullable(REGISTERED_CONFIGS.get(type).get(id));
     }
 
     @ApiStatus.Internal
