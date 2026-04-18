@@ -27,10 +27,6 @@ import java.util.function.Predicate;
 
 public final class ForgeNetworkHelper implements NetworkHelper {
     private static final Logger LOGGER = LogUtils.getLogger();
-
-    private static final Map<Class<?>, PacketType<?>> CLIENT_PACKETS_BY_CLASS = new HashMap<>();
-    private static final Map<Class<?>, PacketType<?>> SERVER_PACKETS_BY_CLASS = new HashMap<>();
-
     private static ForgeNetworkHelper INSTANCE = null;
 
     public static NetworkHelper get() {
@@ -39,6 +35,9 @@ public final class ForgeNetworkHelper implements NetworkHelper {
     }
 
     private final Map<String, ForgePacketRegistrar> registrars = new HashMap<>();
+
+    private final Map<Class<?>, PacketType<?>> clientPacketsByClass = new HashMap<>();
+    private final Map<Class<?>, PacketType<?>> serverPacketsByClass = new HashMap<>();
 
     private final Map<String, Integer> protocolVersions = Maps.newConcurrentMap();
     private final Map<String, HandlerThread> handlerThreads = Maps.newConcurrentMap();
@@ -71,7 +70,7 @@ public final class ForgeNetworkHelper implements NetworkHelper {
     @Override
     public <MSG> void sendToServer(MSG packet) {
         @SuppressWarnings("unchecked")
-        PacketType<MSG> packetType = (PacketType<MSG>) SERVER_PACKETS_BY_CLASS.get(packet.getClass());
+        PacketType<MSG> packetType = (PacketType<MSG>) serverPacketsByClass.get(packet.getClass());
         if (packetType == null) {
             throw new IllegalArgumentException("C2S packet not registered: '" + packet.getClass().getSimpleName() + "'");
         }
@@ -85,7 +84,7 @@ public final class ForgeNetworkHelper implements NetworkHelper {
     @Override
     public <MSG> void sendToPlayer(ServerPlayer player, MSG packet) {
         @SuppressWarnings("unchecked")
-        PacketType<MSG> packetType = (PacketType<MSG>) CLIENT_PACKETS_BY_CLASS.get(packet.getClass());
+        PacketType<MSG> packetType = (PacketType<MSG>) clientPacketsByClass.get(packet.getClass());
         if (packetType == null) {
             throw new IllegalArgumentException("S2C packet not registered: '" + packet.getClass().getSimpleName() + "'");
         }
@@ -182,7 +181,7 @@ public final class ForgeNetworkHelper implements NetworkHelper {
             }
 
             builder.add();
-            CLIENT_PACKETS_BY_CLASS.put(type.type(), type);
+            clientPacketsByClass.put(type.type(), type);
         }
 
         @Override
@@ -206,7 +205,7 @@ public final class ForgeNetworkHelper implements NetworkHelper {
             }
 
             builder.add();
-            SERVER_PACKETS_BY_CLASS.put(type.type(), type);
+            serverPacketsByClass.put(type.type(), type);
         }
     }
 }

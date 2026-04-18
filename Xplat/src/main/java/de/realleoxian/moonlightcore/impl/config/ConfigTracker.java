@@ -33,11 +33,11 @@ public final class ConfigTracker {
             throw new RuntimeException("Couldn't create Config File Watcher", e);
         }
 
-        ServerPlayerNetworkEvents.LOGGED_IN.subscribe(EventPriority.HIGHEST, (server, player, handler) -> {
+        ServerPlayerNetworkEvents.LOGGED_IN.subscribe(EventPriority.HIGHEST,  (handler, sender, server) -> {
             REGISTERED_CONFIGS.get(ModConfig.Type.SERVER).values().forEach((config) -> {
                 try {
                     byte[] data = Files.readAllBytes(config.getFilePath());
-                    NetworkHelper.get().sendToPlayer(player, new S2CModConfigSyncPacket(config.getId(), data));
+                    NetworkHelper.get().sendToPlayer(handler.getPlayer(), new S2CModConfigSyncPacket(config.getId(), data));
                 } catch (IOException e) {
                     LOGGER.error("Failed to send config sync packet for {}", config.getId());
                 }

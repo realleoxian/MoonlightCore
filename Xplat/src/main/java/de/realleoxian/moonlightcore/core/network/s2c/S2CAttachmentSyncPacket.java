@@ -6,21 +6,22 @@ import de.realleoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
 import de.realleoxian.moonlightcore.api.network.PacketType;
 import de.realleoxian.moonlightcore.impl.attachment.sync.AttachmentSyncChange;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public record S2CAttachmentSyncPacket(AttachmentSyncChange change) {
-    public static final PacketType<S2CAttachmentSyncPacket> TYPE = new PacketType<>(new ResourceLocation("moonlightcore", "attachment_sync"), S2CAttachmentSyncPacket.class, S2CAttachmentSyncPacket::writeToBuffer, S2CAttachmentSyncPacket::readFromBuffer);
+    public static final PacketType<S2CAttachmentSyncPacket> TYPE = new PacketType<>(new ResourceLocation("moonlightcore", "attachment_sync"), S2CAttachmentSyncPacket.class, S2CAttachmentSyncPacket::encodeToBuffer, S2CAttachmentSyncPacket::decodeFromBuffer);
 
-    public static void handle(NetworkHelper.PacketContext context, S2CAttachmentSyncPacket packet) {
+    public static void handle(NetworkHelper.PacketContext<ClientPacketListener> context, S2CAttachmentSyncPacket packet) {
         context.queueWork(() -> {
             Player player = context.player();
             packet.change().applyChange(player.level());
         });
     }
 
-    public static void writeToBuffer(FriendlyByteBuf byteBuf, S2CAttachmentSyncPacket packet) {
+    public static void encodeToBuffer(FriendlyByteBuf byteBuf, S2CAttachmentSyncPacket packet) {
         AttachmentSyncChange change = packet.change();
 
         AttachmentsHolderInfo<?, ?> holderInfo = packet.change().holderInfo();
@@ -31,7 +32,7 @@ public record S2CAttachmentSyncPacket(AttachmentSyncChange change) {
         byteBuf.writeByteArray(change.data());
     }
 
-    public static S2CAttachmentSyncPacket readFromBuffer(FriendlyByteBuf byteBuf) {
+    public static S2CAttachmentSyncPacket decodeFromBuffer(FriendlyByteBuf byteBuf) {
         byte holderType = byteBuf.readByte();
         AttachmentsHolderInfo<?, ?> holderInfo = AttachmentsHolderInfo.Type.getDecoder(holderType).read(byteBuf);
         AttachmentType<?> attachmentType = MoonlightCoreRegistries.attachmentTypes().get(byteBuf.readResourceLocation());
