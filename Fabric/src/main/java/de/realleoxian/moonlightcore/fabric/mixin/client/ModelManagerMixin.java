@@ -1,16 +1,10 @@
 package de.realleoxian.moonlightcore.fabric.mixin.client;
 
 import de.realleoxian.moonlightcore.api.client.event.ModelEvents;
-import de.realleoxian.moonlightcore.api.client.model.BlockStateModelModifier;
 import de.realleoxian.moonlightcore.fabric.client.model.FabricModelAfterBakingContext;
-import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.*;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.UnmodifiableView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

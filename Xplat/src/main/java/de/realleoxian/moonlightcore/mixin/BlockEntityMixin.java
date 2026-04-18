@@ -16,8 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlockEntity.class)
 public abstract class BlockEntityMixin implements AttachmentHolder {
-    @Unique
-    private @Nullable AttachmentMap moonlighcore$attachmentsMap = null;
+    @Unique private @Nullable AttachmentMap moonlighcore$attachmentsMap = null;
 
     @Override
     public AttachmentMap getAttachmentsMap() {

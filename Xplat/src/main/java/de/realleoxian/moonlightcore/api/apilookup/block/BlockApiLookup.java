@@ -17,8 +17,7 @@ public interface BlockApiLookup<A, C extends @Nullable Object> extends ApiLookup
         return BlockApiLookupImpl.find(name, apiClass, contextClass);
     }
 
-    @Nullable
-    A find(Level level, BlockPos blockPos, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity, C context);
+    @Nullable A find(Level level, BlockPos blockPos, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity, C context);
 
     void register(BlockApiLookup.Provider<A, C> provider, Block... blocks);
 
@@ -30,8 +29,7 @@ public interface BlockApiLookup<A, C extends @Nullable Object> extends ApiLookup
 
     @FunctionalInterface
     interface Provider<A, C extends @Nullable Object> {
-        @Nullable
-        A get(Level level, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, C context);
+        @Nullable A get(Level level, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, C context);
     }
 }
 

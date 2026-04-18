@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Fluid.class)
 public class FluidMixin implements FluidResourceCache {
-    @Unique
-    private @Nullable FluidResource moonlightcore$cachedFluidResource = null;
+    @Unique private @Nullable FluidResource moonlightcore$cachedFluidResource = null;
 
     @Override
     public FluidResource moonlightcore$getCachedFluidResource() {

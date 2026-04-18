@@ -8,7 +8,6 @@ import de.realleoxian.moonlightcore.api.misc.PathUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

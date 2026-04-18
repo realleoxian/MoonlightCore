@@ -4,7 +4,6 @@ import de.realleoxian.moonlightcore.api.event.EventBus;
 import de.realleoxian.moonlightcore.api.network.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.player.LocalPlayer;
 
 public final class ClientPlayerNetworkEvents {
     public static final EventBus<ClientPlayerNetworkEvents.LoggedIn> LOGGED_IN = EventBus.create(LoggedIn.class, (listeners) -> (handler, sender, client) -> {

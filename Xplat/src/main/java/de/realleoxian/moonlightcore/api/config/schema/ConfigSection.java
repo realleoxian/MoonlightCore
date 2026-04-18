@@ -17,11 +17,9 @@ public interface ConfigSection {
 
     Collection<ConfigSection> getSubSections();
 
-    @Nullable
-    Iterable<String> getComments();
+    @Nullable Iterable<String> getComments();
 
-    @Nullable
-    String getTranslationKey();
+    @Nullable String getTranslationKey();
 
     ConfigKey getKey();
 

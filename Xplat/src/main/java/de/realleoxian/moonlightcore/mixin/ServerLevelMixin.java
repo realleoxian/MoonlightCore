@@ -15,10 +15,8 @@ import java.util.Map;
 
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin implements ServerLevelApiLookupCache {
-    @Unique
-    private final Map<BlockPos, List<WeakReference<BlockApiCacheImpl<?, ?>>>> mlcore$blockApiLookupCaches = new Object2ReferenceArrayMap<>();
-    @Unique
-    private int mlcore$lookupAccessedWithoutCleanup = 0;
+    @Unique private final Map<BlockPos, List<WeakReference<BlockApiCacheImpl<?, ?>>>> mlcore$blockApiLookupCaches = new Object2ReferenceArrayMap<>();
+    @Unique private int mlcore$lookupAccessedWithoutCleanup = 0;
 
     @Override
     public void mlcore$registerBlockCache(BlockPos blockPos, BlockApiCacheImpl<?, ?> cache) {

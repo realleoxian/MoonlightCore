@@ -11,8 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SimpleContainer.class)
 public class SimpleContainerMixin implements SpecialLogicInventory {
-    @Unique
-    private boolean moonlightcore$suppressSpecialLogic = false;
+    @Unique private boolean moonlightcore$suppressSpecialLogic = false;
 
     @Inject(
             method = "setItem",

@@ -7,11 +7,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface BlockApiCache<A, C extends @Nullable Object> {
-    @Nullable
-    A get(@Nullable BlockState blockState, C context);
+    @Nullable A get(@Nullable BlockState blockState, C context);
 
-    @Nullable
-    default A get(C context) {
+    @Nullable default A get(C context) {
         return get(null, context);
     }
 
@@ -21,7 +19,6 @@ public interface BlockApiCache<A, C extends @Nullable Object> {
 
     BlockPos getBlockPos();
 
-    @Nullable
-    BlockEntity getBlockEntity();
+    @Nullable BlockEntity getBlockEntity();
 }
 

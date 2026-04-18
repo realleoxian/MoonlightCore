@@ -20,8 +20,7 @@ public enum EnvSide {
     }
 
 
-    @Nullable
-    public static <T> T unsafeRunWhenOn(EnvSide side, Supplier<Callable<T>> target) {
+    @Nullable public static <T> T unsafeRunWhenOn(EnvSide side, Supplier<Callable<T>> target) {
         if(side.isCurrent()) {
             try {
                 return target.get().call();

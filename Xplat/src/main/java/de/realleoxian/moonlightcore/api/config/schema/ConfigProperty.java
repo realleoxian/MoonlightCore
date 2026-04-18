@@ -18,11 +18,9 @@ public interface ConfigProperty<T> extends Supplier<T> {
 
     ConfigPropertyValidator<T> getValidator();
 
-    @Nullable
-    Iterable<String> getComments();
+    @Nullable Iterable<String> getComments();
 
-    @Nullable
-    String getTranslationKey();
+    @Nullable String getTranslationKey();
 
     RestartType getRestartType();
 

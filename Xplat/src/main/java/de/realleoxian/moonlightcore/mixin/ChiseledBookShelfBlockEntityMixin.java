@@ -25,11 +25,9 @@ public abstract class ChiseledBookShelfBlockEntityMixin implements SpecialLogicI
     @Shadow
     protected abstract void updateState(int slot);
 
-    @Unique
-    private boolean moonlightcore$suppressSpecialLogic = false;
+    @Unique private boolean moonlightcore$suppressSpecialLogic = false;
 
-    @Unique
-    private final SnapshotJournal<Integer> moonlightcore$lastInteractedParticipant = new SnapshotJournal<Integer>() {
+    @Unique private final SnapshotJournal<Integer> moonlightcore$lastInteractedParticipant = new SnapshotJournal<Integer>() {
         @Override
         public Integer createSnapshot() {
             return lastInteractedSlot;

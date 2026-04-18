@@ -4,7 +4,6 @@ import de.realleoxian.moonlightcore.api.config.internal.LoadedConfig;
 import de.realleoxian.moonlightcore.impl.config.schema.type.*;
 import de.realleoxian.moonlightcore.impl.config.schema.validator.ListConfigValidator;
 import de.realleoxian.moonlightcore.impl.config.schema.validator.NoOpConfigValidator;
-import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;

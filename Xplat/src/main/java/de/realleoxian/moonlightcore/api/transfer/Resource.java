@@ -12,8 +12,7 @@ public interface Resource<T> {
 
     boolean isBlank();
 
-    @Nullable
-    CompoundTag getTag();
+    @Nullable CompoundTag getTag();
 
     default @Nullable CompoundTag copyTag() {
         CompoundTag tag = getTag();

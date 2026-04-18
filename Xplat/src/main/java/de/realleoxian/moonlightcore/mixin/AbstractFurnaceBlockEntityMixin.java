@@ -33,8 +33,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BaseContainerBlock
         throw new AssertionError();
     }
 
-    @Unique
-    private boolean moonlightcore$suppressSpecialLogic = false;
+    @Unique private boolean moonlightcore$suppressSpecialLogic = false;
 
     protected AbstractFurnaceBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);

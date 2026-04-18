@@ -8,7 +8,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkEvent;
 
 public record ForgeServerPacketContext(ServerPlayer serverPlayer, MinecraftServer server) implements NetworkHelper.PacketContext<ServerGamePacketListenerImpl> {
     @Override

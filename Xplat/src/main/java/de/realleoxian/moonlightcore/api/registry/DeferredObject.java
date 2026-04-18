@@ -21,8 +21,7 @@ public interface DeferredObject<R, T extends R> extends Supplier<T> {
 
     boolean isBound();
 
-    @Nullable
-    Holder<R> asHolder();
+    @Nullable Holder<R> asHolder();
 
     ResourceLocation name();
 

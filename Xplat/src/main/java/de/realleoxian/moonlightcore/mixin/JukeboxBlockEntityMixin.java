@@ -19,8 +19,7 @@ public abstract class JukeboxBlockEntityMixin implements SpecialLogicInventory, 
     @Shadow
     @Final
     private NonNullList<ItemStack> items;
-    @Unique
-    private boolean moonlightcore$suppressSpecialLogic = false;
+    @Unique private boolean moonlightcore$suppressSpecialLogic = false;
 
     @Inject(
             method = "setItem",

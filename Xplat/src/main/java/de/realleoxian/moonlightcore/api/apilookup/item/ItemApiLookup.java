@@ -14,8 +14,7 @@ public interface ItemApiLookup<A, C extends @Nullable Object> extends ApiLookup<
         return ItemApiLookupImpl.find(name, apiClass, contextClass);
     }
 
-    @Nullable
-    A find(ItemStack itemStack, C context);
+    @Nullable A find(ItemStack itemStack, C context);
 
     void register(ItemApiLookup.Provider<A, C> provider, ItemLike... items);
 
@@ -27,8 +26,7 @@ public interface ItemApiLookup<A, C extends @Nullable Object> extends ApiLookup<
 
     @FunctionalInterface
     interface Provider<A, C extends @Nullable Object> {
-        @Nullable
-        A get(ItemStack itemStack, C context);
+        @Nullable A get(ItemStack itemStack, C context);
     }
 }
 

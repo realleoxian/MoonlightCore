@@ -1,6 +1,5 @@
 package de.realleoxian.moonlightcore.forge.mixin.client;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import de.realleoxian.moonlightcore.api.client.event.ModelEvents;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

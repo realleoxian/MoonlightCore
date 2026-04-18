@@ -14,8 +14,7 @@ public interface EntityApiLookup<A, C extends @Nullable Object> extends ApiLooku
         return EntityApiLookupImpl.find(name, apiClass, contextClass);
     }
 
-    @Nullable
-    A find(Entity entity, C context);
+    @Nullable A find(Entity entity, C context);
 
     void register(EntityApiLookup.Provider<A, C> provider, EntityType<?>... entityTypes);
 
@@ -27,8 +26,7 @@ public interface EntityApiLookup<A, C extends @Nullable Object> extends ApiLooku
 
     @FunctionalInterface
     interface Provider<A, C extends @Nullable Object> {
-        @Nullable
-        A get(Entity entity, C context);
+        @Nullable A get(Entity entity, C context);
     }
 }
 

@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Item.class)
 public class ItemMixin implements ItemResourceCache {
-    @Unique
-    private @Nullable ItemResource moonlightCore$cachedItemResource = null;
+    @Unique private @Nullable ItemResource moonlightCore$cachedItemResource = null;
 
     @Override
     public ItemResource moonlightcore$getCachedItemResource() {

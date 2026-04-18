@@ -21,14 +21,11 @@ public interface AttachmentType<T> {
 
     ResourceLocation name();
 
-    @Nullable
-    Codec<T> codec();
+    @Nullable Codec<T> codec();
 
-    @Nullable
-    AttachmentSyncHandler<T> syncHandler();
+    @Nullable AttachmentSyncHandler<T> syncHandler();
 
-    @Nullable
-    Supplier<T> initializer();
+    @Nullable Supplier<T> initializer();
 
     boolean copyOnDeath();
 

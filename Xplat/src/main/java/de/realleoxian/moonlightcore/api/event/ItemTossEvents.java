@@ -2,7 +2,6 @@ package de.realleoxian.moonlightcore.api.event;
 
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
 public final class ItemTossEvents {
     public static final EventBus<ItemTossEvents.Pre> PRE_ITEM_TOSS = EventBus.create(Pre.class, (listeners) -> (player, stack) -> {

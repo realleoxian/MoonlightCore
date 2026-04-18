@@ -23,8 +23,7 @@ public interface RegistryInformation<T> {
 
     ResourceKey<Registry<T>> name();
 
-    @Nullable
-    ResourceLocation defaultKey();
+    @Nullable ResourceLocation defaultKey();
 
     boolean isSync();
 }

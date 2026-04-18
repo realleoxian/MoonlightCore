@@ -24,8 +24,7 @@ public interface AttachmentsHolderInfo<T, S extends AttachmentsHolderInfo<T, S>>
 
     void syncAttachment(ServerLevel level, AttachmentSyncChange syncChange);
 
-    @Nullable
-    T get(Level level);
+    @Nullable T get(Level level);
 
     Type<T, S> type();
 
@@ -104,8 +103,7 @@ public interface AttachmentsHolderInfo<T, S extends AttachmentsHolderInfo<T, S>>
             return Type.<T, H>getType(typeID).decoder;
         }
 
-        @Nullable
-        @SuppressWarnings("unchecked")
+        @Nullable @SuppressWarnings("unchecked")
         private static <T, H extends AttachmentsHolderInfo<T, H>> Type<T, H> getType(byte id) {
             return (Type<T, H>) Objects.requireNonNull(TYPES.get(id), "Unknown AttachmentHolderInfo type: " + id);
         }

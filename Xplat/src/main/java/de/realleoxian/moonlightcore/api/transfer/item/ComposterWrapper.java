@@ -31,8 +31,7 @@ public final class ComposterWrapper extends SnapshotJournal<BlockState> {
     private static final Map<WrapperLocation, ComposterWrapper> WRAPPERS = new MapMaker().concurrencyLevel(1).weakKeys().weakValues().makeMap();
     private static final ItemResource BONE_MEAL = ItemResource.of(Items.BONE_MEAL);
 
-    @Nullable
-    public static Storage<ItemResource> get(Level level, BlockPos blockPos, @Nullable Direction direction) {
+    @Nullable public static Storage<ItemResource> get(Level level, BlockPos blockPos, @Nullable Direction direction) {
         Objects.requireNonNull(level, "Level may not be 'null'");
         Objects.requireNonNull(blockPos, "BlockPos may not be 'null'");
 

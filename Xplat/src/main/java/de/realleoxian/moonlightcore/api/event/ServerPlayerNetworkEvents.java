@@ -2,7 +2,6 @@ package de.realleoxian.moonlightcore.api.event;
 
 import de.realleoxian.moonlightcore.api.network.PacketSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 public final class ServerPlayerNetworkEvents {

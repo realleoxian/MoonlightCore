@@ -5,7 +5,6 @@ import de.realleoxian.moonlightcore.api.event.EventPriority;
 import de.realleoxian.moonlightcore.api.event.ServerPlayerNetworkEvents;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
 import de.realleoxian.moonlightcore.core.network.s2c.S2CModConfigSyncPacket;
-import de.realleoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
