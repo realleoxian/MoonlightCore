@@ -69,7 +69,7 @@ public final class MoonlightCoreClient {
         RUNTIME.registerPreparableReloadListener(name, listener);
     }
 
-    public static MoonlightCoreClientRuntime<ModLoadingRuntimeContext> getRUNTIME() {
+    public static MoonlightCoreClientRuntime<ModLoadingRuntimeContext> getRuntime() {
         return RUNTIME;
     }
 
