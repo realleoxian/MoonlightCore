@@ -1,0 +1,7 @@
+{
+  "moonlightcore.network.fabric.mod_list_check.missing_on_server": "Missing mod on server: '%s'. Remove it from you game or install it on the server as well.",
+  "moonlightcore.network.fabric.mod_list_check.mod_version_mismatch": "Mod version mismatch for %s. Server expects %s, but you currently have %s.",
+  "moonlightcore.network.fabric.mod_list_check.missing_on_client": "Mod '%s' isn't present on your game. Please install %s version %s to play on this server.",
+  "moonlightcore.network.config_sync.missing_config_on_client": "Your game doesn't have '%s' config registered. Cannot sync to the server",
+  "moonlightcore.config.validator.ranged": "From: %s - To: %s"
+}
