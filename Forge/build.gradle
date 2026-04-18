@@ -104,6 +104,4 @@ tasks.withType(Jar).configureEach {
     manifest.attributes([
       "MixinConfigs": "moonlightcore.mixins.json,moonlightcore.forge.mixins.json"
     ])
-
-    finalizedBy("reobfJar")
 }
