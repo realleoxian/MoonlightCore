@@ -1,7 +1,10 @@
 accessWidener   v1   named
 
 # ClientChunkCache
-accessible  class   net/minecraft/client/multiplayer/ClientChunkCache$Storage # Storage
+accessible class net/minecraft/client/multiplayer/ClientChunkCache$Storage # Storage
 
 # ModelBakery
 accessible class net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl # ModelBakerImpl
+
+# ModelManager
+accessible class net/minecraft/client/resources/model/ModelManager$ReloadState
