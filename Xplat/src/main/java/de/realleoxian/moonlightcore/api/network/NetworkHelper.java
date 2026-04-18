@@ -2,10 +2,13 @@ package de.realleoxian.moonlightcore.api.network;
 
 import de.realleoxian.moonlightcore.api.EnvSide;
 import de.realleoxian.moonlightcore.api.MoonlightCore;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
+import net.minecraft.network.PacketListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.function.BiConsumer;
@@ -38,26 +41,28 @@ public interface NetworkHelper {
     boolean canPlayerReceive(ServerPlayer player, ResourceLocation packet);
 
     interface PacketRegistrar {
-        <MSG> void bidirectional(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler);
+        <MSG> void bidirectional(PacketType<MSG> type, BiConsumer<PacketContext<PacketListener>, MSG> handler);
 
-        <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler);
+        <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext<ClientPacketListener>, MSG> handler);
 
-        <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler);
+        <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext<ServerGamePacketListenerImpl>, MSG> handler);
     }
 
-    interface PacketContext {
+    interface PacketContext<H extends PacketListener> {
         void queueWork(Runnable task);
 
         Player player();
 
-        Connection handler();
+        H handler();
+
+        Connection connection();
 
         PacketSender packetSender();
 
         EnvSide getReceptionSide();
 
         default void disconnect(Component message) {
-            handler().disconnect(message);
+            connection().disconnect(message);
         }
     }
 

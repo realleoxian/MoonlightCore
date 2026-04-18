@@ -4,28 +4,41 @@ import de.realleoxian.moonlightcore.api.EnvSide;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
 import de.realleoxian.moonlightcore.api.network.PacketSender;
 import net.minecraft.network.Connection;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
-public record ForgeServerPacketContext(NetworkEvent.Context forgeCtx) implements NetworkHelper.PacketContext {
+public record ForgeServerPacketContext(ServerPlayer serverPlayer, MinecraftServer server) implements NetworkHelper.PacketContext<ServerGamePacketListenerImpl> {
     @Override
     public void queueWork(Runnable task) {
-        forgeCtx.enqueueWork(task);
-    }
+        if (server.isSameThread()) {
+            task.run();
+            return;
+        }
 
-    @Override
-    public Connection handler() {
-        return forgeCtx.getNetworkManager();
+        server.submitAsync(task);
     }
 
     @Override
     public Player player() {
-        return forgeCtx.getSender();
+        return serverPlayer();
+    }
+
+    @Override
+    public ServerGamePacketListenerImpl handler() {
+        return serverPlayer().connection;
+    }
+
+    @Override
+    public Connection connection() {
+        return serverPlayer().connection.connection;
     }
 
     @Override
     public PacketSender packetSender() {
-        return PacketSender.ofPlayer(forgeCtx.getSender());
+        return PacketSender.ofPlayer(serverPlayer());
     }
 
     @Override

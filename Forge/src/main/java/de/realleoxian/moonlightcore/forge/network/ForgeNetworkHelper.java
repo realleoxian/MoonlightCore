@@ -1,7 +1,6 @@
 package de.realleoxian.moonlightcore.forge.network;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.mojang.logging.LogUtils;
 import de.realleoxian.moonlightcore.api.EnvSide;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
@@ -9,8 +8,11 @@ import de.realleoxian.moonlightcore.api.network.PacketType;
 import de.realleoxian.moonlightcore.forge.client.network.ForgeClientPacketContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.PacketListener;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
@@ -129,10 +131,16 @@ public final class ForgeNetworkHelper implements NetworkHelper {
         return registrar.channel;
     }
 
-    private static PacketContext createContext(EnvSide reception, NetworkEvent.Context forgeCtx) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static PacketContext<PacketListener> createContext(EnvSide reception, NetworkEvent.Context forgeCtx) {
         return switch (reception) {
-            case CLIENT -> ForgeClientPacketContext.INSTANCE;
-            case SERVER -> new ForgeServerPacketContext(forgeCtx);
+            case CLIENT -> (PacketContext<PacketListener>) (PacketContext) ForgeClientPacketContext.INSTANCE;
+            case SERVER -> {
+                ServerPlayer player = Objects.requireNonNull(forgeCtx.getSender(), "This shouldn't happen, but server player it's being null-");
+                MinecraftServer server = player.server;
+
+                yield (PacketContext<PacketListener>) (PacketContext) new ForgeServerPacketContext(player, server);
+            }
         };
     }
 
@@ -156,7 +164,7 @@ public final class ForgeNetworkHelper implements NetworkHelper {
         }
 
         @Override
-        public <MSG> void bidirectional(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler) {
+        public <MSG> void bidirectional(PacketType<MSG> type, BiConsumer<PacketContext<PacketListener>, MSG> handler) {
             var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet()).encoder((msg, buf) -> type.encoder().write(buf, msg)).decoder(type.decoder()::read);
             switch (this.handlerThread) {
                 case MAIN -> builder = builder.consumerMainThread((packet, forgeCtxSup) -> {
@@ -181,7 +189,7 @@ public final class ForgeNetworkHelper implements NetworkHelper {
         }
 
         @Override
-        public <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler) {
+        public <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext<ClientPacketListener>, MSG> handler) {
             var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet(), NetworkDirection.PLAY_TO_CLIENT).encoder((msg, buf) -> type.encoder().write(buf, msg)).decoder(type.decoder()::read);
             switch (this.handlerThread) {
                 case MAIN -> builder = builder.consumerMainThread((packet, forgeCtxSup) -> {
@@ -203,19 +211,21 @@ public final class ForgeNetworkHelper implements NetworkHelper {
         }
 
         @Override
-        public <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext, MSG> handler) {
+        public <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext<ServerGamePacketListenerImpl>, MSG> handler) {
             var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet(), NetworkDirection.PLAY_TO_SERVER).encoder((msg, buf) -> type.encoder().write(buf, msg)).decoder(type.decoder()::read);
             switch (this.handlerThread) {
                 case MAIN -> builder = builder.consumerMainThread((packet, forgeCtxSup) -> {
                     NetworkEvent.Context forgeCtx = forgeCtxSup.get();
+                    ServerPlayer player = Objects.requireNonNull(forgeCtx.getSender(), "This shouldn't happen, but server player it's being null-");
 
-                    forgeCtx.enqueueWork(() -> handler.accept(new ForgeServerPacketContext(forgeCtx), packet));
+                    forgeCtx.enqueueWork(() -> handler.accept(new ForgeServerPacketContext(player, player.server), packet));
                     forgeCtx.setPacketHandled(true);
                 });
                 case NETWORK -> builder = builder.consumerNetworkThread((packet, forgeCtxSup) -> {
                     NetworkEvent.Context forgeCtx = forgeCtxSup.get();
+                    ServerPlayer player = Objects.requireNonNull(forgeCtx.getSender(), "This shouldn't happen, but server player it's being null-");
 
-                    handler.accept(new ForgeServerPacketContext(forgeCtx), packet);
+                    handler.accept(new ForgeServerPacketContext(player, player.server), packet);
                     forgeCtx.setPacketHandled(true);
                 });
             }

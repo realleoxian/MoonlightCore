@@ -8,33 +8,32 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
 import net.minecraft.world.entity.player.Player;
 
-public final class ForgeClientPacketContext implements NetworkHelper.PacketContext {
-    public static final NetworkHelper.PacketContext INSTANCE = new ForgeClientPacketContext();
-
-    private ForgeClientPacketContext() {}
+public final class ForgeClientPacketContext implements NetworkHelper.PacketContext<ClientPacketListener> {
+    public static final ForgeClientPacketContext INSTANCE = new ForgeClientPacketContext();
 
     @Override
     public void queueWork(Runnable task) {
-        if (Minecraft.getInstance().isSameThread()) task.run();
-        else Minecraft.getInstance().execute(task);
+        if (Minecraft.getInstance().isSameThread()) {
+            task.run();
+            return;
+        }
+
+        Minecraft.getInstance().submitAsync(task);
     }
 
     @Override
     public Player player() {
-        Player player = Minecraft.getInstance().player;
-        if (player == null)
-            throw new IllegalStateException("Cannot retrieve client player because it is 'null' (weird (???))");
-
-        return player;
+        return Minecraft.getInstance().player;
     }
 
     @Override
-    public Connection handler() {
-        ClientPacketListener listener = Minecraft.getInstance().getConnection();
-        if (listener == null)
-            throw new IllegalStateException("For some weird reason client packet listener it's null..?");
+    public ClientPacketListener handler() {
+        return Minecraft.getInstance().getConnection();
+    }
 
-        return listener.getConnection();
+    @Override
+    public Connection connection() {
+        return handler().getConnection();
     }
 
     @Override
@@ -46,4 +45,6 @@ public final class ForgeClientPacketContext implements NetworkHelper.PacketConte
     public EnvSide getReceptionSide() {
         return EnvSide.CLIENT;
     }
+
+    private ForgeClientPacketContext() {}
 }
