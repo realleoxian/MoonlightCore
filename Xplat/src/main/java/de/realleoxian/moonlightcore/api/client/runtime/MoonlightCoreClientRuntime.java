@@ -18,7 +18,7 @@ public interface MoonlightCoreClientRuntime<C extends ModLoadingRuntimeContext> 
 
     void initializeClientMod(String modId, C context, Runnable initializer);
 
-    void commands(String namespace, ClientCommandsRegistrar initializer);
+    void commands(ClientCommandsRegistrar initializer);
 
     void modelLayers(String namespace, Consumer<ModelLayerRegistrar> registrar);
 

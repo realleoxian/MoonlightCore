@@ -57,7 +57,7 @@ public final class ForgeMoonlightCoreClientRuntime extends XplatMoonlightCoreCli
     }
 
     @Override
-    public void commands(String namespace, ClientCommandsRegistrar initializer) {
+    public void commands(ClientCommandsRegistrar initializer) {
         this.clientCommandsRegistrars.add(initializer);
     }
 
