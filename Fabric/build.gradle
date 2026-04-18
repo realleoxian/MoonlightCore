@@ -1,36 +1,42 @@
 plugins {
     id 'moonlightcore-loader'
 
-    id 'fabric-loom'
+    id 'net.fabricmc.fabric-loom-remap'
     id 'me.modmuss50.mod-publish-plugin'
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${mcVersion}"
-    mappings(loom.layered {
+    minecraft "com.mojang:minecraft:${project.mcVersion}"
+    mappings loom.layered {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${mcVersion}:${parchmentVersion}@zip")
-    })
-    modImplementation("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}+${mcVersion}")
+    }
 
-    implementation(project(":Xplat"))
+    modImplementation("net.fabricmc:fabric-loader:${project.fabricLoaderVersion}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}")
+    modCompileOnly("me.lucko:fabric-permissions-api:${project.fabricPermissionApi}")
+
+    include(implementation("com.google.code.findbugs:jsr305:3.0.2"))
+
+    api(project(":Xplat"))
 }
 
+artifacts {
+    archives(tasks.remapJar)
+    archives(tasks.remapSourcesJar)
+}
+
+
 loom {
+    accessWidenerPath = project(":Xplat").file("src/main/resources/moonlightcore.accesswidener")
+
     mods {
-        create("moonlightcore") {
+        "moonllightcore" {
             sourceSet sourceSets.main
         }
     }
 
-    mixin {
-        defaultRefmapName = "moonlightcore.refmap.json"
-    }
-
     runs {
-        def loomRunDir = file("run").toPath()
-
         client {
             client()
 
@@ -49,32 +55,7 @@ loom {
 
             vmArg "-Dfabric.log.level=info"
         }
-        clientDebug {
-            client()
-
-            configName = "Fabric Client Debug"
-            ideConfigGenerated = true
-            runDir = "run/client"
-
-            vmArg "-Dfabric.log.level=debug"
-        }
-        serverDebug {
-            server()
-
-            configName = "Fabric Server Debug"
-            ideConfigGenerated = true
-            runDir = "run/server"
-
-            vmArg "-Dfabric.log.level=debug"
-        }
     }
-
-    accessWidenerPath = project(":Xplat").file("src/main/resources/moonlightcore.accesswidener")
-}
-
-artifacts {
-    archives(tasks.remapJar)
-    archives(tasks.remapSourcesJar)
 }
 
 import me.modmuss50.mpp.ReleaseType

@@ -4,8 +4,13 @@
   "required": true,
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [],
-  "client": [],
+  "mixins": [
+    "ServerGamePacketListenerImplAccessor"
+  ],
+  "client": [
+    "client.FabricClientCommandSourceMixin",
+    "client.ModelManagerMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

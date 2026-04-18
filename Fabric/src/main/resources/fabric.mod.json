@@ -5,19 +5,20 @@
   "name": "MoonlightCore",
   "description": "MoonlightCore its a layer abstraction (actually it isn't (kinda?)) that helps with the multi-loader mod development",
   "authors": ["RealLeoxian"],
-  "license": "MIT",
+  "license": "LGPL v3",
   "environment": "*",
   "accessWidener": "moonlightcore.accesswidener",
   "entrypoints": {
-    "main": ["de.leoxian.moonlightcore.fabric.MoonlightCoreFabricMod"],
-    "client": ["de.leoxian.moonlightcore.fabric.client.MoonlightCoreFabricClientMod"]
+    "main": ["de.realleoxian.moonlightcore.fabric.MoonlightCoreFabricMod"],
+    "client": ["de.realleoxian.moonlightcore.fabric.client.MoonlightCoreFabricClientMod"]
   },
   "mixins": [
     "moonlightcore.mixins.json",
     "moonlightcore.fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${fabricLoaderVersion}",
-    "fabric-api": ">=${fabricApiVersion}"
+    "minecraft": "1.20.1",
+    "fabricloader": "*",
+    "fabric-api": "*"
   }
 }
