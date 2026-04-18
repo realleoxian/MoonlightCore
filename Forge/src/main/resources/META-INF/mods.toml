@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "${fmlVersionRange}"
 
-license = "MIT"
+license = "LGPL v3"
 issueTrackerURL = "${githubUrl}/issues"
 showAsResourcePack = false
 
