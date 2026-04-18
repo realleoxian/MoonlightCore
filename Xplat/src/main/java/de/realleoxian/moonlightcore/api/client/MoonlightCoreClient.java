@@ -29,8 +29,8 @@ public final class MoonlightCoreClient {
         RUNTIME.initializeClientMod(modId, context, initializer);
     }
 
-    public static void commands(String namespace, ClientCommandsRegistrar initializer) {
-        RUNTIME.commands(namespace, initializer);
+    public static void commands(ClientCommandsRegistrar initializer) {
+        RUNTIME.commands(initializer);
     }
 
     public static void modelLayers(String namespace, Consumer<ModelLayerRegistrar> registrar) {

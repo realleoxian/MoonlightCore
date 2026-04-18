@@ -31,7 +31,7 @@ public interface AttachmentsHolderInfo<T, S extends AttachmentsHolderInfo<T, S>>
 
     @SuppressWarnings("unchecked")
     default void writeToBuffer(FriendlyByteBuf byteBuf) {
-        type().encoder().write(byteBuf, (S) this);
+        type().encoder().write((S) this, byteBuf);
     }
 
     default byte typeId() {
@@ -41,7 +41,7 @@ public interface AttachmentsHolderInfo<T, S extends AttachmentsHolderInfo<T, S>>
     record BlockEntityHolderInfo(BlockPos blockPos) implements AttachmentsHolderInfo<BlockEntity, BlockEntityHolderInfo> {
         public static final Type<BlockEntity, BlockEntityHolderInfo> TYPE = new Type<>((byte) 0, BlockEntityHolderInfo::writeToBuffer, BlockEntityHolderInfo::new);
 
-        private static void writeToBuffer(ByteBuf byteBuf, BlockEntityHolderInfo holderInfo) {
+        private static void writeToBuffer(BlockEntityHolderInfo holderInfo, ByteBuf byteBuf) {
             byteBuf.writeLong(holderInfo.blockPos().asLong());
         }
 
@@ -69,7 +69,7 @@ public interface AttachmentsHolderInfo<T, S extends AttachmentsHolderInfo<T, S>>
     record EntityHolderInfo(int id) implements AttachmentsHolderInfo<Entity, EntityHolderInfo> {
         public static final Type<Entity, EntityHolderInfo> TYPE = new Type<>((byte) 1, EntityHolderInfo::writeToBuffer, EntityHolderInfo::new);
 
-        private static void writeToBuffer(ByteBuf byteBuf, EntityHolderInfo holderInfo) {
+        private static void writeToBuffer(EntityHolderInfo holderInfo, ByteBuf byteBuf) {
             byteBuf.writeInt(holderInfo.id());
         }
 

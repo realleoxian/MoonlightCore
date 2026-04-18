@@ -20,7 +20,7 @@ public record ResourceStack<T>(T resource, int amount) {
     }
 
     public void writeToBuffer(FriendlyByteBuf byteBuf, PacketEncoder<FriendlyByteBuf, T> resourceEncoder) {
-        resourceEncoder.write(byteBuf, resource());
+        resourceEncoder.write(resource(), byteBuf);
         byteBuf.writeVarInt(amount);
     }
 

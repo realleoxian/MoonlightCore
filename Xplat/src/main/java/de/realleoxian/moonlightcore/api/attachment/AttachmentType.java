@@ -54,7 +54,7 @@ public interface AttachmentType<T> {
             return syncHandler(new AttachmentSyncHandler<T>() {
                 @Override
                 public void encode(FriendlyByteBuf byteBuf, AttachmentType<T> type, T data) {
-                    encoder.write(byteBuf, data);
+                    encoder.write(data, byteBuf);
                 }
 
                 @Override
