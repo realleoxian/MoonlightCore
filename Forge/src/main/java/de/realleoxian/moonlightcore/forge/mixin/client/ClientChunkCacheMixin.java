@@ -2,6 +2,7 @@ package de.realleoxian.moonlightcore.forge.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import de.realleoxian.moonlightcore.api.client.event.ClientChunkEvents;
+import de.realleoxian.moonlightcore.mixin.client.ClientChunkCacheStorageInvoker;
 import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
@@ -66,7 +67,7 @@ public class ClientChunkCacheMixin {
             )
     )
     private void moonlightcore$updateViewRadius(int viewDistance, CallbackInfo ci, @Local ClientChunkCache.Storage clientchunkcache$storage, @Local ChunkPos chunkpos, @Local LevelChunk levelchunk) {
-        if (!clientchunkcache$storage.inRange(chunkpos.x, chunkpos.z)) {
+        if (!((ClientChunkCacheStorageInvoker) (Object) clientchunkcache$storage).inRange(chunkpos.x, chunkpos.z)) {
             ClientChunkEvents.UNLOAD.invoker().onChunkUnload(this.level, levelchunk);
         }
     }

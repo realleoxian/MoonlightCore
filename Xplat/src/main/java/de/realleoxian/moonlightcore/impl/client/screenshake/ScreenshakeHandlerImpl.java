@@ -4,6 +4,7 @@ import de.realleoxian.moonlightcore.api.client.event.ClientTickEvents;
 import de.realleoxian.moonlightcore.api.client.screenshake.ScreenshakeInstance;
 import de.realleoxian.moonlightcore.api.event.EventPriority;
 import de.realleoxian.moonlightcore.core.config.CoreClientConfig;
+import de.realleoxian.moonlightcore.mixin.client.CameraInvoker;
 import net.minecraft.client.Camera;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -40,7 +41,7 @@ public final class ScreenshakeHandlerImpl {
         if (rotationIntensity > 0.01F) {
             float yawOffset = randomizeOffset(rotationIntensity);
             float pitchOffset = randomizeOffset(rotationIntensity);
-            camera.setRotation(camera.getYRot() + yawOffset, camera.getXRot() + pitchOffset);
+            ((CameraInvoker) camera).setRotation(camera.getYRot() + yawOffset, camera.getXRot() + pitchOffset);
         }
 
         Vec3 pos = camera.getPosition();
@@ -51,7 +52,7 @@ public final class ScreenshakeHandlerImpl {
             float x = (float) (Math.cos(a) * Math.cos(b)) * randomizeOffset(positionIntensity);
             float y = (float) (Math.sin(a) * Math.cos(b)) * randomizeOffset(positionIntensity);
             float z = (float) Math.sin(b) * randomizeOffset(positionIntensity);
-            camera.setPosition(pos.add(x, y, z));
+            ((CameraInvoker) camera).setPosition(pos.add(x, y, z));
         }
     }
 
