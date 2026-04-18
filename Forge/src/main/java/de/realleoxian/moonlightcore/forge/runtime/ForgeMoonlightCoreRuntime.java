@@ -36,6 +36,7 @@ public final class ForgeMoonlightCoreRuntime extends XplatMoonlightCoreRuntime<F
     private final List<Pair<ResourceLocation, PreparableReloadListener>> serverReloadListeners = new ArrayList<>();
 
     private final PermissionHelper permissionHelper = new ForgePermissionHelperImpl();
+    private final NetworkHelper networkHelper = new ForgeNetworkHelper();
 
     ForgeMoonlightCoreRuntime() {
         MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> {
@@ -84,7 +85,7 @@ public final class ForgeMoonlightCoreRuntime extends XplatMoonlightCoreRuntime<F
 
     @Override
     public NetworkHelper getNetworkHelper() {
-        return ForgeNetworkHelper.get();
+        return this.networkHelper;
     }
 
     @Override

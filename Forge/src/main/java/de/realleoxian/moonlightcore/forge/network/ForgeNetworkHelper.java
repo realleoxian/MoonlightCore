@@ -27,12 +27,6 @@ import java.util.function.Predicate;
 
 public final class ForgeNetworkHelper implements NetworkHelper {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static ForgeNetworkHelper INSTANCE = null;
-
-    public static NetworkHelper get() {
-        if (ForgeNetworkHelper.INSTANCE == null) ForgeNetworkHelper.INSTANCE = new ForgeNetworkHelper();
-        return ForgeNetworkHelper.INSTANCE;
-    }
 
     private final Map<String, ForgePacketRegistrar> registrars = new HashMap<>();
 
@@ -147,7 +141,7 @@ public final class ForgeNetworkHelper implements NetworkHelper {
         return str.equals("1");
     }
 
-    private ForgeNetworkHelper() {}
+    public ForgeNetworkHelper() {}
 
     private final class ForgePacketRegistrar implements PacketRegistrar {
         private final SimpleChannel channel;

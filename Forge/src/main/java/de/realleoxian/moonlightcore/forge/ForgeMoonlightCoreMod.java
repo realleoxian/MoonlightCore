@@ -13,13 +13,10 @@ import net.minecraftforge.fml.loading.FMLLoader;
 
 @Mod(value = "moonlightcore")
 public class ForgeMoonlightCoreMod {
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public ForgeMoonlightCoreMod(FMLJavaModLoadingContext context) {
         MoonlightCore.initializeMod("moonlightcore", new ForgeModLoadingContext(context.getModEventBus()), CoreMod::initialize);
         if (FMLLoader.getDist().isClient()) MoonlightCoreClient.initializeClientMod("moonlightcore", new ForgeModLoadingContext(context.getModEventBus()), CoreClientMod::initializeClient);
 
-        ((XplatMoonlightCoreRuntime<ForgeModLoadingContext>) (MoonlightCoreRuntime) MoonlightCore.getRuntime()).initializeRuntime();
+        ((XplatMoonlightCoreRuntime<?>) MoonlightCore.getRuntime()).initializeRuntime();
     }
-
 }
