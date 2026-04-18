@@ -41,8 +41,6 @@ public interface NetworkHelper {
     boolean canPlayerReceive(ServerPlayer player, ResourceLocation packet);
 
     interface PacketRegistrar {
-        <MSG> void bidirectional(PacketType<MSG> type, BiConsumer<PacketContext<PacketListener>, MSG> handler);
-
         <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext<ClientPacketListener>, MSG> handler);
 
         <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext<ServerGamePacketListenerImpl>, MSG> handler);

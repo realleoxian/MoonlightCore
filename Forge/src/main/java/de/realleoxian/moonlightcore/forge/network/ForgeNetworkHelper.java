@@ -164,31 +164,6 @@ public final class ForgeNetworkHelper implements NetworkHelper {
         }
 
         @Override
-        public <MSG> void bidirectional(PacketType<MSG> type, BiConsumer<PacketContext<PacketListener>, MSG> handler) {
-            var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet()).encoder((msg, buf) -> type.encoder().write(buf, msg)).decoder(type.decoder()::read);
-            switch (this.handlerThread) {
-                case MAIN -> builder = builder.consumerMainThread((packet, forgeCtxSup) -> {
-                    NetworkEvent.Context forgeCtx = forgeCtxSup.get();
-
-                    EnvSide receptionSide = forgeCtx.getDirection().getReceptionSide().isClient() ? EnvSide.CLIENT : EnvSide.SERVER;
-                    forgeCtx.enqueueWork(() -> handler.accept(createContext(receptionSide, forgeCtx), packet));
-                    forgeCtx.setPacketHandled(true);
-                });
-                case NETWORK -> builder = builder.consumerNetworkThread((packet, forgeCtxSup) -> {
-                    NetworkEvent.Context forgeCtx = forgeCtxSup.get();
-
-                    EnvSide receptionSide = forgeCtx.getDirection().getReceptionSide().isClient() ? EnvSide.CLIENT : EnvSide.SERVER;
-                    handler.accept(createContext(receptionSide, forgeCtx), packet);
-                    forgeCtx.setPacketHandled(true);
-                });
-            }
-
-            builder.add();
-            CLIENT_PACKETS_BY_CLASS.put(type.type(), type);
-            SERVER_PACKETS_BY_CLASS.put(type.type(), type);
-        }
-
-        @Override
         public <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext<ClientPacketListener>, MSG> handler) {
             var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet(), NetworkDirection.PLAY_TO_CLIENT).encoder((msg, buf) -> type.encoder().write(buf, msg)).decoder(type.decoder()::read);
             switch (this.handlerThread) {
