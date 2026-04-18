@@ -67,7 +67,7 @@ public class ClientChunkCacheMixin {
             )
     )
     private void moonlightcore$updateViewRadius(int viewDistance, CallbackInfo ci, @Local ClientChunkCache.Storage clientchunkcache$storage, @Local ChunkPos chunkpos, @Local LevelChunk levelchunk) {
-        if (!((ClientChunkCacheStorageInvoker) (Object) clientchunkcache$storage).inRange(chunkpos.x, chunkpos.z)) {
+        if (!((ClientChunkCacheStorageInvoker) (Object) clientchunkcache$storage).invokeInRange(chunkpos.x, chunkpos.z)) {
             ClientChunkEvents.UNLOAD.invoker().onChunkUnload(this.level, levelchunk);
         }
     }

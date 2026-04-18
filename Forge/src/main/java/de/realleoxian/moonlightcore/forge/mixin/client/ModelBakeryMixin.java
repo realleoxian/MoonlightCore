@@ -16,7 +16,7 @@ public abstract class ModelBakeryMixin {
 
     @Inject(
             method = "getModel",
-            at = @At(value = "HEAD"),
+            at = @At(value = "RETURN"),
             cancellable = true
     )
     private void moonlightcore$modifyOnLoad(ResourceLocation modelLocation, CallbackInfoReturnable<UnbakedModel> cir) {
@@ -37,7 +37,7 @@ public abstract class ModelBakeryMixin {
             }
         };
 
-        UnbakedModel model = ModelEvents.MODIFY_MODEL_ON_LOAD.invoker().onModifyModelOnLoad(getModel(modelLocation), context);
+        UnbakedModel model = ModelEvents.MODIFY_MODEL_ON_LOAD.invoker().onModifyModelOnLoad(cir.getReturnValue(), context);
         if (model != null) {
             cir.setReturnValue(model);
         }

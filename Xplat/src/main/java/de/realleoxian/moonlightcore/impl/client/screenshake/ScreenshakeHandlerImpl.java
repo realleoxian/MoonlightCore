@@ -41,7 +41,7 @@ public final class ScreenshakeHandlerImpl {
         if (rotationIntensity > 0.01F) {
             float yawOffset = randomizeOffset(rotationIntensity);
             float pitchOffset = randomizeOffset(rotationIntensity);
-            ((CameraInvoker) camera).setRotation(camera.getYRot() + yawOffset, camera.getXRot() + pitchOffset);
+            ((CameraInvoker) camera).invokeSetRotation(camera.getYRot() + yawOffset, camera.getXRot() + pitchOffset);
         }
 
         Vec3 pos = camera.getPosition();
@@ -52,7 +52,7 @@ public final class ScreenshakeHandlerImpl {
             float x = (float) (Math.cos(a) * Math.cos(b)) * randomizeOffset(positionIntensity);
             float y = (float) (Math.sin(a) * Math.cos(b)) * randomizeOffset(positionIntensity);
             float z = (float) Math.sin(b) * randomizeOffset(positionIntensity);
-            ((CameraInvoker) camera).setPosition(pos.add(x, y, z));
+            ((CameraInvoker) camera).invokeSetPosition(pos.add(x, y, z));
         }
     }
 

@@ -1,5 +1,6 @@
 package de.realleoxian.moonlightcore.forge.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import de.realleoxian.moonlightcore.api.client.event.ModelEvents;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.function.Function;
 
-@Mixin(targets = "net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl")
+@Mixin(ModelBakery.ModelBakerImpl.class)
 public class ModelBakeryBakeryImplMixin {
     @Shadow
     @Final
@@ -24,7 +25,7 @@ public class ModelBakeryBakeryImplMixin {
     private Function<Material, TextureAtlasSprite> modelTextureGetter;
 
     @ModifyVariable(
-            method = "bake",
+            method = "bake(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;",
             at = @At(
                     value = "INVOKE_ASSIGN",
                     target = "Lnet/minecraft/client/resources/model/ModelBakery$ModelBakerImpl;getModel(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/resources/model/UnbakedModel;"
@@ -53,11 +54,12 @@ public class ModelBakeryBakeryImplMixin {
             }
         };
 
-        return ModelEvents.MODIFY_BEFORE_BAKE.invoker().onModifyBeforeBake(model, context);
+        var modified = ModelEvents.MODIFY_BEFORE_BAKE.invoker().onModifyBeforeBake(model, context);
+        return modified != null ? modified : model;
     }
 
     @Redirect(
-            method = "bake",
+            method = "bake(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/resources/model/UnbakedModel;bake(Lnet/minecraft/client/resources/model/ModelBaker;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/resources/model/BakedModel;"
@@ -87,11 +89,13 @@ public class ModelBakeryBakeryImplMixin {
                 return state;
             }
         };
-        return ModelEvents.MODIFY_BAKE_RESULT.invoker().onModifyBakeResult(model, context);
+
+        var modified = ModelEvents.MODIFY_BAKE_RESULT.invoker().onModifyBakeResult(model, context);
+        return modified != null ? modified : model;
     }
 
     @Redirect(
-            method = "bake",
+            method = "bake(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/renderer/block/model/BlockModel;bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;"
@@ -121,6 +125,8 @@ public class ModelBakeryBakeryImplMixin {
                 return state;
             }
         };
-        return ModelEvents.MODIFY_BAKE_RESULT.invoker().onModifyBakeResult(model, context);
+
+        var modified = ModelEvents.MODIFY_BAKE_RESULT.invoker().onModifyBakeResult(model, context);
+        return modified != null ? modified : model;
     }
 }
