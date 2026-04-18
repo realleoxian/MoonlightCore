@@ -33,7 +33,7 @@ public final class ForgeClientEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
-        ModelEvents.ModifyAfterBake.Context ctx = new ModelEvents.ModifyAfterBake.Context() {
+        ModelEvents.AfterBaking.Context ctx = new ModelEvents.AfterBaking.Context() {
             @Override
             public void setModel(ResourceLocation location, BakedModel model) {
                 event.getModels().put(location, model);
@@ -70,7 +70,7 @@ public final class ForgeClientEventHandler {
             }
         };
 
-        ModelEvents.MODIFY_AFTER_BAKE.invoker().onModifyAfterBake(ctx);
+        ModelEvents.AFTER_BAKING.invoker().onAfterBaking(ctx);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

@@ -20,9 +20,9 @@ public final class ModelEvents {
             listener.onRegisterModelsLocation(context);
         }
     });
-    public static final EventBus<ModifyUnbakedModel> MODIFY_UNBAKED_MODEL = EventBus.create(ModifyUnbakedModel.class, (listeners) -> (context) -> {
-        for (ModifyUnbakedModel listener : listeners) {
-            @Nullable UnbakedModel modified = listener.onModifyUnbakedModel(context);
+    public static final EventBus<ModifyModelOnLoad> MODIFY_MODEL_ON_LOAD = EventBus.create(ModifyModelOnLoad.class, (listeners) -> (model,context) -> {
+        for (ModifyModelOnLoad listener : listeners) {
+            @Nullable UnbakedModel modified = listener.onModifyModelOnLoad(model, context);
 
             if (modified != null) {
                 return modified;
@@ -31,9 +31,9 @@ public final class ModelEvents {
 
         return null;
     });
-    public static final EventBus<ModifyModelBakeResult> MODIFY_MODEL_BAKE_RESULT = EventBus.create(ModifyModelBakeResult.class, (listeners) -> (context) -> {
-        for (ModifyModelBakeResult listener : listeners) {
-            @Nullable BakedModel modified = listener.onModifyBakeResult(context);
+    public static final EventBus<ModifyBeforeBake> MODIFY_BEFORE_BAKE = EventBus.create(ModifyBeforeBake.class, (listeners) -> (model, context) -> {
+        for (ModifyBeforeBake listener : listeners) {
+            @Nullable UnbakedModel modified = listener.onModifyBeforeBake(model, context);
 
             if (modified != null) {
                 return modified;
@@ -42,9 +42,20 @@ public final class ModelEvents {
 
         return null;
     });
-    public static final EventBus<ModifyAfterBake> MODIFY_AFTER_BAKE = EventBus.create(ModifyAfterBake.class, (listeners) -> (context) -> {
-        for (ModifyAfterBake listener : listeners) {
-            listener.onModifyAfterBake(context);
+    public static final EventBus<ModifyBakeResult> MODIFY_BAKE_RESULT = EventBus.create(ModifyBakeResult.class, (listeners) -> (model, context) -> {
+        for (ModifyBakeResult listener : listeners) {
+            @Nullable BakedModel modified = listener.onModifyBakeResult(model, context);
+
+            if (modified != null) {
+                return modified;
+            }
+        }
+
+        return null;
+    });
+    public static final EventBus<AfterBaking> AFTER_BAKING = EventBus.create(AfterBaking.class, (listeners) -> (context) -> {
+        for (AfterBaking listener : listeners) {
+            listener.onAfterBaking(context);
         }
     });
 
@@ -67,8 +78,8 @@ public final class ModelEvents {
         }
     }
 
-    public interface ModifyUnbakedModel {
-        UnbakedModel onModifyUnbakedModel(ModifyUnbakedModel.Context context);
+    public interface ModifyModelOnLoad {
+        UnbakedModel onModifyModelOnLoad(UnbakedModel model, ModifyModelOnLoad.Context context);
 
         @ApiStatus.NonExtendable
         interface Context {
@@ -80,8 +91,8 @@ public final class ModelEvents {
         }
     }
 
-    public interface ModifyModelBakeResult {
-        BakedModel onModifyBakeResult(ModifyModelBakeResult.Context context);
+    public interface ModifyBeforeBake {
+        UnbakedModel onModifyBeforeBake(UnbakedModel model, ModifyBeforeBake.Context context);
 
         @ApiStatus.NonExtendable
         interface Context {
@@ -90,11 +101,28 @@ public final class ModelEvents {
             ModelBakery getModelBakery();
 
             Function<Material, TextureAtlasSprite> getSpriteGetter();
+
+            ModelState getModelState();
         }
     }
 
-    public interface ModifyAfterBake {
-        void onModifyAfterBake(ModifyAfterBake.Context context);
+    public interface ModifyBakeResult {
+        BakedModel onModifyBakeResult(BakedModel model, ModifyBakeResult.Context context);
+
+        @ApiStatus.NonExtendable
+        interface Context {
+            ResourceLocation getId();
+
+            ModelBakery getModelBakery();
+
+            Function<Material, TextureAtlasSprite> getSpriteGetter();
+
+            ModelState getModelState();
+        }
+    }
+
+    public interface AfterBaking {
+        void onAfterBaking(AfterBaking.Context context);
 
         @ApiStatus.NonExtendable
         interface Context {
