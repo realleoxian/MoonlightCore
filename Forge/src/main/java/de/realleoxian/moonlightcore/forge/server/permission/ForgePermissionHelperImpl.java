@@ -27,7 +27,7 @@ public class ForgePermissionHelperImpl extends XplatPermissionHelper {
     @Override
     public void register(ResourceLocation permission, Function<PermissionContext, Boolean> resolver) {
         super.register(permission, resolver);
-        this.nodes.put(permission, new PermissionNode<Boolean>(permission, PermissionTypes.BOOLEAN, (serverPlayer, uuid, permissionDynamicContext) ->
+        this.nodes.put(permission, new PermissionNode<>(permission, PermissionTypes.BOOLEAN, (serverPlayer, uuid, permissionDynamicContext) ->
                 resolver.apply(serverPlayer == null ? new OfflinePermissionContext(uuid) : new PlayerPermissionContext(serverPlayer))));
     }
 
