@@ -14,14 +14,14 @@ import net.minecraft.world.entity.player.Player;
 public record S2CAttachmentSyncPacket(AttachmentSyncChange change) {
     public static final PacketType<S2CAttachmentSyncPacket> TYPE = new PacketType<>(new ResourceLocation("moonlightcore", "attachment_sync"), S2CAttachmentSyncPacket.class, S2CAttachmentSyncPacket::encodeToBuffer, S2CAttachmentSyncPacket::decodeFromBuffer);
 
-    public static void handle(NetworkHelper.PacketContext<ClientPacketListener> context, S2CAttachmentSyncPacket packet) {
+    public static void handle(S2CAttachmentSyncPacket packet, NetworkHelper.PacketContext<ClientPacketListener> context) {
         context.queueWork(() -> {
             Player player = context.player();
             packet.change().applyChange(player.level());
         });
     }
 
-    public static void encodeToBuffer(FriendlyByteBuf byteBuf, S2CAttachmentSyncPacket packet) {
+    public static void encodeToBuffer(S2CAttachmentSyncPacket packet, FriendlyByteBuf byteBuf) {
         AttachmentSyncChange change = packet.change();
 
         AttachmentsHolderInfo<?, ?> holderInfo = packet.change().holderInfo();

@@ -9,7 +9,7 @@ public record PacketType<MSG>(ResourceLocation name, Class<MSG> type, PacketEnco
     public FriendlyByteBuf encode(MSG msg) {
         try {
             FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-            encoder.write(byteBuf, msg);
+            encoder.write(msg, byteBuf);
 
             return byteBuf;
         } catch (Exception e) {

@@ -4,6 +4,7 @@ import de.realleoxian.moonlightcore.api.EnvSide;
 import de.realleoxian.moonlightcore.api.MoonlightCore;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -41,9 +42,17 @@ public interface NetworkHelper {
     boolean canPlayerReceive(ServerPlayer player, ResourceLocation packet);
 
     interface PacketRegistrar {
-        <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext<ClientPacketListener>, MSG> handler);
+        <MSG> void clientbound(PacketType<MSG> type, BiConsumer<MSG, PacketContext<ClientPacketListener>> handler);
 
-        <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext<ServerGamePacketListenerImpl>, MSG> handler);
+        default <MSG> void clientbound(ResourceLocation name, Class<MSG> msgClass, PacketEncoder<FriendlyByteBuf, MSG> encoder, PacketDecoder<FriendlyByteBuf, MSG> decoder, BiConsumer<MSG, PacketContext<ClientPacketListener>> handler) {
+            clientbound(new PacketType<>(name, msgClass, encoder, decoder), handler);
+        }
+
+        <MSG> void serverbound(PacketType<MSG> type, BiConsumer<MSG, PacketContext<ServerGamePacketListenerImpl>> handler);
+
+        default <MSG> void serverbound(ResourceLocation name, Class<MSG> msgClass, PacketEncoder<FriendlyByteBuf, MSG> encoder, PacketDecoder<FriendlyByteBuf, MSG> decoder, BiConsumer<MSG, PacketContext<ServerGamePacketListenerImpl>> handler) {
+            serverbound(new PacketType<>(name, msgClass, encoder, decoder), handler);
+        }
     }
 
     interface PacketContext<H extends PacketListener> {

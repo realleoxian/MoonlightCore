@@ -163,19 +163,19 @@ public final class ForgeNetworkHelper implements NetworkHelper {
         }
 
         @Override
-        public <MSG> void clientbound(PacketType<MSG> type, BiConsumer<PacketContext<ClientPacketListener>, MSG> handler) {
-            var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet(), NetworkDirection.PLAY_TO_CLIENT).encoder((msg, buf) -> type.encoder().write(buf, msg)).decoder(type.decoder()::read);
+        public <MSG> void clientbound(PacketType<MSG> type, BiConsumer<MSG, PacketContext<ClientPacketListener>> handler) {
+            var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet(), NetworkDirection.PLAY_TO_CLIENT).encoder(type.encoder()::write).decoder(type.decoder()::read);
             switch (this.handlerThread) {
                 case MAIN -> builder = builder.consumerMainThread((packet, forgeCtxSup) -> {
                     NetworkEvent.Context forgeCtx = forgeCtxSup.get();
 
-                    forgeCtx.enqueueWork(() -> handler.accept(ForgeClientPacketContext.INSTANCE, packet));
+                    forgeCtx.enqueueWork(() -> handler.accept(packet, ForgeClientPacketContext.INSTANCE));
                     forgeCtx.setPacketHandled(true);
                 });
                 case NETWORK -> builder = builder.consumerNetworkThread((packet, forgeCtxSup) -> {
                     NetworkEvent.Context forgeCtx = forgeCtxSup.get();
 
-                    handler.accept(ForgeClientPacketContext.INSTANCE, packet);
+                    handler.accept(packet, ForgeClientPacketContext.INSTANCE);
                     forgeCtx.setPacketHandled(true);
                 });
             }
@@ -185,21 +185,21 @@ public final class ForgeNetworkHelper implements NetworkHelper {
         }
 
         @Override
-        public <MSG> void serverbound(PacketType<MSG> type, BiConsumer<PacketContext<ServerGamePacketListenerImpl>, MSG> handler) {
-            var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet(), NetworkDirection.PLAY_TO_SERVER).encoder((msg, buf) -> type.encoder().write(buf, msg)).decoder(type.decoder()::read);
+        public <MSG> void serverbound(PacketType<MSG> type, BiConsumer<MSG, PacketContext<ServerGamePacketListenerImpl>> handler) {
+            var builder = this.channel.messageBuilder(type.type(), packetId.incrementAndGet(), NetworkDirection.PLAY_TO_SERVER).encoder(type.encoder()::write).decoder(type.decoder()::read);
             switch (this.handlerThread) {
                 case MAIN -> builder = builder.consumerMainThread((packet, forgeCtxSup) -> {
                     NetworkEvent.Context forgeCtx = forgeCtxSup.get();
                     ServerPlayer player = Objects.requireNonNull(forgeCtx.getSender(), "This shouldn't happen, but server player it's being null-");
 
-                    forgeCtx.enqueueWork(() -> handler.accept(new ForgeServerPacketContext(player, player.server), packet));
+                    forgeCtx.enqueueWork(() -> handler.accept(packet, new ForgeServerPacketContext(player, player.server)));
                     forgeCtx.setPacketHandled(true);
                 });
                 case NETWORK -> builder = builder.consumerNetworkThread((packet, forgeCtxSup) -> {
                     NetworkEvent.Context forgeCtx = forgeCtxSup.get();
                     ServerPlayer player = Objects.requireNonNull(forgeCtx.getSender(), "This shouldn't happen, but server player it's being null-");
 
-                    handler.accept(new ForgeServerPacketContext(player, player.server), packet);
+                    handler.accept(packet, new ForgeServerPacketContext(player, player.server));
                     forgeCtx.setPacketHandled(true);
                 });
             }

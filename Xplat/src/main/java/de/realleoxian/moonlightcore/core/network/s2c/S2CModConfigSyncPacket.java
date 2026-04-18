@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 public record S2CModConfigSyncPacket(ResourceLocation configId, byte[] data) {
     public static final PacketType<S2CModConfigSyncPacket> TYPE = new PacketType<>(new ResourceLocation("moonlightcore", "mod_config_sync"), S2CModConfigSyncPacket.class, S2CModConfigSyncPacket::encodeToBuffer, S2CModConfigSyncPacket::decodeFromBuffer);
 
-    public static void handle(NetworkHelper.PacketContext<ClientPacketListener> context, S2CModConfigSyncPacket packet) {
+    public static void handle(S2CModConfigSyncPacket packet, NetworkHelper.PacketContext<ClientPacketListener> context) {
         context.queueWork(() -> {
             ResourceLocation id = packet.configId();
             ModConfig config = ConfigTracker.getConfig(ModConfig.Type.SERVER, id);
@@ -34,7 +34,7 @@ public record S2CModConfigSyncPacket(ResourceLocation configId, byte[] data) {
         return new S2CModConfigSyncPacket(configId, data);
     }
 
-    public static void encodeToBuffer(FriendlyByteBuf byteBuf, S2CModConfigSyncPacket packet) {
+    public static void encodeToBuffer(S2CModConfigSyncPacket packet, FriendlyByteBuf byteBuf) {
         byteBuf.writeResourceLocation(packet.configId());
         byteBuf.writeByteArray(packet.data());
     }
