@@ -7,7 +7,7 @@ import de.realleoxian.moonlightcore.api.client.command.ClientCommandSourceStack;
 public class CoreClientMod {
 
     public static void initializeClient() {
-        MoonlightCoreClient.commands("moonlightcore", (dispatcher, buildCtx) -> {
+        MoonlightCoreClient.commands((dispatcher, buildCtx) -> {
             CommandNode<ClientCommandSourceStack> apiNode = dispatcher.register(ClientCommandSourceStack.literal("moonlightcore-client-commands"));
 
             dispatcher.register(ClientCommandSourceStack.literal("mcc").redirect(apiNode));
