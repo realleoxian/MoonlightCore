@@ -20,6 +20,7 @@
     "client.CommandSourceStackMixin",
     "client.LevelChunkMixin",
     "client.MinecraftMixin",
+    "client.ModelBakeryBakeryImplMixin",
     "client.ModelBakeryMixin"
   ],
   "injectors": {
