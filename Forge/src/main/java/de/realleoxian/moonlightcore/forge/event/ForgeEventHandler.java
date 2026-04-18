@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -12,6 +13,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
@@ -23,6 +25,20 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventHandler {
+    @SubscribeEvent
+    public static void onChunkLoad(ChunkEvent.Load event) {
+        if (event.getChunk() instanceof LevelChunk levelChunk && event.getLevel() instanceof ServerLevel level) {
+            levelChunk.getBlockEntities().values().forEach(be -> ServerBlockEntityEvents.LOAD.invoker().onBlockEntityLoad(level, be));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onChunkUnload(ChunkEvent.Unload event) {
+        if (event.getChunk() instanceof LevelChunk levelChunk && event.getLevel() instanceof ServerLevel level) {
+            levelChunk.getBlockEntities().values().forEach(be -> ServerBlockEntityEvents.LOAD.invoker().onBlockEntityLoad(level, be));
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onEntityItemPickup(EntityItemPickupEvent event) {
         if (ItemPickupEvent.EVENT.invoker().onItemPickup(event.getEntity(), event.getItem()).isTrue()) {

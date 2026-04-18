@@ -4,6 +4,7 @@ import com.mojang.blaze3d.shaders.FogShape;
 import de.realleoxian.moonlightcore.api.client.event.*;
 import de.realleoxian.moonlightcore.api.client.model.BlockStateModelModifier;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
@@ -13,9 +14,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -25,6 +28,20 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ForgeClientEventHandler {
+    @SubscribeEvent
+    public static void onChunkLoad(ChunkEvent.Load event) {
+        if (event.getChunk() instanceof LevelChunk levelChunk && event.getLevel() instanceof ClientLevel level) {
+            levelChunk.getBlockEntities().values().forEach(be -> ClientBlockEntityEvents.LOAD.invoker().onBlockEntityLoad(level, be));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onChunkUnload(ChunkEvent.Unload event) {
+        if (event.getChunk() instanceof LevelChunk levelChunk && event.getLevel() instanceof ClientLevel level) {
+            levelChunk.getBlockEntities().values().forEach(be -> ClientBlockEntityEvents.LOAD.invoker().onBlockEntityLoad(level, be));
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event) {
         ModelEvents.RegisterModelsLocation.Context ctx = event::register;

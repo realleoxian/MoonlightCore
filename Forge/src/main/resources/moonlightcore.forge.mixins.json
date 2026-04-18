@@ -7,7 +7,6 @@
   "mixins": [
     "ChunkMapMixin",
     "ChunkSerializerMixin",
-    "LevelChunkMixin",
     "PlayerListMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerLevelEntityCallbacksMixin",
@@ -18,7 +17,6 @@
     "client.ClientLevelEntityCallbacksMixin",
     "client.ClientPacketListenerMixin",
     "client.CommandSourceStackMixin",
-    "client.LevelChunkMixin",
     "client.MinecraftMixin",
     "client.ModelBakeryBakeryImplMixin",
     "client.ModelBakeryMixin"
