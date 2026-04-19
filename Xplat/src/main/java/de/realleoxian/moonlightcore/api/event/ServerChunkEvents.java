@@ -15,7 +15,6 @@ public final class ServerChunkEvents {
        }
     });
 
-
     private ServerChunkEvents() {}
 
     public interface Load {

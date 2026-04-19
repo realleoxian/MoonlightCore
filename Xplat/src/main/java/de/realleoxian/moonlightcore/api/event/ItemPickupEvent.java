@@ -6,8 +6,10 @@ import net.minecraft.world.entity.player.Player;
 public interface ItemPickupEvent {
     EventBus<ItemPickupEvent> EVENT = EventBus.create(ItemPickupEvent.class, (listeners) -> (player, item) -> {
         for(ItemPickupEvent listener : listeners) {
-            if(listener.onItemPickup(player, item).isFalse()) {
-                return EventResult.FALSE;
+            EventResult result = listener.onItemPickup(player, item);
+
+            if (result.cancelFurtherProcessing) {
+                return result;
             }
         }
 

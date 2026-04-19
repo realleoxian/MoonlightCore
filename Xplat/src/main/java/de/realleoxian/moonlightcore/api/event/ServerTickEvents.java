@@ -5,24 +5,24 @@ import net.minecraft.server.MinecraftServer;
 import java.util.function.BooleanSupplier;
 
 public final class ServerTickEvents {
-    public static final EventBus<Start> START = EventBus.create(Start.class, (listeners) -> (server, hasTime) -> {
+    public static final EventBus<Start> START = EventBus.create(Start.class, (listeners) -> (server) -> {
        for(Start listener : listeners) {
-           listener.onServerTickStart(server, hasTime);
+           listener.onServerTickStart(server);
        }
     });
-    public static final EventBus<End> END = EventBus.create(End.class, (listeners) -> (server, hasTime) -> {
+    public static final EventBus<End> END = EventBus.create(End.class, (listeners) -> (server) -> {
         for(End listener : listeners) {
-            listener.onServerTickEnd(server, hasTime);
+            listener.onServerTickEnd(server);
         }
     });
 
     private ServerTickEvents() {}
 
     public interface Start {
-        void onServerTickStart(MinecraftServer server, BooleanSupplier hasTime);
+        void onServerTickStart(MinecraftServer server);
     }
 
     public interface End {
-        void onServerTickEnd(MinecraftServer server, BooleanSupplier hasTime);
+        void onServerTickEnd(MinecraftServer server);
     }
 }

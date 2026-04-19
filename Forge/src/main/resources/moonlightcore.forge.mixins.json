@@ -9,8 +9,7 @@
     "ChunkSerializerMixin",
     "PlayerListMixin",
     "ServerGamePacketListenerImplMixin",
-    "ServerLevelEntityCallbacksMixin",
-    "ServerPlayerMixin"
+    "ServerLevelEntityCallbacksMixin"
   ],
   "client": [
     "client.ClientChunkCacheMixin",

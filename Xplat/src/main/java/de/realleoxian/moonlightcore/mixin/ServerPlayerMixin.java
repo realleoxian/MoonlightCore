@@ -1,4 +1,4 @@
-package de.realleoxian.moonlightcore.forge.mixin;
+package de.realleoxian.moonlightcore.mixin;
 
 import de.realleoxian.moonlightcore.api.event.ServerPlayerEvents;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,7 +15,6 @@ import java.util.OptionalInt;
 
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin {
-
     @Inject(
             method = "openMenu",
             at = @At(value = "RETURN")

@@ -5,11 +5,23 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ServerGamePacketListenerImplAccessor"
+    "ChunkSerializerMixin",
+    "ItemEntityMixin",
+    "LivingEntityMixin",
+    "PlayerMixin",
+    "ServerGamePacketListenerImplAccessor",
+    "ServerPlayerMixin"
   ],
   "client": [
     "client.FabricClientCommandSourceMixin",
-    "client.ModelManagerMixin"
+    "client.FogRendererMixin",
+    "client.GameRendererMixin",
+    "client.GuiMixin",
+    "client.KeyboardHandlerMixin",
+    "client.LocalPlayerMixin",
+    "client.ModelManagerMixin",
+    "client.MouseHandlerMixin",
+    "client.RemotePlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

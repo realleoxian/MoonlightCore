@@ -21,6 +21,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -28,6 +29,16 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ForgeClientEventHandler {
+    @SubscribeEvent
+    public static void onClientLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.side == LogicalSide.CLIENT) {
+            switch (event.phase) {
+                case START -> ClientLevelTickEvents.START.invoker().onClientLevelTickStart((ClientLevel) event.level);
+                case END -> ClientLevelTickEvents.END.invoker().onClientLevelTickEnd((ClientLevel) event.level);
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
         if (event.getChunk() instanceof LevelChunk levelChunk && event.getLevel() instanceof ClientLevel level) {
@@ -209,7 +220,7 @@ public final class ForgeClientEventHandler {
             }
         };
 
-        if (ViewportEvents.COMPUTE_FOG_COLOR.invoker().onComputeFogColor(event.getRenderer(), event.getCamera(), context, (float) event.getPartialTick()).isTrue()) {
+        if (ViewportEvents.COMPUTE_FOG_COLOR.invoker().onComputeFogColor(event.getRenderer(), context, (float) event.getPartialTick()).isTrue()) {
             event.setRed(context.getRed());
             event.setGreen(context.getGreen());
             event.setBlue(context.getBlue());

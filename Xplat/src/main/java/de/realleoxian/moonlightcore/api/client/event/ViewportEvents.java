@@ -19,9 +19,9 @@ public final class ViewportEvents {
 
         return EventResult.FALSE;
     });
-    public static final EventBus<ComputeFogColor> COMPUTE_FOG_COLOR = EventBus.create(ComputeFogColor.class, (listeners) -> (renderer, camera, context, partialTick) -> {
+    public static final EventBus<ComputeFogColor> COMPUTE_FOG_COLOR = EventBus.create(ComputeFogColor.class, (listeners) -> (renderer, context, partialTick) -> {
        for (ComputeFogColor listener : listeners) {
-           EventResult result = listener.onComputeFogColor(renderer, camera, context, partialTick);
+           EventResult result = listener.onComputeFogColor(renderer, context, partialTick);
 
            if(result.cancelFurtherProcessing) {
                return result;
@@ -65,7 +65,7 @@ public final class ViewportEvents {
     }
 
     public interface ComputeFogColor {
-        EventResult onComputeFogColor(GameRenderer renderer, Camera camera, Context context, float partialTick);
+        EventResult onComputeFogColor(GameRenderer renderer, Context context, float partialTick);
 
         interface Context {
             void setRed(float red);

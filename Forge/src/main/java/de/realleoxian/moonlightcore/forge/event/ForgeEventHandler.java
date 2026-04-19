@@ -21,10 +21,21 @@ import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventHandler {
+    @SubscribeEvent
+    public static void onServerLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.side == LogicalSide.SERVER) {
+            switch (event.phase) {
+                case START -> ServerLevelTickEvents.START.invoker().onServerLevelTickStart((ServerLevel) event.level);
+                case END -> ServerLevelTickEvents.END.invoker().onServerLevelTickEnd((ServerLevel) event.level);
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
         if (event.getChunk() instanceof LevelChunk levelChunk && event.getLevel() instanceof ServerLevel level) {
@@ -121,8 +132,8 @@ public class ForgeEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         switch (event.phase) {
-            case START -> ServerTickEvents.START.invoker().onServerTickStart(event.getServer(), event::haveTime);
-            case END -> ServerTickEvents.END.invoker().onServerTickEnd(event.getServer(), event::haveTime);
+            case START -> ServerTickEvents.START.invoker().onServerTickStart(event.getServer());
+            case END -> ServerTickEvents.END.invoker().onServerTickEnd(event.getServer());
         }
     }
 
