@@ -1,6 +1,7 @@
 package de.realleoxian.moonlightcore.api;
 
 import de.realleoxian.moonlightcore.api.command.CommandsRegistrar;
+import de.realleoxian.moonlightcore.api.entity.EntityAttributeRegistrar;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
@@ -28,6 +29,10 @@ public final class MoonlightCore {
 
     public static void commands(CommandsRegistrar registrar) {
         RUNTIME.commands(registrar);
+    }
+
+    public static void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> registrar) {
+        RUNTIME.entityAttributes(namespace, registrar);
     }
 
     public static void registry(String namespace, Consumer<RegistryHelper> initializer) {
