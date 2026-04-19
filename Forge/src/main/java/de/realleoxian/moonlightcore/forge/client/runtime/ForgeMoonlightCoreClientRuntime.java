@@ -12,6 +12,7 @@ import de.realleoxian.moonlightcore.api.client.render.ChunkRenderLayerRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.EntityRendererRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.color.BlockColorRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.color.ItemColorRegistrar;
+import de.realleoxian.moonlightcore.api.client.shader.ShaderRegistrar;
 import de.realleoxian.moonlightcore.forge.client.keymapping.ForgeKeyMappingRegistrar;
 import de.realleoxian.moonlightcore.forge.client.model.ForgeModelLayerRegistrar;
 import de.realleoxian.moonlightcore.forge.client.particle.ForgeParticleProviderRegistrar;
@@ -20,6 +21,7 @@ import de.realleoxian.moonlightcore.forge.client.render.ForgeChunkRenderLayerReg
 import de.realleoxian.moonlightcore.forge.client.render.ForgeEntityRendererRegistrar;
 import de.realleoxian.moonlightcore.forge.client.render.color.ForgeBlockColorRegistrar;
 import de.realleoxian.moonlightcore.forge.client.render.color.ForgeItemColorRegistrar;
+import de.realleoxian.moonlightcore.forge.client.shader.ForgeShaderRegistrarImpl;
 import de.realleoxian.moonlightcore.forge.platform.ModEventBusHandler;
 import de.realleoxian.moonlightcore.forge.runtime.ForgeModLoadingContext;
 import de.realleoxian.moonlightcore.impl.client.runtime.XplatMoonlightCoreClientRuntime;
@@ -54,6 +56,12 @@ public final class ForgeMoonlightCoreClientRuntime extends XplatMoonlightCoreCli
     public void initializeClientMod(String modId, ForgeModLoadingContext context, Runnable initializer) {
         ModEventBusHandler.register(modId, context.eventBus());
         initializer.run();
+    }
+
+    @Override
+    public void shaders(String namespace, Consumer<ShaderRegistrar> registrar) {
+        ShaderRegistrar instance = ModEventBusHandler.getRegistration(namespace, ForgeShaderRegistrarImpl.class);
+        registrar.accept(instance);
     }
 
     @Override

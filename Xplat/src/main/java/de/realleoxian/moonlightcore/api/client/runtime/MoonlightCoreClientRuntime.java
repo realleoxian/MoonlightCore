@@ -7,6 +7,7 @@ import de.realleoxian.moonlightcore.api.client.particle.ParticleProviderRegistra
 import de.realleoxian.moonlightcore.api.client.render.*;
 import de.realleoxian.moonlightcore.api.client.render.color.BlockColorRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.color.ItemColorRegistrar;
+import de.realleoxian.moonlightcore.api.client.shader.ShaderRegistrar;
 import de.realleoxian.moonlightcore.api.runtime.ModLoadingRuntimeContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -17,6 +18,8 @@ public interface MoonlightCoreClientRuntime<C extends ModLoadingRuntimeContext> 
     void onClientRuntimeInitialized(Runnable action);
 
     void initializeClientMod(String modId, C context, Runnable initializer);
+
+    void shaders(String namespace, Consumer<ShaderRegistrar> registrar);
 
     void commands(ClientCommandsRegistrar initializer);
 

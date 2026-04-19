@@ -11,6 +11,7 @@ import de.realleoxian.moonlightcore.api.client.render.color.BlockColorRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.color.ItemColorRegistrar;
 import de.realleoxian.moonlightcore.api.client.runtime.MoonlightCoreClientRuntime;
 import de.realleoxian.moonlightcore.api.client.runtime.MoonlightCoreClientRuntimeFactory;
+import de.realleoxian.moonlightcore.api.client.shader.ShaderRegistrar;
 import de.realleoxian.moonlightcore.api.runtime.ModLoadingRuntimeContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -27,6 +28,10 @@ public final class MoonlightCoreClient {
 
     public static void initializeClientMod(String modId, ModLoadingRuntimeContext context, Runnable initializer) {
         RUNTIME.initializeClientMod(modId, context, initializer);
+    }
+
+    public static void shaders(String namespace, Consumer<ShaderRegistrar> registrar) {
+        RUNTIME.shaders(namespace, registrar);
     }
 
     public static void commands(ClientCommandsRegistrar initializer) {

@@ -11,6 +11,7 @@ import de.realleoxian.moonlightcore.api.client.render.ChunkRenderLayerRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.EntityRendererRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.color.BlockColorRegistrar;
 import de.realleoxian.moonlightcore.api.client.render.color.ItemColorRegistrar;
+import de.realleoxian.moonlightcore.api.client.shader.ShaderRegistrar;
 import de.realleoxian.moonlightcore.fabric.runtime.EmptyModLoadingRuntimeContext;
 import de.realleoxian.moonlightcore.impl.client.runtime.XplatMoonlightCoreClientRuntime;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -64,6 +65,11 @@ public class FabricMoonlightCoreClientRuntime extends XplatMoonlightCoreClientRu
     @Override
     public void initializeClientMod(String modId, EmptyModLoadingRuntimeContext context, Runnable initializer) {
         initializer.run();
+    }
+
+    @Override
+    public void shaders(String namespace, Consumer<ShaderRegistrar> registrar) {
+
     }
 
     @Override
