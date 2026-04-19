@@ -4,10 +4,12 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.datafixers.util.Pair;
 import de.realleoxian.moonlightcore.api.EnvSide;
 import de.realleoxian.moonlightcore.api.command.CommandsRegistrar;
+import de.realleoxian.moonlightcore.api.entity.EntityAttributeRegistrar;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
 import de.realleoxian.moonlightcore.api.server.permission.PermissionHelper;
+import de.realleoxian.moonlightcore.forge.entity.ForgeEntityAttributeRegistrarImpl;
 import de.realleoxian.moonlightcore.forge.network.ForgeNetworkHelper;
 import de.realleoxian.moonlightcore.forge.platform.ModEventBusHandler;
 import de.realleoxian.moonlightcore.forge.registry.ForgeRegistryInformationRegistrar;
@@ -59,6 +61,12 @@ public final class ForgeMoonlightCoreRuntime extends XplatMoonlightCoreRuntime<F
     @Override
     public void commands(CommandsRegistrar registrar) {
         this.commandsRegistrar.add(registrar);
+    }
+
+    @Override
+    public void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> registrar) {
+        EntityAttributeRegistrar entityAttributeRegistrar = ModEventBusHandler.getRegistration(namespace, ForgeEntityAttributeRegistrarImpl.class);
+        registrar.accept(entityAttributeRegistrar);
     }
 
     @Override

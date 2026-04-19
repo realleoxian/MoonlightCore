@@ -2,11 +2,13 @@ package de.realleoxian.moonlightcore.fabric.runtime;
 
 import de.realleoxian.moonlightcore.api.EnvSide;
 import de.realleoxian.moonlightcore.api.command.CommandsRegistrar;
+import de.realleoxian.moonlightcore.api.entity.EntityAttributeRegistrar;
 import de.realleoxian.moonlightcore.api.misc.ModProxy;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
 import de.realleoxian.moonlightcore.api.server.permission.PermissionHelper;
+import de.realleoxian.moonlightcore.fabric.entity.FabricEntityAttributeRegistrarImpl;
 import de.realleoxian.moonlightcore.fabric.network.FabricNetworkHelperImpl;
 import de.realleoxian.moonlightcore.fabric.registry.FabricRegistryHelperImpl;
 import de.realleoxian.moonlightcore.impl.runtime.XplatMoonlightCoreRuntime;
@@ -53,6 +55,11 @@ public class FabricMoonlightCoreRuntime extends XplatMoonlightCoreRuntime<EmptyM
     @Override
     public void commands(CommandsRegistrar registrar) {
         this.commandsRegistrars.add(registrar);
+    }
+
+    @Override
+    public void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> registrar) {
+        registrar.accept(new FabricEntityAttributeRegistrarImpl());
     }
 
     @Override

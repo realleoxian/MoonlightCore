@@ -2,6 +2,7 @@ package de.realleoxian.moonlightcore.api.runtime;
 
 import de.realleoxian.moonlightcore.api.EnvSide;
 import de.realleoxian.moonlightcore.api.command.CommandsRegistrar;
+import de.realleoxian.moonlightcore.api.entity.EntityAttributeRegistrar;
 import de.realleoxian.moonlightcore.api.network.NetworkHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryHelper;
 import de.realleoxian.moonlightcore.api.registry.RegistryInformationRegistrar;
@@ -18,6 +19,8 @@ public interface MoonlightCoreRuntime<C extends ModLoadingRuntimeContext> {
     void initializeMod(String modId, C context, Runnable initializer);
 
     void commands(CommandsRegistrar registrar);
+
+    void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> registrar);
 
     void registry(String namespace, Consumer<RegistryHelper> initializer);
 
