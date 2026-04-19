@@ -1,8 +1,6 @@
 plugins {
     id 'moonlightcore-loader'
-
     id 'net.fabricmc.fabric-loom-remap'
-    id 'me.modmuss50.mod-publish-plugin'
 }
 
 dependencies {
@@ -25,7 +23,6 @@ artifacts {
     archives(tasks.remapJar)
     archives(tasks.remapSourcesJar)
 }
-
 
 loom {
     accessWidenerPath = project(":Xplat").file("src/main/resources/moonlightcore.accesswidener")
@@ -55,33 +52,6 @@ loom {
 
             vmArg "-Dfabric.log.level=info"
         }
-    }
-}
-
-import me.modmuss50.mpp.ReleaseType
-publishMods {
-    type = ReleaseType.of(modVersionType)
-    file = tasks.remapJar.archiveFile
-    changelog = provider {
-        def file = file("../Changelog/changelog.md")
-        return file.exists() ? file.text : "No changelog provided"
-    }
-    modLoaders = ["fabric"]
-    displayName = "MoonlightCore | Fabric ${mcVersion}"
-    version = project.version
-
-    curseforge {
-        projectId = "1152824"
-        accessToken = System.getenv("CURSEFORGE_API_KEY")
-        minecraftVersions = [mcVersion]
-        javaVersions = [JavaVersion.toVersion(modJavaVersion)]
-        dryRun = !System.getenv().containsKey("CURSEFORGE_API_KEY")
-    }
-    modrinth {
-        projectId = "6MSffsOL"
-        accessToken = System.getenv("MODRINTH_TOKEN")
-        minecraftVersions = [mcVersion]
-        dryRun = !System.getenv().containsKey("MODRINTH_TOKEN")
     }
 }
 

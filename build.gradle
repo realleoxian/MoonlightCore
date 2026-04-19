@@ -1,7 +1,63 @@
 plugins {
     id 'net.neoforged.moddev.legacyforge' version '2.0.139' apply false
     id 'net.fabricmc.fabric-loom-remap' version '1.16-SNAPSHOT' apply false
-    id 'me.modmuss50.mod-publish-plugin' version '1.1.0' apply false
-
     id 'com.diffplug.spotless' version '8.2.1' apply false
+
+    id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
+}
+
+import me.modmuss50.mpp.ReleaseType;
+publishMods {
+    changelog = provider {
+        def changelogFile = file("changelog/${mcVersion}/${modVersion}.${modVersionType}")
+        return changelogFile.exists() ? changelogFile.text : "No Changelog Provided"
+    }
+    type = ReleaseType.of(modVersionType)
+
+    def cfOptions = curseforgeOptions {
+        accessToken = System.getenv("CURSEFORGE_API_KEY")
+        projectId = "1152824"
+        minecraftVersions.add("${mcVersion}")
+        dryRun = !System.getenv().containsKey("CURSEFORGE_API_KEY")
+    }
+
+    def mrOptions = modrinthOptions {
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        projectId = "6MSffsOL"
+        minecraftVersions.add("${mcVersion}")
+        dryRun = !System.getenv().containsKey("MODRINTH_TOKEN")
+    }
+
+    curseforge("curseforgeFabric") {
+        from cfOptions
+        file project(":Fabric")
+        modLoaders.add("fabric")
+        javaVersions.add(JavaVersion.toVersion(modJavaVersion))
+
+        requires {
+            slug = "fabric-api"
+        }
+    }
+    curseforge("curseforgeForge") {
+        from cfOptions
+        file project(":Forge")
+        modLoaders.add("forge")
+    }
+
+    modrinth("modrinthFabric") {
+        from mrOptions
+        file project(":Fabric")
+        modLoaders.add("fabric")
+        requires {
+            slug = "fabric-api"
+        }
+        optional {
+            slug = "fabric-permission-api"
+        }
+    }
+    modrinth("modrinthForge") {
+        from mrOptions
+        file project(":Forge")
+        modLoaders.add("forge")
+    }
 }
