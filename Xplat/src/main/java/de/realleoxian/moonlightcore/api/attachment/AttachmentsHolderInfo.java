@@ -92,6 +92,34 @@ public interface AttachmentsHolderInfo<T, S extends AttachmentsHolderInfo<T, S>>
         }
     }
 
+    enum LevelHolderInfo implements AttachmentsHolderInfo<Level, LevelHolderInfo> {
+        INSTANCE
+        ;
+        public static final Type<Level, LevelHolderInfo> TYPE = new Type<>((byte) 2, LevelHolderInfo::encodeToBuffer, LevelHolderInfo::decodeFromBuffer);
+
+        private static void encodeToBuffer(LevelHolderInfo holderInfo, ByteBuf byteBuf) {
+        }
+
+        private static LevelHolderInfo decodeFromBuffer(ByteBuf byteBuf) {
+            return INSTANCE;
+        }
+
+        @Override
+        public void syncAttachment(ServerLevel level, AttachmentSyncChange syncChange) {
+            PlayerTrackUtils.level(level).forEach(player -> NetworkHelper.get().sendToPlayer(player, new S2CAttachmentSyncPacket(syncChange)));
+        }
+
+        @Override
+        public Level get(Level level) {
+            return level;
+        }
+
+        @Override
+        public Type<Level, LevelHolderInfo> type() {
+            return TYPE;
+        }
+    }
+
     record Type<T, H extends AttachmentsHolderInfo<T, H>>(byte id, PacketEncoder<? super ByteBuf, H> encoder, PacketDecoder<? super ByteBuf, H> decoder) {
         private static final Byte2ObjectOpenHashMap<Type<?, ?>> TYPES = new Byte2ObjectOpenHashMap<>();
 

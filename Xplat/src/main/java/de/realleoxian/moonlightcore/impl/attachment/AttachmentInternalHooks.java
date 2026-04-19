@@ -1,6 +1,7 @@
 package de.realleoxian.moonlightcore.impl.attachment;
 
 import de.realleoxian.moonlightcore.api.attachment.AttachmentHolder;
+import de.realleoxian.moonlightcore.api.attachment.AttachmentMap;
 import de.realleoxian.moonlightcore.api.attachment.AttachmentType;
 import de.realleoxian.moonlightcore.api.event.EventPriority;
 import de.realleoxian.moonlightcore.api.event.ServerPlayerEvents;
@@ -31,5 +32,18 @@ public final class AttachmentInternalHooks {
                 to.getAttachmentsMap().set((AttachmentType<Object>) type, attachment.getValue());
             }
         }
+    }
+
+    static boolean hasPersistentAttachments(AttachmentMap map) {
+        var attachments = map.getAttachments();
+        if (attachments == null || attachments.isEmpty())
+            return false;
+
+        for (var attachment : attachments.entrySet()) {
+            if (attachment.getKey().isPersistent()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

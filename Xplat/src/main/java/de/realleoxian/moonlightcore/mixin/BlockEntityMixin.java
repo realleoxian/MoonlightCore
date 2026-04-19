@@ -21,7 +21,7 @@ public abstract class BlockEntityMixin implements AttachmentHolder {
     @Override
     public AttachmentMap getAttachmentsMap() {
         if(moonlighcore$attachmentsMap == null) {
-            moonlighcore$attachmentsMap = AttachmentMapImpl.create(new AttachmentsHolderInfo.EntityHolderInfo(((Entity) (Object) this).getId()));
+            moonlighcore$attachmentsMap = AttachmentMapImpl.create(new AttachmentsHolderInfo.BlockEntityHolderInfo(((BlockEntity) (Object) this).getBlockPos()));
         }
 
         return moonlighcore$attachmentsMap;
