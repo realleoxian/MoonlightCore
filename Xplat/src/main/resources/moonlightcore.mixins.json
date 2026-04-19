@@ -27,6 +27,7 @@
     "client.CameraMixin",
     "client.ClientChunkCacheStorageInvoker",
     "client.KeyboardHandlerMixin",
+    "client.LevelRendererMixin",
     "client.MouseHandlerMixin"
   ],
   "injectors": {

@@ -6,7 +6,6 @@ import de.realleoxian.moonlightcore.api.attachment.AttachmentsHolderInfo;
 import de.realleoxian.moonlightcore.impl.attachment.AttachmentMapImpl;
 import de.realleoxian.moonlightcore.impl.util.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
