@@ -2,7 +2,6 @@ package de.realleoxian.moonlightcore.api.event;
 
 import net.minecraft.server.MinecraftServer;
 
-import java.util.function.BooleanSupplier;
 
 public final class ServerTickEvents {
     public static final EventBus<Start> START = EventBus.create(Start.class, (listeners) -> (server) -> {

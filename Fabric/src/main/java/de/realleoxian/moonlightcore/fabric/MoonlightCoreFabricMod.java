@@ -1,7 +1,6 @@
 package de.realleoxian.moonlightcore.fabric;
 
 import de.realleoxian.moonlightcore.api.MoonlightCore;
-import de.realleoxian.moonlightcore.api.event.EventResult;
 import de.realleoxian.moonlightcore.api.event.LivingEntityEvents;
 import de.realleoxian.moonlightcore.api.event.ServerLevelTickEvents;
 import de.realleoxian.moonlightcore.api.event.ServerPlayerNetworkEvents;
