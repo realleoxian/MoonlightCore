@@ -13,6 +13,7 @@ publishMods {
         return changelogFile.exists() ? changelogFile.text : "No Changelog Provided"
     }
     type = ReleaseType.of(modVersionType)
+    displayName = "MoonlightCore | ${mcVersion}-${modVersion}"
 
     def cfOptions = curseforgeOptions {
         accessToken = System.getenv("CURSEFORGE_API_KEY")
@@ -33,6 +34,7 @@ publishMods {
         file project(":Fabric")
         modLoaders.add("fabric")
         javaVersions.add(JavaVersion.toVersion(modJavaVersion))
+        additionalFiles.from project(":Xplat")
 
         requires {
             slug = "fabric-api"
@@ -42,12 +44,15 @@ publishMods {
         from cfOptions
         file project(":Forge")
         modLoaders.add("forge")
+        additionalFiles.from project(":Xplat")
     }
 
     modrinth("modrinthFabric") {
         from mrOptions
         file project(":Fabric")
         modLoaders.add("fabric")
+        additionalFiles.from project(":Xplat")
+
         requires {
             slug = "fabric-api"
         }
@@ -59,5 +64,6 @@ publishMods {
         from mrOptions
         file project(":Forge")
         modLoaders.add("forge")
+        additionalFiles.from project(":Xplat")
     }
 }
