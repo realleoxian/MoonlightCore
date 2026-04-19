@@ -30,7 +30,7 @@ public final class ForgeRegistryManager implements RegistryHelper, ModEventBusRe
     }
 
     @Override
-    public <R> RegistryHelper.Registrar<R> createHelper(ResourceKey<? extends Registry<R>> registryType) {
+    public <R> RegistryHelper.Registrar<R> registrar(ResourceKey<? extends Registry<R>> registryType) {
         return new ForgeRegistrar<>(registryType);
     }
 

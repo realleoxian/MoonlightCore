@@ -8,11 +8,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface RegistryHelper {
-    <R> Registrar<R> createHelper(ResourceKey<? extends Registry<R>> registryType);
+    <R> Registrar<R> registrar(ResourceKey<? extends Registry<R>> registryType);
 
     <R> Supplier<Registry<R>> getRegistry(ResourceKey<? extends Registry<R>> registryType);
 
-    public interface Registrar<R> {
+    interface Registrar<R> {
         <T extends R> DeferredObject<R, T> register(String name, Function<ResourceLocation, T> func);
 
         default <T extends R> DeferredObject<R, T> register(String name, Supplier<T> sup) {

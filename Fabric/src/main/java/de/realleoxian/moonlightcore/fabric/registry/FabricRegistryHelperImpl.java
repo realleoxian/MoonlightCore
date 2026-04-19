@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public record FabricRegistryHelperImpl(String namespace) implements RegistryHelper {
     @Override
-    public <R> Registrar<R> createHelper(ResourceKey<? extends Registry<R>> registryType) {
+    public <R> Registrar<R> registrar(ResourceKey<? extends Registry<R>> registryType) {
         return new FabricRegistrar<>(registryType);
     }
 
