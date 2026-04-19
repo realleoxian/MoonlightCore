@@ -9,7 +9,7 @@ plugins {
 import me.modmuss50.mpp.ReleaseType;
 publishMods {
     changelog = provider {
-        def changelogFile = file("changelog/${mcVersion}/${modVersion}.${modVersionType}")
+        def changelogFile = file("changelog/${mcVersion}/${modVersion}.${modVersionType}.md")
         return changelogFile.exists() ? changelogFile.text : "No Changelog Provided"
     }
     type = ReleaseType.of(modVersionType)
