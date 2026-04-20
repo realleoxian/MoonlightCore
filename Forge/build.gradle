@@ -1,6 +1,7 @@
 plugins {
     id 'moonlightcore-loader'
     id 'net.neoforged.moddev.legacyforge'
+    id 'me.modmuss50.mod-publish-plugin'
 }
 
 dependencies {
@@ -54,6 +55,36 @@ mixin {
     add sourceSets.main, "moonlightcore.refmap.json"
     config "moonlightcore.mixins.json"
     config "moonlightcore.forge.mixins.json"
+}
+
+import me.modmuss50.mpp.ReleaseType
+publishMods {
+    evaluationDependsOn(":Xplat")
+
+    type = ReleaseType.of(modVersionType)
+    displayName = "MoonlightCore | ${mcVersion}-${modVersion} | Forge"
+    changelog = provider {
+        def changelogFile = rootProject.file("changelog/${mcVersion}/${modVersion}.${modVersionType}.md")
+        return changelogFile.exists() ? changelogFile.text : "No Changelog Provided"
+    }
+
+    curseforge {
+        accessToken = System.getenv("CURSEFORGE_API_KEY")
+        projectId = "1152824"
+        file project(":Forge")
+        modLoaders.add("forge")
+        minecraftVersions.add("${mcVersion}")
+        dryRun = !System.getenv().containsKey("CURSEFORGE_API_KEY")
+    }
+    modrinth {
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        projectId = "6MSffsOL"
+        file project(":Forge")
+        modLoaders.add("forge")
+        minecraftVersions.add("${mcVersion}")
+        additionalFiles.from project(":Xplat").jar
+        dryRun = !System.getenv().containsKey("MODRINTH_TOKEN")
+    }
 }
 
 publishing {

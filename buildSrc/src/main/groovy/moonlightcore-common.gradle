@@ -5,11 +5,11 @@ plugins {
     id 'com.diffplug.spotless'
 }
 
-group = "${modGroup}"
-version = "${modVersion}"
+project.group = "${modGroup}"
+project.version = "${modVersion}"
 
 if(!modVersionType.equalsIgnoreCase("stable")) {
-    version += "-${modVersionType}"
+    project.version += "-${modVersionType}"
 }
 
 base {

@@ -1,6 +1,7 @@
 plugins {
     id 'moonlightcore-loader'
     id 'net.fabricmc.fabric-loom-remap'
+    id 'me.modmuss50.mod-publish-plugin'
 }
 
 dependencies {
@@ -51,6 +52,48 @@ loom {
             runDir = "run/server"
 
             vmArg "-Dfabric.log.level=info"
+        }
+    }
+}
+
+import me.modmuss50.mpp.ReleaseType
+publishMods {
+    evaluationDependsOn(":Xplat")
+
+    type = ReleaseType.of(modVersionType)
+    displayName = "MoonlightCore | ${mcVersion}-${modVersion} | Fabric"
+    changelog = provider {
+        def changelogFile = rootProject.file("changelog/${mcVersion}/${modVersion}.${modVersionType}.md")
+        return changelogFile.exists() ? changelogFile.text : "No Changelog Provided"
+    }
+
+    curseforge {
+        accessToken = System.getenv("CURSEFORGE_API_KEY")
+        projectId = "1152824"
+        file project(":Fabric")
+        modLoaders.add("fabric")
+        minecraftVersions.add("${mcVersion}")
+        javaVersions.add(JavaVersion.toVersion(modJavaVersion))
+        dryRun = !System.getenv().containsKey("CURSEFORGE_API_KEY")
+
+        requires {
+            slug = "fabric-api"
+        }
+    }
+    modrinth {
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        projectId = "6MSffsOL"
+        file project(":Fabric")
+        modLoaders.add("fabric")
+        minecraftVersions.add("${mcVersion}")
+        additionalFiles.from project(":Xplat").jar
+        dryRun = !System.getenv().containsKey("MODRINTH_TOKEN")
+
+        requires {
+            slug = "fabric-api"
+        }
+        optional {
+            slug = "fabric-permissions-api"
         }
     }
 }

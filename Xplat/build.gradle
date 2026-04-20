@@ -40,7 +40,7 @@ artifacts {
 publishing {
     publications {
         register('xplatJar', MavenPublication) {
-            artifactId base.archivesName.get()
+            artifactId = base.archivesName.get()
             from components.java
         }
     }
