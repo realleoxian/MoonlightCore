@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "de.realleoxian.moonlightcore.fabric.mixin",
+  "minVersion": "0.8",
+  "refmap": "${modId}.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

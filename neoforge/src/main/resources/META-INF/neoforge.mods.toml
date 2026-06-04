@@ -1,0 +1,25 @@
+modLoader = "javafml"
+license = "${modLicense}"
+loaderVersion = "${neoLoaderRange}"
+issueTrackerURL = "${modIssues}"
+
+[[mods]]
+    modId = "moonlightcore"
+    version = "${modVersion}"
+    displayName = "${modName}"
+    description = "${modDescription}"
+    authors = "${modAuthor}"
+    credits = "${modCredits}"
+[[dependencies.moonlightcore]]
+    modId = "neoforge"
+    type = "required"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[accessTransformers]]
+    file = "META-INF/accesstransformer.cfg"
+
+[[mixins]]
+    config = "${modId}.mixins.json"
+[[mixins]]
+    config = "${modId}.neoforge.mixins.json"

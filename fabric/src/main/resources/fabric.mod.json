@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "${modId}",
+  "name": "${modName}",
+  "version": "${modVersion}",
+  "environment": "*",
+  "description": "${modDescription}",
+  "license": "${modLicense}",
+  "authors": ["${modAuthor}"],
+  "contributors": ["${modCredits}"],
+  "contact": {
+    "sources": "${modSources}",
+    "issues": "${modIssues}"
+  },
+  "accessWidener": "moonlightcore.accesswidener",
+  "mixins": [
+    "moonlightcore.mixins.json",
+    "moonlightcore.fabric.mixins.json"
+  ],
+  "entrypoints": {
+    "main": ["de.realleoxian.moonlightcore.fabric.MoonlightCoreFabricMod"],
+    "client": ["de.realleoxian.moonlightcore.fabric.client.MoonlightCoreClientFabricMod"]
+  },
+  "depends": {
+    "fabric-api": "${fabricApiRange}",
+    "fabricloader": "${fabricLoaderRange}"
+  }
+}
