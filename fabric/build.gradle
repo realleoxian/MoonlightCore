@@ -1,0 +1,71 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.fabricmc.fabric-loom-remap'
+    id 'me.modmuss50.mod-publish-plugin'
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mcVersion}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchmentMcVersion}:${parchmentVersion}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabricLoaderVersion}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabricApi}"
+}
+
+loom {
+    def awFile = project(":xplat").file("src/main/resources/${modId}.accesswidener")
+    if (awFile.exists()) {
+        accessWidenerPath = awFile
+    }
+
+    mods {
+        register("$modId") {
+            sourceSet sourceSets.main
+        }
+    }
+
+    runs {
+        client {
+            client()
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("runs/client")
+            vmArg("-Dfabric.log.level=debug")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("runs/client")
+            vmArg("-Dfabric.log.level=debug")
+        }
+    }
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    modLoaders.add("fabric")
+    changelog = provider { rootProject.file("Changelog/changelog.md").text }
+    type = provider {
+        if (releaseType.equalsIgnoreCase("stable")) return STABLE
+        else if (releaseType.equalsIgnoreCase("alpha")) return ALPHA
+        else if (releaseType.equalsIgnoreCase("beta")) return BETA
+        else throw new GradleException("Unknown release type '" + releaseType + "'");
+    }
+
+    curseforge {
+        projectId = curseforgeProjectId
+        accessToken = System.getenv("CURSEFORGE_API_TOKEN")
+        minecraftVersions.add("${mcVersion}")
+        javaVersions.add(JavaVersion.toVersion(modJavaVersion))
+        requires("fabric-api")
+    }
+    modrinth {
+        projectId = modrinthProjectId
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        minecraftVersions.add("${mcVersion}")
+        requires("fabric-api")
+    }
+}

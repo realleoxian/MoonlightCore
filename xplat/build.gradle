@@ -1,0 +1,40 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev'
+}
+
+configurations {
+    xplatJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    xplatResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+dependencies {
+    compileOnly "org.spongepowered:mixin:${mixinVersion}"
+    compileOnly "io.github.llamalad7:mixinextras-common:${mixinextrasVersion}"
+}
+
+neoForge {
+    neoFormVersion = neoformVersion
+
+    var atFile = file("src/main/resources/META-INF/accesstransformer.cfg")
+    if (atFile.exists()) {
+        validateAccessTransformers = true
+        accessTransformers.from atFile
+    }
+
+    parchment {
+        minecraftVersion = parchmentMcVersion
+        mappingsVersion = parchmentVersion
+    }
+}
+
+artifacts {
+    xplatJava sourceSets.main.java.sourceDirectories.singleFile
+    xplatResources sourceSets.main.resources.sourceDirectories.singleFile
+}

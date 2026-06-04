@@ -1,0 +1,36 @@
+pluginManagement {
+    repositories {
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'Fabric'
+                    url = uri("https://maven.fabricmc.net")
+                }
+            }
+            filter {
+                includeGroupAndSubgroups("net.fabricmc")
+                includeGroup("fabric-loom")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'Sponge'
+                    url = uri('https://repo.spongepowered.org/repository/maven-public')
+                }
+            }
+            filter {
+                includeGroupAndSubgroups("org.spongepowered")
+            }
+        }
+
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id "org.gradle.toolchains.foojay-resolver-convention" version "1.0.0"
+}
+
+rootProject.name = 'MoonlightCore'
+include('xplat', 'fabric', 'neoforge')

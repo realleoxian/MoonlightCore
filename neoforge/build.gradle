@@ -1,0 +1,65 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev'
+    id 'me.modmuss50.mod-publish-plugin'
+}
+
+neoForge {
+    version = neoVersion
+
+    def atFile = project(":xplat").file("src/main/resources/META-INF/accesstransformer.cfg")
+    if (atFile.exists()) {
+        validateAccessTransformers = true
+        accessTransformers.from atFile
+    }
+
+    parchment {
+        minecraftVersion = parchmentMcVersion
+        mappingsVersion = parchmentVersion
+    }
+
+    mods {
+        register("$modId") {
+            sourceSet sourceSets.main
+        }
+    }
+
+    runs {
+        client {
+            client()
+            ideName = "Neoforge Client"
+            gameDirectory = file("runs/client")
+            logLevel = org.slf4j.event.Level.DEBUG
+            systemProperty 'forge.logging.console.level', 'debug'
+        }
+        server {
+            server()
+            ideName = "Neoforge Server"
+            systemProperty 'forge.logging.console.level', 'debug'
+        }
+    }
+}
+
+publishMods {
+    file = jar.archiveFile
+    modLoaders.add("neoforge")
+    changelog = provider { rootProject.file("Changelog/changelog.md").text }
+    type = provider {
+        if (releaseType.equalsIgnoreCase("stable")) return STABLE
+        else if (releaseType.equalsIgnoreCase("alpha")) return ALPHA
+        else if (releaseType.equalsIgnoreCase("beta")) return BETA
+        else throw new GradleException("Unknown release type '" + releaseType + "'");
+    }
+
+    curseforge {
+        projectId = curseforgeProjectId
+        accessToken = System.getenv("CURSEFORGE_API_TOKEN")
+        minecraftVersions.add("${mcVersion}")
+        javaVersions.add(JavaVersion.toVersion(modJavaVersion))
+    }
+    modrinth {
+        projectId = modrinthProjectId
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        minecraftVersions.add("${mcVersion}")
+    }
+}
