@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface PermissionAPI {
     static PermissionAPI get() {
-        return MoonlightCore.RUNTIME.getPermissionAPI();
+        return MoonlightCore.ABSTRACTION.getPermissionAPI();
     }
 
     <T> PermissionNode<T> register(ResourceLocation name, Class<T> permissionType, PermissionResolver<T> resolver);

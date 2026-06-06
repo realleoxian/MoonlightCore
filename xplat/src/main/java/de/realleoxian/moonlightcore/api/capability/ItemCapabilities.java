@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public interface ItemCapabilities {
     static ItemCapabilities get() {
-        return MoonlightCore.RUNTIME.getItemCapabilities();
+        return MoonlightCore.ABSTRACTION.getItemCapabilities();
     }
 
     @Nullable

@@ -10,10 +10,10 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import java.util.function.Consumer;
 
-public interface MoonlightCoreClientRuntime<T extends ModLoadContext> {
+public interface ClientXplatAbstraction<T extends ModLoadContext> {
     void initializeClientMod(String modId, T loadContext, Consumer<ClientModContainer> initializer);
 
-    // -----[NETWORKING]-----
+    // -----[CLIENT NETWORKING]-----
 
     <MSG extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> codec, ClientNetworking.ConfigurationPayloadHandler<MSG> handler);
 

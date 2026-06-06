@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public interface EntityCapabilities {
     static EntityCapabilities get() {
-        return MoonlightCore.RUNTIME.getEntityCapabilities();
+        return MoonlightCore.ABSTRACTION.getEntityCapabilities();
     }
 
     @Nullable

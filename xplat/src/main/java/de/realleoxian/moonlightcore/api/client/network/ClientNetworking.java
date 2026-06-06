@@ -14,19 +14,27 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.NonExtendable
 public interface ClientNetworking {
     static <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ConfigurationPayloadHandler<T> handler) {
-        MoonlightCoreClient.RUNTIME.registerConfigurationPayload(type, codec, handler);
+        MoonlightCoreClient.ABSTRACTION.registerConfigurationPayload(type, codec, handler);
     }
 
     static <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PlayPayloadHandler<T> handler) {
-        MoonlightCoreClient.RUNTIME.registerPlayPayload(type, codec, handler);
+        MoonlightCoreClient.ABSTRACTION.registerPlayPayload(type, codec, handler);
     }
 
     static boolean canSendPlayPayload(CustomPacketPayload.Type<?> type) {
-        return MoonlightCoreClient.RUNTIME.canSendPlayPayload(type);
+        return MoonlightCoreClient.ABSTRACTION.canSendPlayPayload(type);
+    }
+
+    static boolean canSendPlayPayload(CustomPacketPayload payload) {
+        return canSendPlayPayload(payload.type());
     }
 
     static boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type) {
-        return MoonlightCoreClient.RUNTIME.canSendConfigurationPayload(type);
+        return MoonlightCoreClient.ABSTRACTION.canSendConfigurationPayload(type);
+    }
+
+    static boolean canSendConfigurationPayload(CustomPacketPayload payload) {
+        return canSendConfigurationPayload(payload.type());
     }
 
     @FunctionalInterface

@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public interface BlockCapabilities {
     static BlockCapabilities get() {
-        return MoonlightCore.RUNTIME.getBlockCapabilities();
+        return MoonlightCore.ABSTRACTION.getBlockCapabilities();
     }
 
     @Nullable

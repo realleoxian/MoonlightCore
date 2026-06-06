@@ -1,19 +1,19 @@
 package de.realleoxian.moonlightcore.api.client;
 
 import de.realleoxian.moonlightcore.api.ModLoadContext;
-import de.realleoxian.moonlightcore.api.client.runtime.MoonlightCoreClientRuntime;
-import de.realleoxian.moonlightcore.api.client.runtime.MoonlightCoreClientRuntimeFactory;
+import de.realleoxian.moonlightcore.api.client.runtime.ClientXplatAbstraction;
+import de.realleoxian.moonlightcore.api.client.runtime.ClientXplatAbstractionFactory;
 
 import java.util.ServiceLoader;
 
 public final class MoonlightCoreClient {
-    public static final MoonlightCoreClientRuntime<?> RUNTIME = create();
+    public static final ClientXplatAbstraction<?> ABSTRACTION = create();
 
     @SuppressWarnings("unchecked")
-    private static MoonlightCoreClientRuntime<ModLoadContext> create() {
-        var loader = ServiceLoader.load(MoonlightCoreClientRuntimeFactory.class);
+    private static ClientXplatAbstraction<ModLoadContext> create() {
+        var loader = ServiceLoader.load(ClientXplatAbstractionFactory.class);
         var factory = loader.findFirst().orElseThrow();
-        return (MoonlightCoreClientRuntime<ModLoadContext>) factory.make();
+        return (ClientXplatAbstraction<ModLoadContext>) factory.make();
     }
 
     private MoonlightCoreClient() {}

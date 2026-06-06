@@ -14,15 +14,15 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.NonExtendable
 public interface ServerNetworking {
     static <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ConfigurationPayloadHandler<T> handler) {
-        MoonlightCore.RUNTIME.registerServerConfigurationPayload(type, codec, handler);
+        MoonlightCore.ABSTRACTION.registerServerConfigurationPayload(type, codec, handler);
     }
 
     static <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PlayPayloadHandler<T> handler) {
-        MoonlightCore.RUNTIME.registerServerPlayPayload(type, codec, handler);
+        MoonlightCore.ABSTRACTION.registerServerPlayPayload(type, codec, handler);
     }
 
     static boolean canSendPlayPayload(ServerPlayer player, CustomPacketPayload.Type<?> type) {
-        return MoonlightCore.RUNTIME.canSendServerPlayPayload(player, type);
+        return MoonlightCore.ABSTRACTION.canSendServerPlayPayload(player, type);
     }
 
     static boolean canSendPlayPayload(ServerPlayer player, CustomPacketPayload payload) {
@@ -30,7 +30,7 @@ public interface ServerNetworking {
     }
 
     static boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl networkHandler, CustomPacketPayload.Type<?> type) {
-        return MoonlightCore.RUNTIME.canSendServerConfigurationPayload(networkHandler, type);
+        return MoonlightCore.ABSTRACTION.canSendServerConfigurationPayload(networkHandler, type);
     }
 
     static boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl networkHandler, CustomPacketPayload payload) {
