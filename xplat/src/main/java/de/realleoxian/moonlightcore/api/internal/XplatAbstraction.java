@@ -1,4 +1,4 @@
-package de.realleoxian.moonlightcore.api.runtime;
+package de.realleoxian.moonlightcore.api.internal;
 
 import de.realleoxian.moonlightcore.api.EnvironmentSide;
 import de.realleoxian.moonlightcore.api.ModContainer;
@@ -17,10 +17,14 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @ApiStatus.Internal
 public interface XplatAbstraction<T extends ModLoadContext> {
@@ -28,7 +32,9 @@ public interface XplatAbstraction<T extends ModLoadContext> {
 
     void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer);
 
-    void commands(String namespace, Consumer<CommandRegistrar> initializer);
+    void commands(String namespace, CommandRegistrar initializer);
+
+    void argumentType(String namespace, Consumer<EntityAttributeRegistrar> initializer);
 
     // -----[SERVER NETWORKING]------
 
@@ -51,6 +57,10 @@ public interface XplatAbstraction<T extends ModLoadContext> {
     PermissionAPI getPermissionAPI();
 
     // -----[PLATFORM]-----
+
+    LevelResource createLevelResource(String id);
+
+    SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound);
 
     boolean isModLoaded(String modId);
 

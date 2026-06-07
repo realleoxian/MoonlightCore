@@ -1,14 +1,16 @@
 package de.realleoxian.moonlightcore.api;
 
-import de.realleoxian.moonlightcore.api.command.CommandRegistrar;
-import de.realleoxian.moonlightcore.api.entity.EntityAttributeRegistrar;
-import de.realleoxian.moonlightcore.api.runtime.XplatAbstraction;
-import de.realleoxian.moonlightcore.api.runtime.XplatAbstractionFactory;
+import de.realleoxian.moonlightcore.api.internal.XplatAbstraction;
+import de.realleoxian.moonlightcore.api.internal.XplatAbstractionFactory;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public final class MoonlightCore {
     public static final XplatAbstraction<ModLoadContext> ABSTRACTION = create();
@@ -17,12 +19,12 @@ public final class MoonlightCore {
         ABSTRACTION.initializeMod(modId, loadContext, initializer);
     }
 
-    public static void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
-        ABSTRACTION.entityAttributes(namespace, initializer);
+    public static LevelResource createLevelResource(String id) {
+        return ABSTRACTION.createLevelResource(id);
     }
 
-    public static void commands(String namespace, Consumer<CommandRegistrar> initializer) {
-        ABSTRACTION.commands(namespace, initializer);
+    public static SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound) {
+        return ABSTRACTION.createSoundType(volume, pitch, breakSound, stepSound, placeSound, hitSound, fallSound);
     }
 
     public static boolean isModLoaded(String modId) {

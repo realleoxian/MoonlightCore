@@ -1,4 +1,4 @@
-package de.realleoxian.moonlightcore.api.runtime;
+package de.realleoxian.moonlightcore.api.internal;
 
 import org.jetbrains.annotations.ApiStatus;
 
