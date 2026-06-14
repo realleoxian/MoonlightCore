@@ -1,21 +1,20 @@
 package de.realleoxian.moonlightcore.api.config;
 
-import de.realleoxian.moonlightcore.api.config.internal.MutableLoadedConfig;
 import de.realleoxian.moonlightcore.api.config.schema.ConfigSchema;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.NonExtendable
+import java.nio.file.Path;
+
 public interface ModConfig {
-    void apply(MutableLoadedConfig config);
+    void clearListeners();
 
-    void validate();
+    ConfigSchema getSchema();
 
-    ResourceLocation name();
+    ResourceLocation getName();
 
-    Type type();
+    Type getType();
 
-    ConfigSchema schema();
+    Path getPath();
 
     enum Type {
         COMMON,

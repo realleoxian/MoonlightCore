@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -41,6 +42,14 @@ public final class MoonlightCore {
 
     public static boolean isNeoforge() {
         return ABSTRACTION.isNeoforge();
+    }
+
+    public static Path getConfigDirectory() {
+        return ABSTRACTION.getConfigDirectory();
+    }
+
+    public static Path getGameDirectory() {
+        return ABSTRACTION.getGameDirectory();
     }
 
     public static EnvironmentSide getEnvironmentSide() {

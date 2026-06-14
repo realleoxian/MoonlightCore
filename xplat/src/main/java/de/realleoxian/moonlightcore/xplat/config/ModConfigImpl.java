@@ -1,55 +1,96 @@
 package de.realleoxian.moonlightcore.xplat.config;
 
+import com.mojang.logging.LogUtils;
+import de.realleoxian.moonlightcore.api.MoonlightCore;
 import de.realleoxian.moonlightcore.api.config.ModConfig;
-import de.realleoxian.moonlightcore.api.config.internal.LoadedConfig;
-import de.realleoxian.moonlightcore.api.config.internal.MutableLoadedConfig;
+import de.realleoxian.moonlightcore.api.config.MutableLoadedConfig;
 import de.realleoxian.moonlightcore.api.config.schema.ConfigSchema;
-import de.realleoxian.moonlightcore.xplat.config.internal.DefaultLoadedConfig;
+import de.realleoxian.moonlightcore.api.util.DeduplicatingRunnable;
 import de.realleoxian.moonlightcore.xplat.config.schema.ConfigSchemaImpl;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.concurrent.locks.Lock;
 
 public final class ModConfigImpl implements ModConfig {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Duration SAVE_DELAY_TIME = Duration.ofSeconds(2);
+
+    public final Lock lock;
     private final ResourceLocation name;
     private final Type type;
     private final ConfigSchema schema;
-    public final Lock lock;
+    private final Path path;
+    private final DeduplicatingRunnable saveTask = new DeduplicatingRunnable(SAVE_DELAY_TIME, this::save);
 
-    private LoadedConfig config;
+    public volatile MutableLoadedConfig loadedConfig = DefaultLoadedConfig.INSTANCE;
 
-    ModConfigImpl(ResourceLocation name, Type type, ConfigSchema schema, Lock lock) {
+    @ApiStatus.Internal
+    public ModConfigImpl(Lock lock, ResourceLocation name, Type type, ConfigSchema schema) {
+        this.lock = lock;
         this.name = name;
         this.type = type;
         this.schema = schema;
-        this.config = DefaultLoadedConfig.INSTANCE;
-        this.lock = lock;
+        this.path = MoonlightCore.getConfigDirectory().resolve("%s-%s.txt".formatted(name.getNamespace(), name.getPath()));
+        ((ConfigSchemaImpl) schema).accept(this);
     }
 
-    @Override
-    public void apply(MutableLoadedConfig config) {
+    @ApiStatus.Internal
+    public void load() {
         this.lock.lock();
-        this.config = config;
-        this.lock.unlock();
+        try {
+            try {
+                this.loadedConfig = new LoadedConfigImpl(this.path);
+            } catch (IOException e) {
+                LOGGER.error("Failed to load mod config '{}'. Returning to default", this.name);
+                this.loadedConfig = DefaultLoadedConfig.INSTANCE;
+            }
+            ((ConfigSchemaImpl) schema).invalidate();
+        } finally {
+            this.lock.unlock();
+        }
+    }
+
+    public void markDirty() {
+        this.saveTask.run();
     }
 
     @Override
-    public void validate() {
-        ((ConfigSchemaImpl) this.schema).validate(this.config, this);
+    public void clearListeners() {
+        ((ConfigSchemaImpl) this.schema).clearListeners();
+        for (final var schema : this.schema.getSchemas())((ConfigSchemaImpl) schema).clearListeners();
     }
 
     @Override
-    public ResourceLocation name() {
+    public ConfigSchema getSchema() {
+        return this.schema;
+    }
+
+    @Override
+    public ResourceLocation getName() {
         return this.name;
     }
 
     @Override
-    public Type type() {
+    public Type getType() {
         return this.type;
     }
 
     @Override
-    public ConfigSchema schema() {
-        return this.schema;
+    public Path getPath() {
+        return this.path;
+    }
+
+    @ApiStatus.Internal
+    private void save() {
+        try {
+            ConfigSerializer.writeToFile(this);
+        } catch (IOException e) {
+            LOGGER.error("Failed to save config file '{}'", this.path, e);
+        }
     }
 }

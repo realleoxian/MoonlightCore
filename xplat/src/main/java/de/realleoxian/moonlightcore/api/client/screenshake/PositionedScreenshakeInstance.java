@@ -5,7 +5,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
-public class PositionedScreenshakeInstance extends ScreenshakeInstance {
+public final class PositionedScreenshakeInstance extends ScreenshakeInstance {
     public static PositionedScreenshakeInstance create(Builder builder, Vec3 position, Easing falloffEasing, float falloffDistance, float maxDistance) {
         return new PositionedScreenshakeInstance(builder, position, falloffEasing, falloffDistance, maxDistance);
     }
@@ -19,7 +19,7 @@ public class PositionedScreenshakeInstance extends ScreenshakeInstance {
     public final float falloffDistance;
     public final float maxDistance;
 
-    protected PositionedScreenshakeInstance(Builder builder, Vec3 position, Easing falloffEasing, float falloffDistance, float maxDistance) {
+    private PositionedScreenshakeInstance(Builder builder, Vec3 position, Easing falloffEasing, float falloffDistance, float maxDistance) {
         super(builder);
         this.position = position;
         this.falloffEasing = falloffEasing;

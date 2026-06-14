@@ -23,6 +23,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -69,6 +70,10 @@ public interface XplatAbstraction<T extends ModLoadContext> {
     boolean isFabric();
 
     boolean isNeoforge();
+
+    Path getConfigDirectory();
+
+    Path getGameDirectory();
 
     EnvironmentSide getEnvironmentSide();
 

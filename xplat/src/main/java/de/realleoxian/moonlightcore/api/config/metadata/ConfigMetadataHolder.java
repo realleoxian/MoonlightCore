@@ -2,17 +2,17 @@ package de.realleoxian.moonlightcore.api.config.metadata;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.function.Consumer;
+import java.util.Map;
 
 @ApiStatus.NonExtendable
 public interface ConfigMetadataHolder {
     @Nullable
-    <M> M getMetadata(ConfigMetadataType<M, ?> metadataType);
+    <M> M getMetadata(ConfigMetadataType<M, ?> type);
 
-    boolean hasMetadata(ConfigMetadataType<?, ?> metadataType);
+    <M> boolean hasMetadata(ConfigMetadataType<M, ?> type);
 
-    interface Builder<S extends Builder<S>> {
-        <M, B> S metadata(ConfigMetadataType<M, B> metadataType, Consumer<B> builder);
-    }
+    @UnmodifiableView
+    Map<ConfigMetadataType<?, ?>, ?> getMetadata();
 }

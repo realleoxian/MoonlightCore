@@ -16,7 +16,7 @@ public interface ModContainer {
         MoonlightCore.ABSTRACTION.entityAttributes(namespace(), initializer);
     }
 
-    default void argumentType(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
+    default void argumentTypes(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
         MoonlightCore.ABSTRACTION.argumentType(namespace, initializer);
     }
 }
