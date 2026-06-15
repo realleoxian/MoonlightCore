@@ -10,6 +10,7 @@ import de.realleoxian.moonlightcore.xplat.config.schema.serializer.*;
 import de.realleoxian.moonlightcore.xplat.config.schema.validator.ListConfigValueValidator;
 import de.realleoxian.moonlightcore.xplat.config.schema.validator.NoOpConfigValueValidator;
 import de.realleoxian.moonlightcore.xplat.config.schema.validator.RangedConfigValueValidator;
+import de.realleoxian.moonlightcore.xplat.config.sync.ConfigValueSyncChange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class ConfigSchemaImpl implements ConfigSchema {
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
@@ -66,6 +68,14 @@ public class ConfigSchemaImpl implements ConfigSchema {
             throw new IllegalArgumentException("Unknown config value: " + (this.configKey == null ? key : this.configKey.child(key).asFriendlyString()));
         }
         return (ConfigValue<T>) this.values.get(key);
+    }
+
+    @Override
+    public List<ConfigValueSyncChange> createSyncChanges() {
+        return getValues().stream().map(val -> {
+            ((ConfigValueImpl<?>) val).invalidate();    // Invalidate the current value so when querying it on the sync change we get the newest one
+            return ConfigValueSyncChange.create(val);
+        }).toList();
     }
 
     @Override

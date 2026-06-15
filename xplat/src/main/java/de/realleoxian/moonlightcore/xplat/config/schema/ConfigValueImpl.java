@@ -38,7 +38,8 @@ public class ConfigValueImpl<T> implements ConfigValue<T> {
         this.defaultValue = defaultValue;
     }
 
-    public void set(T value) {
+    @Override
+    public void set(T value, boolean shouldSave) {
         this.config.lock.lock();
         try {
             if (Objects.equals(this.cachedValue, value)) {
@@ -54,7 +55,10 @@ public class ConfigValueImpl<T> implements ConfigValue<T> {
                     }
                 }
                 this.config.loadedConfig.setRaw(this, value);
-                this.config.markDirty();
+                this.config.markKeyDirty(this.configKey);
+                if (shouldSave) {
+                    this.config.markDirty();
+                }
             }
         } finally {
             this.config.lock.unlock();

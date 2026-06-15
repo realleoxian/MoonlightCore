@@ -3,6 +3,7 @@ package de.realleoxian.moonlightcore.api.config.schema;
 import de.realleoxian.moonlightcore.api.config.ConfigKey;
 import de.realleoxian.moonlightcore.api.config.metadata.ConfigMetadataHolder;
 import de.realleoxian.moonlightcore.api.config.metadata.ConfigMetadataType;
+import de.realleoxian.moonlightcore.xplat.config.sync.ConfigValueSyncChange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -11,12 +12,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @ApiStatus.NonExtendable
 public interface ConfigSchema extends ConfigMetadataHolder {
     ConfigSchema getSchema(String key);
 
     <T> ConfigValue<T> getValue(String key);
+
+    List<ConfigValueSyncChange> createSyncChanges();
 
     @UnmodifiableView
     Collection<ConfigSchema> getSchemas();

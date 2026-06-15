@@ -15,6 +15,7 @@ import de.realleoxian.moonlightcore.api.client.shader.ShaderRegistrar;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -54,6 +55,8 @@ public interface ClientXplatAbstraction<T extends ModLoadContext> {
     boolean canSendPlayPayload(CustomPacketPayload.Type<?> type);
 
     boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type);
+
+    Packet<?> createC2SPacket(CustomPacketPayload payload);
 
     // -----[PLATFORM]-----
 

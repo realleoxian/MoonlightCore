@@ -6,6 +6,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.NonExtendable
 public interface ConfigValue<T> extends ConfigMetadataHolder {
+    void set(T t, boolean shouldSave);
+
     void registerListener(ChangeListener<T> listener);
 
     T getValue();

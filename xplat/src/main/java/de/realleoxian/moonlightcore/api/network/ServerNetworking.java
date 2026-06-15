@@ -4,6 +4,7 @@ import de.realleoxian.moonlightcore.api.MoonlightCore;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +20,10 @@ public interface ServerNetworking {
 
     static <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PlayPayloadHandler<T> handler) {
         MoonlightCore.ABSTRACTION.registerServerPlayPayload(type, codec, handler);
+    }
+
+    static Packet<?> createS2CPacket(CustomPacketPayload payload) {
+        return MoonlightCore.ABSTRACTION.createS2CPacket(payload);
     }
 
     static boolean canSendPlayPayload(ServerPlayer player, CustomPacketPayload.Type<?> type) {

@@ -1,6 +1,8 @@
 package de.realleoxian.moonlightcore.xplat.config;
 
 import de.realleoxian.moonlightcore.api.config.ConfigKey;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -9,9 +11,26 @@ import java.util.List;
 import java.util.Objects;
 
 public final class ConfigKeyImpl implements ConfigKey {
+    public static final StreamCodec<FriendlyByteBuf, ConfigKey> STREAM_CODEC = StreamCodec.of(ConfigKeyImpl::encodeToBuf, ConfigKeyImpl::decodeFromBuf);
+
     private final String[] components;
     private final int componentCount;
     private final String friendlyString;
+
+    private static ConfigKey decodeFromBuf(FriendlyByteBuf byteBuf) {
+        var components = new String[byteBuf.readVarInt()];
+        for (int i = 0; i < components.length; i++) {
+            components[i] = byteBuf.readUtf();
+        }
+        return new ConfigKeyImpl(components);
+    }
+
+    public static void encodeToBuf(FriendlyByteBuf byteBuf, ConfigKey configKey) {
+        byteBuf.writeVarInt(configKey.getComponentCount());
+        for (int idx = 0; idx < configKey.getComponentCount(); idx++) {
+            byteBuf.writeUtf(configKey.getComponent(idx));
+        }
+    }
 
     public ConfigKeyImpl(String... components) {
         this.components = new String[components.length];

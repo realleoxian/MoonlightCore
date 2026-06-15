@@ -8,6 +8,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -19,6 +20,10 @@ public interface ClientNetworking {
 
     static <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PlayPayloadHandler<T> handler) {
         MoonlightCoreClient.ABSTRACTION.registerPlayPayload(type, codec, handler);
+    }
+
+    static Packet<?> createC2SPacket(CustomPacketPayload payload) {
+        return MoonlightCoreClient.ABSTRACTION.createC2SPacket(payload);
     }
 
     static boolean canSendPlayPayload(CustomPacketPayload.Type<?> type) {

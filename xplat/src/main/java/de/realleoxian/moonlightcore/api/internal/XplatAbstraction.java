@@ -13,6 +13,7 @@ import de.realleoxian.moonlightcore.api.permissions.PermissionAPI;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,6 +47,8 @@ public interface XplatAbstraction<T extends ModLoadContext> {
     boolean canSendServerConfigurationPayload(ServerConfigurationPacketListenerImpl networkHandler, CustomPacketPayload.Type<?> type);
 
     boolean canSendServerPlayPayload(ServerPlayer player, CustomPacketPayload.Type<?> type);
+
+    Packet<?> createS2CPacket(CustomPacketPayload payload);
 
     // -----[CAPABILITIES]-----
 

@@ -1,6 +1,7 @@
 package de.realleoxian.moonlightcore.xplat.config.schema.serializer;
 
 import de.realleoxian.moonlightcore.api.config.schema.ConfigValueSerializer;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,23 @@ public final class ListConfigValueSerializer<T> implements ConfigValueSerializer
             return new DeserializationResult.Error<>(errorMessage);
         }
         return new DeserializationResult.Success<>(results);
+    }
+
+    @Override
+    public void encodeToBuf(FriendlyByteBuf byteBuf, List<T> ts) {
+        byteBuf.writeVarInt(ts.size());
+        ts.forEach(t -> this.elementSerializer.encodeToBuf(byteBuf, t));
+    }
+
+    @Override
+    public List<T> decodeFromBuf(FriendlyByteBuf byteBuf) {
+        int size = byteBuf.readInt();
+
+        var list = new ArrayList<T>(size);
+        for (int ignored = 0; ignored < size; ignored++) {
+            list.add(this.elementSerializer.decodeFromBuf(byteBuf));
+        }
+        return list;
     }
 
     @Override

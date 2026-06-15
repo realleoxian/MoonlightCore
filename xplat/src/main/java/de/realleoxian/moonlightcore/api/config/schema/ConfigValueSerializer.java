@@ -1,12 +1,17 @@
 package de.realleoxian.moonlightcore.api.config.schema;
 
-import java.util.List;
+import net.minecraft.network.FriendlyByteBuf;
+
 import java.util.function.Consumer;
 
 public interface ConfigValueSerializer<T> {
     DeserializationResult<T> readFromString(String str);
 
     String writeToString(T t);
+
+    void encodeToBuf(FriendlyByteBuf byteBuf, T t);
+
+    T decodeFromBuf(FriendlyByteBuf byteBuf);
 
     sealed interface DeserializationResult<T> permits DeserializationResult.Success, DeserializationResult.Error {
         record Success<T>(T value) implements DeserializationResult<T> {
