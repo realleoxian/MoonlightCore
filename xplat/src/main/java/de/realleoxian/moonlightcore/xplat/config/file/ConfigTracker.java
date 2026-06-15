@@ -53,7 +53,7 @@ public final class ConfigTracker {
 
     @UnmodifiableView
     public static Set<ResourceLocation> getSyncableConfigs() {
-        return Collections.unmodifiableSet(CONFIGS_BY_MOD.row(ModConfig.Type.SERVER).keySet()).stream().map();
+        return Collections.unmodifiableSet(CONFIGS_BY_MOD.row(ModConfig.Type.SERVER).keySet());
     }
 
     private ConfigTracker() {}
