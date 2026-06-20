@@ -15,7 +15,7 @@ public interface ItemCapabilities {
     }
 
     @Nullable
-    <T, C> T find(CapabilityType<Item, T, C> capabilityType, ItemStack stack);
+    <T, C> T find(CapabilityType<Item, T, C> capabilityType, ItemStack stack, C context);
 
     <T, C> CapabilityType<Item, T, C> create(ResourceLocation id, Class<T> capabilityType, Class<C> contextType);
 
