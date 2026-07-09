@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "${fancyModLoaderRange}"
+license = "${modLicense}"
+
+[[mods]]
+modId = "${modId}"
+version = "${modVersion}"
+displayName = "${modName}"
+credits = "${modCredits}"
+authors = "${modAuthor}"
+description = '''${modDescription}'''
+
+[[mixins]]
+config = "moonlightcore.mixins.json"
+
+[[mixins]]
+config = "moonlightcore.neoforge.mixins.json"
+
+[[mixins]]
+config = "moonlightcore.client.mixins.json"
+
+[[mixins]]
+config = "moonlightcore.client.neoforge.mixins.json"
+
+[[dependencies."${modId}"]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neoVersion},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${modId}"]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${mcRangeStart},)"
+ordering = "NONE"
+side = "BOTH"

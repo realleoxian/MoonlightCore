@@ -1,0 +1,45 @@
+plugins {
+    id 'multiloader-common'
+}
+
+configurations {
+    xplatJava {
+        canBeResolved = true
+    }
+    xplatResources {
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    compileOnly(project(":xplat")) {
+        def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+        attributes {
+            attribute(loaderAttribute, 'common')
+        }
+    }
+    xplatJava(project(path: ':xplat', configuration: 'xplatJava'))
+    xplatResources(project(path: ':xplat', configuration: 'xplatResources'))
+}
+
+tasks.named('compileJava', JavaCompile) {
+    dependsOn(configurations.xplatJava)
+    source(configurations.xplatJava)
+}
+
+tasks.named('javadoc', Javadoc).configure {
+    dependsOn(configurations.xplatJava)
+    source(configurations.xplatJava)
+}
+
+tasks.named('sourcesJar', Jar) {
+    dependsOn(configurations.xplatJava)
+    from(configurations.xplatJava)
+    dependsOn(configurations.xplatResources)
+    from(configurations.xplatResources)
+}
+
+processResources {
+    dependsOn(configurations.xplatResources)
+    from(configurations.xplatResources)
+}

@@ -1,0 +1,19 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT' apply false
+    id 'net.neoforged.moddev' version '2.0.141' apply false
+    id 'me.modmuss50.mod-publish-plugin' version '2.1.1' apply false
+    id 'com.diffplug.spotless' version '8.7.0'
+}
+
+spotless {
+    java {
+        target "**/src/*/java/de/leoxian/moonlightcore/**/*.java"
+
+        endWithNewline()
+        trimTrailingWhitespace()
+        removeUnusedImports()
+        leadingSpacesToTabs(4)
+        replaceRegex("class-level javadoc indentation fix", "^\\*", " *")
+        replaceRegex("method-level javadoc indentation fix", "\t\\*", "\t *")
+    }
+}

@@ -1,0 +1,99 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'idea'
+}
+
+version = modVersion
+if (!modVersionType.equalsIgnoreCase("stable")) {
+    version += "-${modVersionType}"
+}
+
+println("MoonlightCore: ${version} | Platform: ${project.name}")
+
+base.archivesName = "${modId}-${project.name}"
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(modJavaVersion)
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    maven {
+        name = "NeoForge"
+        url = "https://maven.neoforged.net/releases"
+    }
+    maven {
+        name = "Fabric"
+        url = "https://maven.fabricmc.net/"
+    }
+
+    mavenCentral()
+}
+
+tasks.withType(Jar).configureEach {
+    from(rootProject.file("LICENSE")) {
+        rename { "${it}_${modId}" }
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title": modName,
+                "Specification-Vendor": modAuthor,
+                "Specification-Version": project.jar.archiveVersion,
+                "Implementation-Title": project.name,
+                "Implementation-Vendor": modAuthor,
+                "Implementation-Version": project.jar.archiveVersion,
+                "Built-On-Minecraft": mcVersion
+        ])
+    }
+}
+
+processResources {
+    filteringCharset = "UTF-8"
+    def expandProperties = [
+            modId: modId, modVersion: version, modName: modName, modAuthor: modAuthor, modCredits: modCredits, modDescription: modDescription,
+            modSources: modSources, modIssues: modIssues, modLicense: modLicense, modJavaVersion: modJavaVersion,
+            mcVersion: mcVersion, packFormat: packFormat, mcRangeStart: mcRangeStart,
+            neoVersion: neoVersion, neoRange: neoRange, fancyModLoaderRange: fancyModLoaderRange,
+            fabricApi: fabricApi, fabricLoader: fabricLoader
+    ]
+
+    def jsonExpandedProps = expandProperties.collectEntries {
+        key, value -> [(key): value instanceof String ? value.replace("\n", "\\\\n") : value]
+    }
+
+    filesMatching(["META-INF/neoforge.mods.toml"]) {
+        expand expandProperties
+    }
+
+    filesMatching(["pack.mcmeta", "fabric.mod.json", "*.mixins.json"]) {
+        expand jsonExpandedProps
+    }
+
+    inputs.properties expandProperties
+}
+
+publishing {
+    publications {
+        register('mavenJar', MavenPublication) {
+            artifactId project.name
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = System.getenv("local_maven_url")
+        }
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

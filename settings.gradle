@@ -1,0 +1,27 @@
+pluginManagement {
+    repositories {
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Fabric"
+                    url = uri("https://maven.fabricmc.net")
+                }
+            }
+            filter {
+                includeGroupAndSubgroups("net.fabricmc")
+            }
+        }
+
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id "org.gradle.toolchains.foojay-resolver-convention" version "1.0.0"
+}
+
+rootProject.name = "MoonlightCore"
+include("xplat")
+include 'fabric'
+include 'neoforge'

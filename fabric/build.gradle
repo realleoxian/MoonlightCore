@@ -1,0 +1,52 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.fabricmc.fabric-loom'
+    id "me.modmuss50.mod-publish-plugin"
+}
+
+dependencies {
+    minecraft("com.mojang:minecraft:${mcVersion}")
+    implementation("net.fabricmc:fabric-loader:${fabricLoader}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${fabricApi}")
+}
+
+loom {
+    def awFile = project(":xplat").file("src/main/resources/${modId}.aw")
+    if (awFile.exists()) {
+        accessWidenerPath = awFile
+    }
+
+    runs {
+        client {
+            client()
+            setDisplayName("Fabric Client")
+            setGenerateRunConfig(true)
+            setRunDirectory(file("runs/client"))
+        }
+        server {
+            server()
+            setDisplayName("Fabric Server")
+            setGenerateRunConfig(true)
+            setRunDirectory(file("runs/server"))
+        }
+    }
+}
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'modCompileClasspath'].each { variant ->
+    configurations.named(variant) {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named(variant) {
+            attributes {
+                attribute(loaderAttribute, 'fabric')
+            }
+        }
+    }
+}
