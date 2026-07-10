@@ -10,12 +10,14 @@ import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.internal.common.config.file.ConfigFileWatcher;
 import de.leoxian.moonlightcore.internal.common.config.sync.s2c.S2CSyncLoadedConfigPacket;
+import de.leoxian.moonlightcore.internal.common.config.sync.task.SyncConfigurationTask;
 import de.leoxian.moonlightcore.internal.common.util.ModLockHelper;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
@@ -27,12 +29,6 @@ import java.util.function.Function;
 public final class ConfigRegistry {
     private static final Map<Identifier, ConfigImpl<?>> REGISTRY = new ConcurrentHashMap<>();
     private static final Set<Identifier> SYNCED_CONFIGS = ConcurrentHashMap.newKeySet();
-
-    static {
-        ServerConfigurationConnectionEvents.CONFIGURE.subscribe(EventPriority.HIGHEST, (packetListener, server) -> {
-            ServerConfigurationNetworking.addTask(packetListener, new SyncConfigurationTask(packetListener, SYNCED_CONFIGS));
-        });
-    }
 
     @SuppressWarnings("unchecked")
     public static <O> Config<O> register(Identifier id, Function<ConfigSchema.Builder, O> factory, boolean synced) {
@@ -50,7 +46,7 @@ public final class ConfigRegistry {
                     if (currentServer != null) {
                         currentServer.execute(() -> {
                             config.load();
-                            PacketDistributor.sendToAllPlayers(new S2CSyncLoadedConfigPacket(config.id(), config.loadedConfig()));
+                            PacketDistributor.sendToAllPlayers(new S2CSyncLoadedConfigPacket(config));
                         });
                     }
                 });
@@ -67,31 +63,10 @@ public final class ConfigRegistry {
         return REGISTRY.get(id);
     }
 
-    public static void init() {
-        // no-op
-        // Just to load the static block of the class
+    @UnmodifiableView
+    public static Set<Identifier> getSyncableConfigs() {
+        return Set.copyOf(SYNCED_CONFIGS);
     }
 
     private ConfigRegistry() {}
-
-    private record SyncConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, Set<Identifier> syncables) implements ConfigurationTask {
-        public static final Type TYPE = new Type("moonlightcoer:sync_config");
-
-        @Override
-        public void start(Consumer<Packet<?>> consumer) {
-            for (final var syncable : syncables){
-                var config = ConfigRegistry.getConfig(syncable);
-                if (config == null) {
-                    continue;
-                }
-                consumer.accept(new ClientboundCustomPayloadPacket(new S2CSyncLoadedConfigPacket(syncable, config.loadedConfig())));
-            }
-            ServerConfigurationNetworking.completeTask(packetListener, TYPE);
-        }
-
-        @Override
-        public Type type() {
-            return TYPE;
-        }
-    }
 }

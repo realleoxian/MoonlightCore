@@ -4,11 +4,15 @@ import de.leoxian.moonlightcore.client.network.ClientConfigurationNetworking;
 import de.leoxian.moonlightcore.client.network.ClientPlayNetworking;
 import de.leoxian.moonlightcore.common.ModContainer;
 import de.leoxian.moonlightcore.common.entrypoint.ClientModInitializer;
+import de.leoxian.moonlightcore.internal.common.config.sync.s2c.S2CRequestValidConfigsPacket;
 import de.leoxian.moonlightcore.internal.common.config.sync.s2c.S2CSyncLoadedConfigPacket;
 
 public class InternalClientMod implements ClientModInitializer {
     @Override
     public void onInitializedClient(ModContainer container) {
+        ClientConfigurationNetworking.register(S2CRequestValidConfigsPacket.TYPE, S2CRequestValidConfigsPacket.STREAM_CODEC, S2CRequestValidConfigsPacket::handleConfiguration);
+        ClientPlayNetworking.register(S2CRequestValidConfigsPacket.TYPE, S2CRequestValidConfigsPacket.STREAM_CODEC, S2CRequestValidConfigsPacket::handlePlay);
+
         ClientConfigurationNetworking.register(S2CSyncLoadedConfigPacket.TYPE, S2CSyncLoadedConfigPacket.STREAM_CODEC, S2CSyncLoadedConfigPacket::handleConfiguration);
         ClientPlayNetworking.register(S2CSyncLoadedConfigPacket.TYPE, S2CSyncLoadedConfigPacket.STREAM_CODEC, S2CSyncLoadedConfigPacket::handlePlay);
     }
