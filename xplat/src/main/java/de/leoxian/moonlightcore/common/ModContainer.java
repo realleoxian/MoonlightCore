@@ -1,5 +1,6 @@
 package de.leoxian.moonlightcore.common;
 
+import de.leoxian.moonlightcore.common.resource.ModResource;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.file.Path;
@@ -10,7 +11,5 @@ import java.util.Optional;
 public interface ModContainer {
     ModMetadata metadata();
 
-    List<Path> rootPaths();
-
-    Optional<Path> findPath(String path);
+    ModResource resources();
 }
