@@ -15,7 +15,6 @@ import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
 import de.leoxian.moonlightcore.common.stat.StatRegistrar;
-import de.leoxian.moonlightcore.internal.common.XplatInternalsAbstraction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -101,10 +100,4 @@ public interface XplatAbstraction {
     boolean isNeoforge();
 
     boolean isFabric();
-
-    // |-----| INTERNALS |-----|
-
-    @ApiStatus.Internal
-    @ApiStatus.Experimental
-    XplatInternalsAbstraction getInternals();
 }
