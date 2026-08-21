@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.internal.common.config.sync.s2c;
+package de.leoxian.moonlightcore.internal.common.network.s2c;
 
 import com.mojang.logging.LogUtils;
 import de.leoxian.moonlightcore.client.network.ClientConfigurationNetworking;

@@ -1,10 +1,10 @@
-package de.leoxian.moonlightcore.internal.common.config.sync.s2c;
+package de.leoxian.moonlightcore.internal.common.network.s2c;
 
 import de.leoxian.moonlightcore.client.network.ClientConfigurationNetworking;
 import de.leoxian.moonlightcore.client.network.ClientPacketDistributor;
 import de.leoxian.moonlightcore.client.network.ClientPlayNetworking;
 import de.leoxian.moonlightcore.internal.common.config.ConfigRegistry;
-import de.leoxian.moonlightcore.internal.common.config.sync.c2s.C2SAcceptedValidConfigs;
+import de.leoxian.moonlightcore.internal.common.network.c2s.C2SAcceptedValidConfigs;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

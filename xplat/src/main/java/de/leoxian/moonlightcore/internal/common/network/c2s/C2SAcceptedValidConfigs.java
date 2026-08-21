@@ -1,14 +1,13 @@
-package de.leoxian.moonlightcore.internal.common.config.sync.c2s;
+package de.leoxian.moonlightcore.internal.common.network.c2s;
 
 import com.mojang.logging.LogUtils;
-import de.leoxian.moonlightcore.common.event.ServerPlayConnectionEvents;
 import de.leoxian.moonlightcore.common.network.PacketDistributor;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.internal.common.config.ConfigRegistry;
-import de.leoxian.moonlightcore.internal.common.config.sync.s2c.S2CSyncLoadedConfigPacket;
-import de.leoxian.moonlightcore.internal.common.config.sync.task.RequestValidConfigsTask;
-import de.leoxian.moonlightcore.internal.common.config.sync.task.SyncConfigurationTask;
+import de.leoxian.moonlightcore.internal.common.network.s2c.S2CSyncLoadedConfigPacket;
+import de.leoxian.moonlightcore.internal.common.network.task.RequestValidConfigsTask;
+import de.leoxian.moonlightcore.internal.common.network.task.SyncConfigurationTask;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

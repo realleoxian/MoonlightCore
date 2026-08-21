@@ -1,6 +1,6 @@
-package de.leoxian.moonlightcore.internal.common.config.sync.task;
+package de.leoxian.moonlightcore.internal.common.network.task;
 
-import de.leoxian.moonlightcore.internal.common.config.sync.s2c.S2CRequestValidConfigsPacket;
+import de.leoxian.moonlightcore.internal.common.network.s2c.S2CRequestValidConfigsPacket;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.server.network.ConfigurationTask;

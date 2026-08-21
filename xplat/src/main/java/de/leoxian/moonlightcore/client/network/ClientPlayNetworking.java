@@ -3,6 +3,7 @@ package de.leoxian.moonlightcore.client.network;
 import de.leoxian.moonlightcore.client.platform.XplatClientAbstraction;
 import de.leoxian.moonlightcore.common.network.PacketSender;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -37,6 +38,8 @@ public final class ClientPlayNetworking {
         CompletableFuture<Void> enqueueWork(Runnable task);
 
         <T> CompletableFuture<T> enqueueWork(Supplier<T> task);
+
+        ClientPacketListener packetListener();
 
         Minecraft minecraft();
 

@@ -3,27 +3,18 @@ package de.leoxian.moonlightcore.internal.common.config;
 import de.leoxian.moonlightcore.common.EnvironmentSide;
 import de.leoxian.moonlightcore.common.config.Config;
 import de.leoxian.moonlightcore.common.config.ConfigSchema;
-import de.leoxian.moonlightcore.common.event.ServerConfigurationConnectionEvents;
-import de.leoxian.moonlightcore.common.event.base.EventPriority;
 import de.leoxian.moonlightcore.common.network.PacketDistributor;
-import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.internal.common.config.file.ConfigFileWatcher;
-import de.leoxian.moonlightcore.internal.common.config.sync.s2c.S2CSyncLoadedConfigPacket;
-import de.leoxian.moonlightcore.internal.common.config.sync.task.SyncConfigurationTask;
+import de.leoxian.moonlightcore.internal.common.network.s2c.S2CSyncLoadedConfigPacket;
 import de.leoxian.moonlightcore.internal.common.util.ModLockHelper;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.network.ConfigurationTask;
-import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class ConfigRegistry {
