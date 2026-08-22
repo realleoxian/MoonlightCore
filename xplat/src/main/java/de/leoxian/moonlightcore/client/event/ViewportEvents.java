@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class ViewportEvents {
     public static final Event<RenderFog> RENDER_FOG = Event.create(RenderFog.class, listeners -> (gameRenderer, camera, partialTick, fogEnvironment, fogData) -> {
-        var ret = new CompoundEventResult<FogData>(EventResult.TRUE, fogData);
+        var ret = new CompoundEventResult<FogData>(EventResult.SUCCESS, fogData);
         for (final var listener : listeners) {
             ret = listener.onRenderFog(gameRenderer, camera, partialTick, fogEnvironment, fogData);
             if (ret.result().cancelFurtherEventProcessing()) {
@@ -22,7 +22,7 @@ public final class ViewportEvents {
         return ret;
     });
     public static final Event<ComputeFogColor> COMPUTE_FOG_COLOR = Event.create(ComputeFogColor.class, listeners -> (gameRenderer, camera, partialTick, context) -> {
-       var ret = EventResult.TRUE;
+       var ret = EventResult.SUCCESS;
        for (final var listener : listeners) {
            ret = listener.onComputeFogColor(gameRenderer, camera, partialTick, context);
            if (ret.cancelFurtherEventProcessing()) {
@@ -32,7 +32,7 @@ public final class ViewportEvents {
        return ret;
     });
     public static final Event<ComputeCameraAngles> COMPUTE_CAMERA_ANGLES  = Event.create(ComputeCameraAngles.class, listeners -> (gameRenderer, camera, partialTick, context) -> {
-       var ret = EventResult.TRUE;
+       var ret = EventResult.SUCCESS;
        for (final var listener : listeners) {
            ret = listener.onComputeCameraAngles(gameRenderer, camera, partialTick, context);
            if (ret.cancelFurtherEventProcessing()) {

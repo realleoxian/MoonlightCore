@@ -5,7 +5,7 @@ import de.leoxian.moonlightcore.common.event.base.EventResult;
 
 public final class InputEvents {
     public static final Event<Key.Pre> PRE_KEY_PRESS = Event.create(Key.Pre.class, listeners -> (key, scancode, modifiers, action) -> {
-       var result = EventResult.TRUE;
+       var result = EventResult.SUCCESS;
        for (final var listener : listeners) {
            result = listener.onPreMouseInput(key, scancode, modifiers, action);
            if (result.cancelFurtherEventProcessing()) {
@@ -21,7 +21,7 @@ public final class InputEvents {
     });
 
     public static final Event<Mouse.Pre> PRE_MOUSE_INPUT = Event.create(Mouse.Pre.class, listeners -> (button, modifiers, action) -> {
-       var result = EventResult.TRUE;
+       var result = EventResult.SUCCESS;
        for (final var listener : listeners) {
            result = listener.onPreMouseInput(button, modifiers, action);
            if (result.cancelFurtherEventProcessing()) {
@@ -36,7 +36,7 @@ public final class InputEvents {
        }
     });
     public static final Event<Mouse.Scroll> MOUSE_SCROLL = Event.create(Mouse.Scroll.class, listeners -> (scrollDeltaX, scrollDeltaY, leftDown, middleDown, rightDown, mouseX, mouseY) -> {
-       var result = EventResult.TRUE;
+       var result = EventResult.SUCCESS;
        for (final var listener : listeners) {
            result = listener.onMouseScroll(scrollDeltaX, scrollDeltaY, leftDown, middleDown, rightDown, mouseX, mouseY);
            if (result.cancelFurtherEventProcessing()) {

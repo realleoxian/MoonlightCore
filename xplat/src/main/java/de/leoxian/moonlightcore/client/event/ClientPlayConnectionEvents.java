@@ -5,11 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 
 public final class ClientPlayConnectionEvents {
-    public static final Event<Init> INIT = Event.create(Init.class, listeners -> (packetListener, minecraft) -> {
-       for (final var listener : listeners) {
-           listener.onPlayInit(packetListener, minecraft);
-       }
-    });
     public static final Event<Join> JOIN = Event.create(Join.class, listeners -> (packetListener, minecraft) -> {
         for (final var listener : listeners) {
             listener.onPlayJoin(packetListener, minecraft);
@@ -22,11 +17,6 @@ public final class ClientPlayConnectionEvents {
     });
 
     private ClientPlayConnectionEvents() {}
-
-    @FunctionalInterface
-    public interface Init {
-        void onPlayInit(ClientPacketListener packetListener, Minecraft minecraft);
-    }
 
     @FunctionalInterface
     public interface Join {
