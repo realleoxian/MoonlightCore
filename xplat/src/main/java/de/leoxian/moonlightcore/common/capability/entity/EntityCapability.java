@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import org.jspecify.annotations.Nullable;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -17,7 +18,7 @@ public interface EntityCapability<A, C extends @Nullable Object> {
     @Nullable
     A find(Entity entity, C context);
 
-    <E extends Entity> void registerForEntity(Supplier<EntityType<E>> entityType, Function<E, @Nullable A> provider);
+    <E extends Entity> void registerForEntity(Supplier<EntityType<E>> entityType, BiFunction<E, C, @Nullable A> provider);
 
     void registerSelf(Supplier<EntityType<?>> entityType);
 

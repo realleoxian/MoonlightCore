@@ -6,4 +6,6 @@ import net.minecraft.resources.Identifier;
 
 public interface ArgumentTypeRegistrar {
     <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void register(Identifier id, Class<A> argumentType, ArgumentTypeInfo<A, T> info);
+
+    <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void register(String id, Class<A> argumentType, ArgumentTypeInfo<A, T> info);
 }

@@ -1,7 +1,11 @@
 package de.leoxian.moonlightcore.common.entrypoint;
 
-import de.leoxian.moonlightcore.common.ModContainer;
+import de.leoxian.moonlightcore.client.platform.XplatClientAbstraction;
 
 public interface ClientModInitializer {
-    void onInitializedClient(ModContainer container);
+    static void initialize(String modId, Class<?> initializer) {
+        XplatClientAbstraction.INSTANCE.initializeClientMod(modId, initializer);
+    }
+
+    void onInitializedClient();
 }

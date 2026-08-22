@@ -7,7 +7,5 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public interface BlockColorRegistrar {
-    void register(List<BlockTintSource> tintSources, Supplier<Block[]> blocks);
-
-    void register(List<BlockTintSource> tintSources, Iterable<? extends Block> blocks);
+    void register(List<BlockTintSource> tintSources, Supplier<Block> blocks);
 }

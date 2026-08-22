@@ -34,7 +34,6 @@ public final class DynamicRegistryUtils {
                 ResourceKey<T> key = ResourceKey.create(registry.key(), id);
                 T value = accessor.getByLocation().get(id).value();
 
-
                 ObjectList<Holder.Reference<T>> byId = accessor.getById();
                 int rawId = accessor.getToId().removeInt(value);
                 if (byId.get(rawId).value() != value) {
@@ -42,7 +41,10 @@ public final class DynamicRegistryUtils {
                 }
 
                 Holder.Reference<T> removed = byId.remove(rawId);
-                assert removed.value() == value;
+                if (removed.value() != value) {
+                    throw new RuntimeException("Id mismatch in registry '" + registry.key() + "'");
+                }
+
                 accessor.getToId().replaceAll((t, i) -> i > rawId ? i - 1 : i);
                 accessor.getByLocation().remove(id);
                 accessor.getByKey().remove(key);
@@ -85,7 +87,9 @@ public final class DynamicRegistryUtils {
             if (frozen) accessor.setFrozen(false);
             Holder.Reference<T> ret = mappedRegistry.register(ResourceKey.create(registry.key(), id), value.get(), RegistrationInfo.BUILT_IN);
             if (frozen) registry.freeze();
-            assert accessor.getById().get(accessor.getToId().getInt(value)) != null;
+            if (accessor.getById().get(accessor.getToId().getInt(value)) == null) {
+                throw new RuntimeException();
+            }
             return ret;
         } else {
             LOGGER.warn("Tried to add pre-existing key {}", id);

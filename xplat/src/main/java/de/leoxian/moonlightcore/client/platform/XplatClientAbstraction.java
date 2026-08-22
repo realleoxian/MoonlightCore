@@ -6,6 +6,7 @@ import de.leoxian.moonlightcore.client.gui.GuiLayerRegistrar;
 import de.leoxian.moonlightcore.client.keymapping.KeyMappingRegistrar;
 import de.leoxian.moonlightcore.client.menu.MenuScreenRegistrar;
 import de.leoxian.moonlightcore.client.model.ModelLayerRegistrar;
+import de.leoxian.moonlightcore.client.model.RangeSelectItemModelPropertyRegistrar;
 import de.leoxian.moonlightcore.client.model.SelectItemModelPropertyRegistrar;
 import de.leoxian.moonlightcore.client.network.ClientConfigurationNetworking;
 import de.leoxian.moonlightcore.client.network.ClientPlayNetworking;
@@ -26,6 +27,8 @@ import java.util.function.Consumer;
 public interface XplatClientAbstraction {
     XplatClientAbstraction INSTANCE = ServiceLoader.load(XplatClientAbstractionFactory.class).findFirst().orElseThrow().create();
 
+    void initializeClientMod(String modId, Class<?> initializer);
+
     // |-----| Registrars |-----|
     void guiLayers(String namespace, Consumer<GuiLayerRegistrar> initializer);
 
@@ -45,23 +48,23 @@ public interface XplatClientAbstraction {
 
     void menuScreens(String namespace, Consumer<MenuScreenRegistrar> initializer);
 
-    void resourceReloadListeners(Consumer<ClientResourceReloadListenerRegistrar> initializer);
+    void resourceReloadListeners(String namespace, Consumer<ClientResourceReloadListenerRegistrar> initializer);
 
-    void selectItemModelProperties(Consumer<SelectItemModelPropertyRegistrar> initializer);
+    void selectItemModelProperties(String namespace, Consumer<SelectItemModelPropertyRegistrar> initializer);
 
-    void rangeSelectItemModelProperties(Consumer<RangeSelectItemModelProperty> initializer);
+    void rangeSelectItemModelProperties(String namespace, Consumer<RangeSelectItemModelPropertyRegistrar> initializer);
 
     void commands(Consumer<ClientCommandsContext> initializer);
 
     // |-----| C2S Play Networking |-----|
 
-    <MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> codec, ClientPlayNetworking.Handler<MSG> handler);
+    <MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ClientPlayNetworking.Handler<MSG> handler);
 
     boolean canSendPlayPayload(CustomPacketPayload.Type<?> type);
 
     // |-----| C2S Configuration Networking |-----|
 
-    <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ClientConfigurationNetworking.Handler<T> handler);
+    <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler);
 
     boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type);
 }

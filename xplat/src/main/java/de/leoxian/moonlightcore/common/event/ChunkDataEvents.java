@@ -4,6 +4,7 @@ import de.leoxian.moonlightcore.common.event.base.Event;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.storage.SerializableChunkData;
 
 public final class ChunkDataEvents {
     public static final Event<Load> LOAD = Event.create(Load.class, listeners -> (level, chunkAccess, tag) -> {
@@ -21,11 +22,11 @@ public final class ChunkDataEvents {
 
     @FunctionalInterface
     public interface Load {
-        void onChunkDataLoad(ServerLevel level, ChunkAccess chunkAccess, CompoundTag tag);
+        void onChunkDataLoad(ServerLevel level, ChunkAccess chunkAccess, SerializableChunkData chunkData);
     }
 
     @FunctionalInterface
     public interface Save {
-        void onChunkDataSave(ServerLevel level, ChunkAccess chunkAccess, CompoundTag tag);
+        void onChunkDataSave(ServerLevel level, ChunkAccess chunkAccess, SerializableChunkData chunkData);
     }
 }

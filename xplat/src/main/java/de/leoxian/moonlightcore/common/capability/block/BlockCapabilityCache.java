@@ -10,17 +10,12 @@ import org.jspecify.annotations.Nullable;
 
 @ApiStatus.NonExtendable
 public interface BlockCapabilityCache<A, C extends @Nullable Object> {
-    static <A, C extends @Nullable Object> BlockCapabilityCache<A, C> get(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos) {
-        return XplatAbstraction.INSTANCE.getBlockCapabilityCache(capability, level, blockPos);
+    static <A, C extends @Nullable Object> BlockCapabilityCache<A, C> get(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context) {
+        return XplatAbstraction.INSTANCE.getBlockCapabilityCache(capability, level, blockPos, context);
     }
 
     @Nullable
-    A find(@Nullable BlockState blockState, C context);
-
-    @Nullable
-    default A find(C context) {
-        return find(null, context);
-    }
+    A find(@Nullable BlockState blockState);
 
     @Nullable BlockEntity blockEntity();
 

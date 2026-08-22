@@ -12,9 +12,9 @@ public final class ServerPlayerEvents {
            listener.onPlayerClone(original, clone, wasDeath);
        }
     });
-    public static final Event<AfterRespawn> AFTER_RESPAWN = Event.create(AfterRespawn.class, listeners -> (oldPlayer, newPlayer) -> {
+    public static final Event<AfterRespawn> AFTER_RESPAWN = Event.create(AfterRespawn.class, listeners -> (player) -> {
        for (final var listener : listeners) {
-           listener.onPlayerRespawn(oldPlayer, newPlayer);
+           listener.onPlayerRespawn(player);
        }
     });
     public static final Event<OpenMenu> OPEN_MENU = Event.create(OpenMenu.class, listeners -> (player, containerMenu) -> {
@@ -42,7 +42,7 @@ public final class ServerPlayerEvents {
 
     @FunctionalInterface
     public interface AfterRespawn {
-        void onPlayerRespawn(ServerPlayer oldPlayer, ServerPlayer newPlayer);
+        void onPlayerRespawn(ServerPlayer player);
     }
 
     @FunctionalInterface

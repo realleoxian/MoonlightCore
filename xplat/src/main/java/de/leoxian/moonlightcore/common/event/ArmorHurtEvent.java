@@ -32,16 +32,4 @@ public interface ArmorHurtEvent {
 
         void setDamage(EquipmentSlot slot, float damage);
     }
-
-    public static class ArmorEntry {
-        public final ItemStack armorItemStack;
-        public final float originalDamage;
-        public float damage;
-
-        public ArmorEntry(ItemStack armorItemStack, float originalDamage) {
-            this.armorItemStack = armorItemStack;
-            this.originalDamage = originalDamage;
-            this.damage = originalDamage;
-        }
-    }
 }

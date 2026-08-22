@@ -13,8 +13,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class ClientConfigurationNetworking {
-    public static <T extends CustomPacketPayload> void register(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, Handler<T> handler) {
-        XplatClientAbstraction.INSTANCE.registerConfigurationPayload(type, codec, handler);
+    public static <T extends CustomPacketPayload> void register(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, Handler<T> handler) {
+        XplatClientAbstraction.INSTANCE.registerConfigurationPayload(type, streamCodec, handler);
     }
 
     public static boolean canSend(CustomPacketPayload.Type<?> type) {

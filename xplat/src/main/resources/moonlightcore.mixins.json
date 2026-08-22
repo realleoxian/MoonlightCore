@@ -10,9 +10,7 @@
     "accessor.MappedRegistryAccessor",
     "accessor.MinecraftServerAccessor",
     "accessor.ServerChunkCacheAccessor",
-    "dimension.MinecraftServerAccessor",
     "dimension.MinecraftServerMixin",
-    "dimension.WorldGenSettingsAccessor",
     "transfer.FluidMixin",
     "transfer.ItemMixin"
   ],

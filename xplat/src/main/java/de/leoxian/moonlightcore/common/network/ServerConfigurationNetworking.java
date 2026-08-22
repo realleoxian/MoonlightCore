@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
@@ -18,19 +19,19 @@ public final class ServerConfigurationNetworking {
         XplatAbstraction.INSTANCE.registerConfigurationPayload(type, codec, handler);
     }
 
-    public static boolean canSend(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type) {
+    public static boolean canSend(ServerConfigurationPacketListener packetListener, CustomPacketPayload.Type<?> type) {
         return XplatAbstraction.INSTANCE.canSendConfigurationPayload(packetListener, type);
     }
 
-    public static boolean canSend(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload payload) {
+    public static boolean canSend(ServerConfigurationPacketListener packetListener, CustomPacketPayload payload) {
         return canSend(packetListener, payload.type());
     }
 
-    public static void addTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task) {
-        XplatAbstraction.INSTANCE.addConfigurationTask(packetListener, task);
+    public static void addTask(String modId, ServerConfigurationPacketListener packetListener, ConfigurationTask task) {
+        XplatAbstraction.INSTANCE.addConfigurationTask(modId, packetListener, task);
     }
 
-    public static void completeTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type) {
+    public static void completeTask(ServerConfigurationPacketListener packetListener, ConfigurationTask.Type type) {
         XplatAbstraction.INSTANCE.completeCurrentConfigurationTask(packetListener, type);
     }
 
@@ -48,8 +49,6 @@ public final class ServerConfigurationNetworking {
         <T> CompletableFuture<T> enqueueWork(Supplier<T> task);
 
         ServerConfigurationPacketListenerImpl packetListener();
-
-        MinecraftServer server();
 
         PacketSender responseSender();
     }

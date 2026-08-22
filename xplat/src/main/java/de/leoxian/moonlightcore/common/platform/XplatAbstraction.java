@@ -1,7 +1,6 @@
 package de.leoxian.moonlightcore.common.platform;
 
 import de.leoxian.moonlightcore.common.EnvironmentSide;
-import de.leoxian.moonlightcore.common.ModContainer;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapabilityCache;
 import de.leoxian.moonlightcore.common.capability.entity.EntityCapability;
@@ -9,10 +8,14 @@ import de.leoxian.moonlightcore.common.capability.item.ItemCapability;
 import de.leoxian.moonlightcore.common.command.ArgumentTypeRegistrar;
 import de.leoxian.moonlightcore.common.command.CommandRegistrarContext;
 import de.leoxian.moonlightcore.common.entity.EntityAttributeRegistrar;
+import de.leoxian.moonlightcore.common.entrypoint.ModInitializer;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
+import de.leoxian.moonlightcore.common.resource.ModResource;
+import de.leoxian.moonlightcore.common.resource.ModResourceVisitor;
+import de.leoxian.moonlightcore.common.resource.ModResources;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
 import de.leoxian.moonlightcore.common.stat.StatRegistrar;
 import net.minecraft.core.BlockPos;
@@ -21,6 +24,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -34,6 +38,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -42,14 +47,14 @@ import java.util.function.Supplier;
 public interface XplatAbstraction {
     XplatAbstraction INSTANCE = ServiceLoader.load(XplatAbstractionFactory.class).findFirst().orElseThrow().create();
 
+    void initializeMod(String modId, Class<?> initializer);
+
     // |-----| Registrars |-----|
     void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer);
 
     void commands(Consumer<CommandRegistrarContext> initializer);
 
-    void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer);
-
-    void stats(String namespace, Consumer<StatRegistrar> initializer);
+    void argumentTypes(String namespace, Consumer<ArgumentTypeRegistrar> initializer);
 
     void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer);
 
@@ -62,7 +67,7 @@ public interface XplatAbstraction {
 
     <A, C extends @Nullable Object> BlockCapability<A, C> getBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
-    <A, C extends @Nullable Object> BlockCapabilityCache<A, C> getBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos);
+    <A, C extends @Nullable Object> BlockCapabilityCache<A, C> getBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context);
 
     <A, C extends @Nullable Object> EntityCapability<A, C> getEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
@@ -74,18 +79,19 @@ public interface XplatAbstraction {
     // |-----| S2C Configuration Networking |-----|
     <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler);
 
-    boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type);
+    boolean canSendConfigurationPayload(ServerConfigurationPacketListener packetListener, CustomPacketPayload.Type<?> type);
 
-    void addConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task);
+    void addConfigurationTask(String modId, ServerConfigurationPacketListener packetListener, ConfigurationTask task);
 
-    void completeCurrentConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type);
+    void completeCurrentConfigurationTask(ServerConfigurationPacketListener packetListener, ConfigurationTask.Type type);
 
     // |-----| Platform |-----|
+    @Nullable
+    ModResources getModResources(String modId);
+
     PermissionsHelper getPermissionHelper();
 
     boolean isModLoaded(String modId);
-
-    ModContainer getModContainer(String modId);
 
     MinecraftServer getCurrentServer();
 

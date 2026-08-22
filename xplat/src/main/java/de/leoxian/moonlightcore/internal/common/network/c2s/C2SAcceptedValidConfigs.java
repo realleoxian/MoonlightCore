@@ -33,7 +33,7 @@ public record C2SAcceptedValidConfigs(Set<Identifier> validConfigs) implements C
             var packetListener = context.packetListener();
             var decoded = decodeSyncableConfigs(packet);
             if (ServerConfigurationNetworking.canSend(packetListener, S2CSyncLoadedConfigPacket.TYPE)) {
-                ServerConfigurationNetworking.addTask(packetListener, new SyncConfigurationTask(packetListener, decoded));
+                ServerConfigurationNetworking.addTask("moonlightcore", packetListener, new SyncConfigurationTask(packetListener, decoded));
             }
             ServerConfigurationNetworking.completeTask(packetListener, RequestValidConfigsTask.TYPE);
         });

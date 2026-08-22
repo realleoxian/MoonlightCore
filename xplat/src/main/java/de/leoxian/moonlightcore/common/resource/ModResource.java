@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 @ApiStatus.NonExtendable
 public interface ModResource {
-    InputStream open();
+    InputStream open() throws IOException;
 
     default BufferedReader bufferedReader(Charset charset) throws IOException {
         return new BufferedReader(new InputStreamReader(open(), charset));

@@ -2,7 +2,7 @@ package de.leoxian.moonlightcore.common.event;
 
 import de.leoxian.moonlightcore.common.event.base.Event;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.ReloadableServerResources;
 
 public final class TagsUpdatedEvents {
     public static final Event<ServerDataLoad> SERVER_DATA_LOAD = Event.create(ServerDataLoad.class, listeners -> (registryAccess, resourceManager) -> {
@@ -20,7 +20,7 @@ public final class TagsUpdatedEvents {
 
     @FunctionalInterface
     public interface ServerDataLoad {
-        void onServerDataLoad(RegistryAccess registryAccess, ReloadableResourceManager resourceManager);
+        void onServerDataLoad(RegistryAccess registryAccess, ReloadableServerResources resourceManager);
     }
 
     @FunctionalInterface
