@@ -137,14 +137,23 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onMouseInput(InputEvent.MouseButton event) {
+    public static void onPreMouseInput(InputEvent.MouseButton.Pre event) {
         int button = event.getButton();
         int modifiers = event.getModifiers();
         int action = event.getAction();
 
-        if (InputEvents.PRE_MOUSE_INPUT.doFire().onPreMouseInput(button, modifiers, action).isSuccess()) {
-            InputEvents.POST_MOUSE_INPUT.doFire().onPostMouseInput(button, modifiers, action);
+        if (InputEvents.PRE_MOUSE_INPUT.doFire().onPreMouseInput(button, modifiers, action).isDeny()) {
+            event.setCanceled(true);
         }
+    }
+
+    @SubscribeEvent
+    public static void onPostMouseInput(InputEvent.MouseButton.Post event) {
+        int button = event.getButton();
+        int modifiers = event.getModifiers();
+        int action = event.getAction();
+
+        InputEvents.POST_MOUSE_INPUT.doFire().onPostMouseInput(button, modifiers, action);
     }
 
     @SubscribeEvent
@@ -164,10 +173,23 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onRenderFog(ViewportEvent.RenderFog event) {
-        CompoundEventResult<FogData> result = ViewportEvents.RENDER_FOG.doFire().onRenderFog(event.getRenderer(), event.getCamera(), event.getFarPlaneDistance(), event.getEnvironment(), event.getFogData());
-        if (result.result().isSuccess()) {
-            event.setNearPlaneDistance(result.value().renderDistanceStart);
-            event.setFarPlaneDistance(result.value().renderDistanceEnd);
+        FogData originalData = event.getFogData();
+
+        CompoundEventResult<FogData> result = ViewportEvents.RENDER_FOG.doFire().onRenderFog(event.getRenderer(), event.getCamera(), (float) event.getPartialTick(), event.getEnvironment(), originalData);
+
+        if (result.result().isSuccess() && result.isValuePresent() && result.value() != originalData) {
+            FogData data = result.value();
+
+            originalData.environmentalStart = data.environmentalStart;
+            originalData.environmentalEnd = data.environmentalEnd;
+            originalData.skyEnd = data.skyEnd;
+            originalData.cloudEnd = data.cloudEnd;
+            originalData.renderDistanceStart = data.renderDistanceStart;
+            originalData.renderDistanceEnd = data.renderDistanceEnd;
+            originalData.color = data.color;
+
+            event.setNearPlaneDistance(data.renderDistanceStart);
+            event.setFarPlaneDistance(data.renderDistanceEnd);
         }
     }
 

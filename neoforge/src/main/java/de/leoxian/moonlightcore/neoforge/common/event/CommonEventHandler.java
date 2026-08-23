@@ -134,7 +134,7 @@ public final class CommonEventHandler {
 
     @SubscribeEvent
     public static void onLivingIncomingDamage(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
-        if (LivingIncomingDamageEvent.EVENT.doFire().onLivingIncomingDamage(event.getEntity(), event.getSource(), event.getAmount()).isFalse()) {
+        if (LivingIncomingDamageEvent.EVENT.doFire().onLivingIncomingDamage(event.getEntity(), event.getSource(), event.getAmount()).isDeny()) {
             event.setCanceled(true);
         }
     }
