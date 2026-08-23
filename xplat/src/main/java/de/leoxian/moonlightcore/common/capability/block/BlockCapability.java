@@ -36,7 +36,7 @@ public interface BlockCapability<A, C extends @Nullable Object> {
 
     void registerFallback(BlockCapability.Provider<A, C> provider);
 
-    BlockCapability.@Nullable Provider<A, C> getProvider(Supplier<BlockEntityType<?>> blockEntityType);
+    BlockCapability.@Nullable Provider<A, C> getProvider(Supplier<Block> blockEntityType);
 
     Identifier id();
 

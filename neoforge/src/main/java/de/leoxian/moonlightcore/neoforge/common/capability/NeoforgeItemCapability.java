@@ -67,7 +67,7 @@ public class NeoforgeItemCapability<A, C> implements ItemCapability<A, C> {
     }
 
     @Override
-    public @Nullable Provider<A, C> getProvider(Supplier<ItemLike> item) {
+    public @Nullable Provider<A, C> getProvider(Supplier<Item> item) {
         return this::find;
     }
 

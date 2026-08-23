@@ -14,9 +14,11 @@ import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
+import de.leoxian.moonlightcore.common.registry.DeferredHolder;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
+import de.leoxian.moonlightcore.neoforge.common.ModDeferredRegisters;
 import de.leoxian.moonlightcore.neoforge.common.ModEventBuses;
 import de.leoxian.moonlightcore.neoforge.common.capability.NeoforgeBlockCapabilityCache;
 import de.leoxian.moonlightcore.neoforge.common.capability.NeoforgeCapabilityRegistry;
@@ -79,13 +81,11 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     @Override
     public void initializeMod(String modId, Class<?> initializer) {
         try {
-            Constructor<?> constructor = initializer.getConstructor();
+            Constructor<?> constructor = initializer.getDeclaredConstructor();
             constructor.setAccessible(true);
             Object instance = constructor.newInstance();
 
-            if (instance instanceof ClientModInitializer) {
-                throw new IllegalArgumentException("May not use a client mod initializer entrypoint for common");
-            } else if (instance instanceof ModInitializer modInitializer) {
+            if (instance instanceof ModInitializer modInitializer) {
                 modInitializer.onInitialized();
             }
         } catch (NoSuchMethodException e) {
@@ -122,8 +122,14 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     }
 
     @Override
-    public <T> RegistryBuilder<T> registryBuilder(ResourceKey<? extends Registry<T>> registryKey) {
+    public <T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey) {
         return new NeoforgeRegistryBuilder<>(registryKey);
+    }
+
+    @Override
+    public <R, T extends R> DeferredHolder<R, T> register(Registry<R> registry, Identifier id, Supplier<T> value) {
+        net.neoforged.neoforge.registries.DeferredHolder<R, T> holder = ModDeferredRegisters.get(registry, id.getNamespace()).register(id.getPath(), value);
+        return DeferredHolder.create(holder.getKey());
     }
 
     @Override
@@ -167,18 +173,18 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     }
 
     @Override
-    public boolean canSendConfigurationPayload(ServerConfigurationPacketListener packetListener, CustomPacketPayload.Type<?> type) {
+    public boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type) {
         return packetListener.hasChannel(type);
     }
 
     @Override
-    public void addConfigurationTask(String modId, ServerConfigurationPacketListener packetListener, ConfigurationTask task) {
+    public void addConfigurationTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task) {
         ModEventBuses.registerListener(modId, NeoforgeServerNetworkHandler.class)
                 .addTask(task);
     }
 
     @Override
-    public void completeCurrentConfigurationTask(ServerConfigurationPacketListener packetListener, ConfigurationTask.Type type) {
+    public void completeCurrentConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type) {
         packetListener.finishCurrentTask(type);
     }
 
@@ -234,5 +240,10 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     @Override
     public boolean isFabric() {
         return false;
+    }
+
+    @Override
+    public void initialize() {
+
     }
 }

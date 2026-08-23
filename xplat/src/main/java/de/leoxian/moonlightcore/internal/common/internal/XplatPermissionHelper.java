@@ -15,6 +15,10 @@ import java.util.function.Function;
 public class XplatPermissionHelper implements PermissionsHelper {
     private final Map<Identifier, Function<PermissionContext, Boolean>> resolvers = new ConcurrentHashMap<>();
 
+    public XplatPermissionHelper() {
+
+    }
+
     @Override
     public void registerPermission(Identifier id, Function<PermissionContext, Boolean> permissionResolver) {
         this.resolvers.put(id, permissionResolver);

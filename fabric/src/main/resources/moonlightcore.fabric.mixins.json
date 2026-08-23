@@ -4,7 +4,14 @@
   "package": "de.leoxian.moonlightcore.fabric.common.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-
+    "event.ChunkMapMixin",
+    "event.ItemEntityMixin",
+    "event.LivingEntityMixin",
+    "event.PlayerListMixin",
+    "event.PlayerMixin",
+    "event.ReloadableServerResourcesMixin",
+    "event.ServerLevelMixin",
+    "event.ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

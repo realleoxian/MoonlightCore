@@ -1,6 +1,7 @@
 package de.leoxian.moonlightcore.common.event;
 
 import de.leoxian.moonlightcore.common.event.base.Event;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
 
@@ -20,11 +21,11 @@ public final class TagsUpdatedEvents {
 
     @FunctionalInterface
     public interface ServerDataLoad {
-        void onServerDataLoad(RegistryAccess registryAccess, ReloadableServerResources resourceManager);
+        void onServerDataLoad(HolderLookup.Provider registryLookup, ReloadableServerResources resourceManager);
     }
 
     @FunctionalInterface
     public interface ClientPacketReceived {
-        void onClientPacketReceived(RegistryAccess registryAccess, boolean isIntegratedServerConnection);
+        void onClientPacketReceived(HolderLookup.Provider registryLookup, boolean isIntegratedServerConnection);
     }
 }

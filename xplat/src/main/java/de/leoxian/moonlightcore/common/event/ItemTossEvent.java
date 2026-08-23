@@ -2,6 +2,7 @@ package de.leoxian.moonlightcore.common.event;
 
 import de.leoxian.moonlightcore.common.event.base.Event;
 import de.leoxian.moonlightcore.common.event.base.EventResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 
@@ -18,5 +19,5 @@ public interface ItemTossEvent {
         return result;
     });
 
-    EventResult onItemToss(Player player, ItemEntity entity);
+    EventResult onItemToss(LivingEntity player, ItemEntity entity);
 }

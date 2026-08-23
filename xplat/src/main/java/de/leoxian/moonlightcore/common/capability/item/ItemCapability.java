@@ -2,6 +2,7 @@ package de.leoxian.moonlightcore.common.capability.item;
 
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.ApiStatus;
@@ -24,7 +25,7 @@ public interface ItemCapability<A, C extends @Nullable Object> {
 
     void registerFallbackProvider(ItemCapability.Provider<A, C> provider);
 
-    ItemCapability.@Nullable Provider<A, C> getProvider(Supplier<ItemLike> item);
+    ItemCapability.@Nullable Provider<A, C> getProvider(Supplier<Item> item);
 
     Identifier id();
 

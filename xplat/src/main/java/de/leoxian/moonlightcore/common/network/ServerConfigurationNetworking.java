@@ -19,19 +19,19 @@ public final class ServerConfigurationNetworking {
         XplatAbstraction.INSTANCE.registerConfigurationPayload(type, codec, handler);
     }
 
-    public static boolean canSend(ServerConfigurationPacketListener packetListener, CustomPacketPayload.Type<?> type) {
+    public static boolean canSend(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type) {
         return XplatAbstraction.INSTANCE.canSendConfigurationPayload(packetListener, type);
     }
 
-    public static boolean canSend(ServerConfigurationPacketListener packetListener, CustomPacketPayload payload) {
+    public static boolean canSend(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload payload) {
         return canSend(packetListener, payload.type());
     }
 
-    public static void addTask(String modId, ServerConfigurationPacketListener packetListener, ConfigurationTask task) {
+    public static void addTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task) {
         XplatAbstraction.INSTANCE.addConfigurationTask(modId, packetListener, task);
     }
 
-    public static void completeTask(ServerConfigurationPacketListener packetListener, ConfigurationTask.Type type) {
+    public static void completeTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type) {
         XplatAbstraction.INSTANCE.completeCurrentConfigurationTask(packetListener, type);
     }
 

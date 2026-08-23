@@ -6,7 +6,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
 public interface RegistryBuilder<R> {
-    static <R> RegistryBuilder<R> of(ResourceKey<? extends Registry<R>> key) {
+    static <R> RegistryBuilder<R> of(ResourceKey<Registry<R>> key) {
         return XplatAbstraction.INSTANCE.registryBuilder(key);
     }
 

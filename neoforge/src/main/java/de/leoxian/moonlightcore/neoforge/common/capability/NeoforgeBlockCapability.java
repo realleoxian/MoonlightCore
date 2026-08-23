@@ -78,7 +78,7 @@ public class NeoforgeBlockCapability<A, C> implements BlockCapability<A, C> {
     }
 
     @Override
-    public @Nullable Provider<A, C> getProvider(Supplier<BlockEntityType<?>> blockEntityType) {
+    public @Nullable Provider<A, C> getProvider(Supplier<Block> blockEntityType) {
         return this::find;
     }
 

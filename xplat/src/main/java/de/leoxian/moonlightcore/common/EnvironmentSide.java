@@ -7,7 +7,7 @@ public enum EnvironmentSide {
     SERVER
     ;
 
-    static EnvironmentSide current() {
+    public static EnvironmentSide current() {
         return XplatAbstraction.INSTANCE.getEnvironmentSide();
     }
 }

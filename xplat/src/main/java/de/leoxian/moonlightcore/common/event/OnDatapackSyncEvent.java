@@ -9,11 +9,11 @@ import java.util.stream.Stream;
 
 @FunctionalInterface
 public interface OnDatapackSyncEvent {
-    Event<OnDatapackSyncEvent> EVENT = Event.create(OnDatapackSyncEvent.class, listeners -> (playerList, player, relevantPlayer) -> {
+    Event<OnDatapackSyncEvent> EVENT = Event.create(OnDatapackSyncEvent.class, listeners -> (playerList, player) -> {
        for (final var listener : listeners) {
-           listener.onDatapackSync(playerList, player, relevantPlayer);
+           listener.onDatapackSync(playerList, player);
        }
     });
 
-    void onDatapackSync(PlayerList playerList, @Nullable ServerPlayer player, Stream<ServerPlayer> relevantPlayer);
+    void onDatapackSync(PlayerList playerList, @Nullable ServerPlayer player);
 }

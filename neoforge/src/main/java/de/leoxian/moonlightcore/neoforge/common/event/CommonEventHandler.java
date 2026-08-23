@@ -169,23 +169,8 @@ public final class CommonEventHandler {
     }
 
     @SubscribeEvent
-    public static void onNewRegistry(net.neoforged.neoforge.registries.NewRegistryEvent event) {
-        NewRegistryEvent.EVENT.doFire().onNewRegistryEvent(event::register);
-    }
-
-    @SubscribeEvent
     public static void onDatapackSync(net.neoforged.neoforge.event.OnDatapackSyncEvent event) {
-        OnDatapackSyncEvent.EVENT.doFire().onDatapackSync(event.getPlayerList(), event.getPlayer(), event.getRelevantPlayers());
-    }
-
-    @SubscribeEvent
-    public static void onRegisterEvent(net.neoforged.neoforge.registries.RegisterEvent event) {
-        RegisterEvent.EVENT.doFire().onRegister(event.getRegistryKey(), new RegisterEvent.Output() {
-            @Override
-            public <T> void register(Identifier id, Supplier<T> value) {
-                event.register((ResourceKey<? extends Registry<T>>) event.getRegistryKey(), id, value);
-            }
-        });
+        OnDatapackSyncEvent.EVENT.doFire().onDatapackSync(event.getPlayerList(), event.getPlayer());
     }
 
     @SubscribeEvent
@@ -367,6 +352,11 @@ public final class CommonEventHandler {
     }
 
     @SubscribeEvent
+    public static void onClientPacketReceived(TagsUpdatedEvent.ClientPacketReceived event) {
+        TagsUpdatedEvents.CLIENT_PACKET_RECEIVED.doFire().onClientPacketReceived(event.getRegistries(), !event.shouldUpdateStaticData());
+    }
+
+    @SubscribeEvent
     public static void onVanillaGameEvent(VanillaGameEvent event) {
         if (event.getLevel() instanceof ServerLevel level) {
             if (VanillaGameEventCallback.EVENT.doFire().onVanillaGameEvent(level, event.getVanillaEvent(), event.getContext(), event.getEventPosition()).isFalse()) {
@@ -377,12 +367,7 @@ public final class CommonEventHandler {
 
     @SubscribeEvent
     public static void onRegisterConfigurationTasks(net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent event) {
-        RegisterConfigurationTasksEvent.EVENT.doFire().onConfigure(event.getListener(), new RegisterConfigurationTasksEvent.Context() {
-            @Override
-            public void addTask(ConfigurationTask task) {
-                event.register(task);
-            }
-        });
+        RegisterConfigurationTasksEvent.EVENT.doFire().onConfigure((ServerConfigurationPacketListenerImpl) event.getListener(), event::register);
     }
 
     private CommonEventHandler() {}
