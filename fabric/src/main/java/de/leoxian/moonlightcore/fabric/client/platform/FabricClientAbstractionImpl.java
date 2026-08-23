@@ -22,6 +22,7 @@ import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
 import de.leoxian.moonlightcore.common.entrypoint.ClientModInitializer;
+import de.leoxian.moonlightcore.fabric.client.event.ClientEventHooks;
 import de.leoxian.moonlightcore.fabric.client.gui.FabricGuiLayer;
 import de.leoxian.moonlightcore.fabric.client.network.FabricClientConfigurationNetworkingContext;
 import de.leoxian.moonlightcore.fabric.client.network.FabricClientPlayNetworkingContext;
@@ -290,5 +291,10 @@ public class FabricClientAbstractionImpl implements XplatClientAbstraction {
     @Override
     public boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type) {
         return net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.canSend(type);
+    }
+
+    @Override
+    public void initialize() {
+        ClientEventHooks.bindFabricApiEvents();
     }
 }

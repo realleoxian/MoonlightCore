@@ -4,7 +4,10 @@
   "package": "de.leoxian.moonlightcore.fabric.client.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
-
+    "CameraMixin",
+    "FogRendererMixin",
+    "KeyboardHandlerMixin",
+    "MouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

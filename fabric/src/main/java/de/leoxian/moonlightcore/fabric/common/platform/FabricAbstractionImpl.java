@@ -72,10 +72,9 @@ import java.util.function.Supplier;
 public class FabricAbstractionImpl implements XplatAbstraction {
     private final AtomicReference<@Nullable MinecraftServer> currentServer = new AtomicReference<>();
 
-    private final PermissionsHelper permissionsHelper = new ModProxy<>(PermissionsHelper.class, XplatPermissionHelper::new)
+    private final Supplier<PermissionsHelper> permissionsHelper = new ModProxy<>(PermissionsHelper.class, XplatPermissionHelper::new)
             .put("fabric-permission-api-v1", "de.leoxian.moonlightcore.fabric.common.server.permission.FabricPermissionsHelperV1")
-            .put("fabric-permissions-api-v0", "de.leoxian.moonlightcore.fabric.common.server.permission.FabricPermissionsHelperV0")
-            .get();
+            .put("fabric-permissions-api-v0", "de.leoxian.moonlightcore.fabric.common.server.permission.FabricPermissionsHelperV0");
 
     @Override
     public void initializeMod(String modId, Class<?> initializer) {
@@ -237,7 +236,7 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 
     @Override
     public PermissionsHelper getPermissionHelper() {
-        return this.permissionsHelper;
+        return this.permissionsHelper.get();
     }
 
     @Override

@@ -67,20 +67,6 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onLevelLoad(LevelEvent.Load event) {
-        if (event.getLevel() instanceof ClientLevel level) {
-            ClientLevelEvents.LOAD.doFire().onLevelLoad(level);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onLevelUnload(LevelEvent.Unload event) {
-        if (event.getLevel() instanceof ClientLevel level) {
-            ClientLevelEvents.UNLOAD.doFire().onLevelUnload(level);
-        }
-    }
-
-    @SubscribeEvent
     public static void onPreLevelTick(LevelTickEvent.Pre event) {
         if (event.getLevel() instanceof ClientLevel level) {
             ClientLevelTickEvents.START.doFire().onLevelTickStart(level);

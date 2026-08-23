@@ -183,4 +183,9 @@ public class NeoforgeClientAbstraction implements XplatClientAbstraction {
         }
         return packetListener.hasChannel(type);
     }
+
+    @Override
+    public void initialize() {
+
+    }
 }

@@ -67,4 +67,6 @@ public interface XplatClientAbstraction {
     <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler);
 
     boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type);
+
+    void initialize();
 }

@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class ModProxy<T> {
+public class ModProxy<T> implements Supplier<T> {
     private final Map<String, String> options = Collections.synchronizedMap(new LinkedHashMap<>());
     private final Supplier<T> fallback;
     private final Class<T> type;
@@ -24,6 +24,7 @@ public class ModProxy<T> {
         return this;
     }
 
+    @Override
     public T get() {
         T ret = this.cached;
         if (ret == null) {
