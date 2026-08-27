@@ -80,13 +80,18 @@ processResources {
 publishing {
     publications {
         register('mavenJar', MavenPublication) {
-            artifactId project.name
+            groupId = project.modGroup
+            artifactId = "moonlightcore-${project.name}"
+            version = "${project.version}"
             from components.java
         }
     }
     repositories {
         maven {
             url = System.getenv("local_maven_url")
+        }
+        maven {
+            url = files("mvn-repo")
         }
     }
 }

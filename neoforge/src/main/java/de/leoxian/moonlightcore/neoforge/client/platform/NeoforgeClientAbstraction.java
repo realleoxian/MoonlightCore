@@ -16,7 +16,7 @@ import de.leoxian.moonlightcore.client.platform.XplatClientAbstraction;
 import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
-import de.leoxian.moonlightcore.common.entrypoint.ClientModInitializer;
+import de.leoxian.moonlightcore.common.ClientModEntrypoint;
 import de.leoxian.moonlightcore.neoforge.client.color.NeoforgeBlockColorRegistrar;
 import de.leoxian.moonlightcore.neoforge.client.command.NeoforgeClientCommandsContext;
 import de.leoxian.moonlightcore.neoforge.client.gui.NeoforgeGuiLayerRegistrar;
@@ -34,7 +34,6 @@ import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeRenderPipelineReg
 import de.leoxian.moonlightcore.neoforge.common.ModEventBuses;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -42,24 +41,15 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
 
-import java.lang.reflect.Constructor;
 import java.util.function.Consumer;
 
 public class NeoforgeClientAbstraction implements XplatClientAbstraction {
     @Override
-    public void initializeClientMod(String modId, Class<?> initializer) {
+    public void initializeClientMod(String modId, ClientModEntrypoint entrypoint) {
         try {
-            Constructor<?> constructor = initializer.getConstructor();
-            constructor.setAccessible(true);
-            Object instance = constructor.newInstance();
-
-            if (instance instanceof ClientModInitializer modInitializer) {
-                modInitializer.onInitializedClient();
-            }
-        }  catch (NoSuchMethodException e) {
-            throw new IllegalStateException("Failed to initialize client mod '" + modId + "': Class " + initializer.getName() + " must have a no-arg constructor!", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize client mod '" + modId + "' with initializer " + initializer.getName(), e);
+            entrypoint.initializeClientMod();
+        } catch (Throwable e) {
+            throw new RuntimeException("Failed to initialize client mod '" + modId + "'", e);
         }
     }
 

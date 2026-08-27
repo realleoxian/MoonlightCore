@@ -1,7 +1,7 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT' apply false
     id 'net.neoforged.moddev' version '2.0.141' apply false
-    id 'me.modmuss50.mod-publish-plugin' version '2.1.1' apply false
+    id 'me.modmuss50.mod-publish-plugin' version '2.2.0'
     id 'com.diffplug.spotless' version '8.7.0'
 }
 
@@ -15,5 +15,64 @@ spotless {
         leadingSpacesToTabs(4)
         replaceRegex("class-level javadoc indentation fix", "^\\*", " *")
         replaceRegex("method-level javadoc indentation fix", "\t\\*", "\t *")
+    }
+}
+
+publishMods {
+    def changelogFile = rootProject.file("changelog.md")
+    displayName = "${modVersion} ${modVersionType}"
+    version = "${modVersion}"
+    changelog = changelogFile.exists() ? changelogFile.text : ""
+    if (modVersionType.equalsIgnoreCase("alpha")) {
+        type = ALPHA
+    } else if (modVersionType.equalsIgnoreCase("beta")) {
+        type = BETA
+    } else {
+        type = RELEASE
+    }
+
+    def cfOptions = curseforgeOptions {
+        accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
+        projectId = curseforgeId
+        minecraftVersionRange {
+            start = mcRangeStart
+            end = mcRangeEnd
+        }
+
+        javaVersions.add(JavaVersion.toVersion(modJavaVersion.toString()))
+        client = true
+        server = true
+    }
+
+    def mrOptions = modrinthOptions {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = modrinthId
+        minecraftVersionRange {
+            start = mcRangeStart
+            end = mcRangeEnd
+        }
+    }
+
+    curseforge("curseforgeFabric") {
+        from cfOptions
+        file project(":fabric")
+        modLoaders.add("fabric")
+        requires("fabric-api")
+    }
+    curseforge("curseforgeNeoforge") {
+        from cfOptions
+        file project(":neoforge")
+        modLoaders.add("neoforge")
+    }
+    modrinth("modrinthFabric") {
+        from mrOptions
+        file project(":fabric")
+        modLoaders.add("fabric")
+        requires("fabric-api")
+    }
+    modrinth("modrinthNeoforge") {
+        from mrOptions
+        file project(":neoforge")
+        modLoaders.add("neoforge")
     }
 }

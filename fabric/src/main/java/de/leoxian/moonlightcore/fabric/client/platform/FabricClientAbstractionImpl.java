@@ -21,7 +21,7 @@ import de.leoxian.moonlightcore.client.platform.XplatClientAbstraction;
 import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
-import de.leoxian.moonlightcore.common.entrypoint.ClientModInitializer;
+import de.leoxian.moonlightcore.common.ClientModEntrypoint;
 import de.leoxian.moonlightcore.fabric.client.event.ClientEventHooks;
 import de.leoxian.moonlightcore.fabric.client.gui.FabricGuiLayer;
 import de.leoxian.moonlightcore.fabric.client.network.FabricClientConfigurationNetworkingContext;
@@ -71,26 +71,17 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class FabricClientAbstractionImpl implements XplatClientAbstraction {
     @Override
-    public void initializeClientMod(String modId, Class<?> initializer) {
+    public void initializeClientMod(String modId, ClientModEntrypoint entrypoint) {
         try {
-            Constructor<?> constructor = initializer.getConstructor();
-            constructor.setAccessible(true);
-            Object instance = constructor.newInstance();
-
-            if (instance instanceof ClientModInitializer modInitializer) {
-                modInitializer.onInitializedClient();
-            }
-        }  catch (NoSuchMethodException e) {
-            throw new IllegalStateException("Failed to initialize client mod '" + modId + "': Class " + initializer.getName() + " must have a no-arg constructor!", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize client mod '" + modId + "' with initializer " + initializer.getName(), e);
+            entrypoint.initializeClientMod();
+        } catch (Throwable e) {
+            throw new RuntimeException("Failed to initialize client mod '" + modId + "'", e);
         }
     }
 

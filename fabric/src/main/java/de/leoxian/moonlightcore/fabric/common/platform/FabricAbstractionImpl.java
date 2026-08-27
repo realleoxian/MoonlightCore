@@ -3,6 +3,7 @@ package de.leoxian.moonlightcore.fabric.common.platform;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import de.leoxian.moonlightcore.common.EnvironmentSide;
+import de.leoxian.moonlightcore.common.ModEntrypoint;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapabilityCache;
 import de.leoxian.moonlightcore.common.capability.entity.EntityCapability;
@@ -10,7 +11,6 @@ import de.leoxian.moonlightcore.common.capability.item.ItemCapability;
 import de.leoxian.moonlightcore.common.command.ArgumentTypeRegistrar;
 import de.leoxian.moonlightcore.common.command.CommandRegistrarContext;
 import de.leoxian.moonlightcore.common.entity.EntityAttributeRegistrar;
-import de.leoxian.moonlightcore.common.entrypoint.ModInitializer;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
@@ -63,7 +63,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.level.block.SoundType;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -77,19 +76,11 @@ public class FabricAbstractionImpl implements XplatAbstraction {
             .put("fabric-permissions-api-v0", "de.leoxian.moonlightcore.fabric.common.server.permission.FabricPermissionsHelperV0");
 
     @Override
-    public void initializeMod(String modId, Class<?> initializer) {
+    public void initializeMod(String modId, final ModEntrypoint entrypoint) {
         try {
-            Constructor<?> constructor = initializer.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            Object instance = constructor.newInstance();
-
-            if (instance instanceof ModInitializer modInitializer) {
-                modInitializer.onInitialized();
-            }
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("Failed to initialize mod '" + modId + "': Class " + initializer.getName() + " must have a no-arg constructor!", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize mod '" + modId + "' with initializer " + initializer.getName(), e);
+            entrypoint.initialize();
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Failed to initialize mod '" + modId + "'", throwable);
         }
     }
 

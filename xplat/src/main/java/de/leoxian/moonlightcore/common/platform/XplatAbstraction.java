@@ -1,6 +1,7 @@
 package de.leoxian.moonlightcore.common.platform;
 
 import de.leoxian.moonlightcore.common.EnvironmentSide;
+import de.leoxian.moonlightcore.common.ModEntrypoint;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapabilityCache;
 import de.leoxian.moonlightcore.common.capability.entity.EntityCapability;
@@ -21,7 +22,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -43,7 +43,7 @@ import java.util.function.Supplier;
 public interface XplatAbstraction {
     XplatAbstraction INSTANCE = ServiceLoader.load(XplatAbstractionFactory.class).findFirst().orElseThrow().create();
 
-    void initializeMod(String modId, Class<?> initializer);
+    void initializeMod(final String modId, final ModEntrypoint entrypoint);
 
     // |-----| Registrars |-----|
     void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer);
