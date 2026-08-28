@@ -45,12 +45,8 @@ public class NeoforgeRegistryBuilder<R> implements RegistryBuilder<R> {
 
     @Override
     public Registry<R> build() {
-        // Create the registry instance using NeoForge's builder
         Registry<R> registry = this.builder.create();
-
-        // Queue it for registration during NewRegistryEvent
         PENDING_REGISTRIES.add(registry);
-
         return registry;
     }
 }

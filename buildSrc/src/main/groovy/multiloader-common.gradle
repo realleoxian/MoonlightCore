@@ -91,7 +91,7 @@ publishing {
             url = System.getenv("local_maven_url")
         }
         maven {
-            url = files("mvn-repo")
+            url = rootProject.file("mvn-repo")
         }
     }
 }
