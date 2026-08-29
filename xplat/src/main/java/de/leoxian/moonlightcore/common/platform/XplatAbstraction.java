@@ -11,6 +11,7 @@ import de.leoxian.moonlightcore.common.command.CommandRegistrarContext;
 import de.leoxian.moonlightcore.common.entity.EntityAttributeRegistrar;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
+import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.registry.DeferredHolder;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
@@ -59,6 +60,8 @@ public interface XplatAbstraction {
     <T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey);
 
     <R, T extends R> DeferredHolder<R, T> register(Registry<R> registry, Identifier id, Supplier<T> value);
+
+    void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer);
 
     // |-----| Capabilities |-----|
     <A, C extends @Nullable Object> ItemCapability<A, C> getItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);

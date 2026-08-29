@@ -2,6 +2,7 @@ package de.leoxian.moonlightcore.fabric.common.platform;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.serialization.Codec;
 import de.leoxian.moonlightcore.common.EnvironmentSide;
 import de.leoxian.moonlightcore.common.ModEntrypoint;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
@@ -13,6 +14,7 @@ import de.leoxian.moonlightcore.common.command.CommandRegistrarContext;
 import de.leoxian.moonlightcore.common.entity.EntityAttributeRegistrar;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
+import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.common.registry.DeferredHolder;
@@ -33,15 +35,17 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.DataResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -54,7 +58,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
@@ -66,6 +69,7 @@ import org.jspecify.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class FabricAbstractionImpl implements XplatAbstraction {
@@ -135,13 +139,13 @@ public class FabricAbstractionImpl implements XplatAbstraction {
     public void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer) {
         initializer.accept(new ResourceReloadListenerRegistrar() {
             @Override
-            public void register(Identifier id, PreparableReloadListener listener) {
-                ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(id, listener);
+            public void register(Identifier id, Function<HolderLookup.Provider, PreparableReloadListener> listener) {
+                DataResourceLoader.get().registerReloadListener(id, listener);
             }
 
             @Override
             public void addDependency(Identifier first, Identifier second) {
-                ResourceLoader.get(PackType.SERVER_DATA).addListenerOrdering(first, second);
+                DataResourceLoader.get().addListenerOrdering(first, second);
             }
         });
     }
@@ -161,6 +165,20 @@ public class FabricAbstractionImpl implements XplatAbstraction {
         ResourceKey<R> key = ResourceKey.create(registry.key(), id);
         Registry.register(registry, id, value.get());
         return DeferredHolder.create(key);
+    }
+
+    @Override
+    public void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer) {
+        initializer.accept(new DataPackRegistryRegistrar() {
+            @Override
+            public <T> void register(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec) {
+                if (networkCodec == null) {
+                    DynamicRegistries.register(registryKey, codec);
+                } else {
+                    DynamicRegistries.registerSynced(registryKey, codec, networkCodec, DynamicRegistries.SyncOption.SKIP_WHEN_EMPTY);
+                }
+            }
+        });
     }
 
     @Override

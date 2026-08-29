@@ -11,6 +11,7 @@ import de.leoxian.moonlightcore.common.command.CommandRegistrarContext;
 import de.leoxian.moonlightcore.common.entity.EntityAttributeRegistrar;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
+import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.common.registry.DeferredHolder;
@@ -25,6 +26,7 @@ import de.leoxian.moonlightcore.neoforge.common.command.NeoforgeArgumentTypeRegi
 import de.leoxian.moonlightcore.neoforge.common.command.NeoforgeCommandRegistrarContext;
 import de.leoxian.moonlightcore.neoforge.common.entity.NeoforgeEntityAttributeRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.network.NeoforgeServerNetworkHandler;
+import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeDataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.registry.NeoforgeRegistryBuilder;
 import de.leoxian.moonlightcore.neoforge.common.resource.NeoforgeModResources;
@@ -119,6 +121,11 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     public <R, T extends R> DeferredHolder<R, T> register(Registry<R> registry, Identifier id, Supplier<T> value) {
         net.neoforged.neoforge.registries.DeferredHolder<R, T> holder = ModDeferredRegisters.get(registry, id.getNamespace()).register(id.getPath(), value);
         return DeferredHolder.create(holder.getKey());
+    }
+
+    @Override
+    public void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer) {
+        initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeDataPackRegistryRegistrar.class));
     }
 
     @Override
