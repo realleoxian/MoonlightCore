@@ -5,6 +5,7 @@ import de.leoxian.moonlightcore.common.config.schema.type.*;
 import de.leoxian.moonlightcore.common.config.schema.validator.*;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -15,21 +16,35 @@ import java.util.function.Supplier;
 
 @ApiStatus.NonExtendable
 public interface ConfigSchema {
+    /// Attempt to retrieve a config's value entry at this schema/category/section.
+    /// If this schema's [#key()] its null, it is the root schema.
+    /// @param key The key of the config's value entry
+    /// @return The config value with the given key, or `null` if isn't at this level or doesn't exist
     @Nullable
     <T> ConfigValue<T> getValue(String key);
 
+    /// Attempt to retrieve a child config schema from this schema level.
+    /// @param key The key of the schema/category/section
+    /// @return The config schema with the given key, or `null` if isn't at this level or doesn't exist
     @Nullable
     ConfigSchema getSection(String key);
 
+    /// @return An unmodifiable collection of all the config values this schema has
+    @UnmodifiableView
     Collection<ConfigValue<?>> getConfigValues();
 
+    /// @return An unmodifiable collection of all the children schemas this schema has
+    @UnmodifiableView
     Collection<ConfigSchema> getSchemas();
 
+    /// @return The key of this schema, or `null` if it's root
     @Nullable
     ConfigKey key();
 
+    /// @return The comments of this schema
     Iterable<String> comments();
 
+    /// @return The translation key of this schema
     @Nullable
     String translationKey();
 

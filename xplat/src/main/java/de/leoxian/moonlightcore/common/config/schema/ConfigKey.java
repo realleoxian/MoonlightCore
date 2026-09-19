@@ -53,13 +53,6 @@ public final class ConfigKey {
         this (DOT_SPLITTER.splitToStream(path).toArray(String[]::new));
     }
 
-    public ConfigKey child(String key) {
-        var newComponents = new String[this.componentsCount + 1];
-        System.arraycopy(this.components, 0, newComponents, 0, this.componentsCount);
-        newComponents[newComponents.length - 1] = key;
-        return new ConfigKey(newComponents);
-    }
-
     public String get(int index) {
         Objects.checkIndex(index, this.componentsCount);
         return this.components[index];

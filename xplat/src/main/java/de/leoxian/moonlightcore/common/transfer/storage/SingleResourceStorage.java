@@ -17,9 +17,14 @@ public abstract class SingleResourceStorage<T extends Resource> extends Snapshot
     private T resource = getEmptyResource();
     private int amount = 0;
 
+    /// @return An empty resource
     protected abstract T getEmptyResource();
+    /// @return The codec used for the resource
     protected abstract Codec<T> getResourceCodec();
 
+    /// A method invoked when the content of this storage changes
+    /// @param oldStack The old content stack
+    /// @param newStack The new content stack
     protected void onContentChanged(ResourceStack<T> oldStack, ResourceStack<T> newStack) {
 
     }

@@ -12,13 +12,23 @@ public abstract class SnapshotJournal<T extends @Nullable Object> implements Tra
     private final ArrayList<T> snapshots = new ArrayList<>();
     private @Nullable T originalState = null;
 
+    /// @return A new **nonnull** object containing the current state of this journal. `null` **may not be
+    /// returned, or an exception will be thrown!**
     protected abstract T createSnapshot();
 
+    /// Reads a previous state created by [#createSnapshot()
+    /// @param snapshot The snapshot state
     protected abstract void readSnapshot(T snapshot);
 
+    /// Signals that the snapshot will not be used anymore, and is safe to cache for future calls to
+    /// [#createSnapshot()], or discard entirely.
+    /// @param snapshot The released snapshot
     protected void releaseSnapshot(T snapshot) {
     }
 
+    /// Called after the root transaction was successfully commited, to perform irreversible
+    /// actions such as `setChanged()` or neighbor updates.
+    /// @param originalState The state of the journal before all transactional operations, corresponds to the first snapshot created by [#createSnapshot()]
     protected void onRootCommit(T originalState) {
 
     }

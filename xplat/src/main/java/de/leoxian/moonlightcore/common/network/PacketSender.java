@@ -11,17 +11,29 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.NonExtendable
 public interface PacketSender {
+    /// Creates a packet from a packet payload
+    /// @param payload the packet payload
     Packet<?> createPacket(CustomPacketPayload payload);
 
+    /// Sends a packet
+    /// @param packet The packet
+    /// @param callback An optional callback to execute after the packet is sent, may be `null`
     void sendPacket(Packet<?> packet, @Nullable ChannelFutureListener callback);
 
-    void disconnect(Component reason);
-
+    /// Sends a packet
+    /// @param payload The packet payload
+    /// @param callback An optional callback to execute after the packet is sent, may be `null`
     default void sendPacket(CustomPacketPayload payload, @Nullable ChannelFutureListener callback) {
         sendPacket(createPacket(payload), callback);
     }
 
+    /// Sends a packet
+    /// @param payload The packet payload
     default void sendPacket(CustomPacketPayload payload) {
         sendPacket(createPacket(payload), null);
     }
+
+    /// Disconnects the player
+    /// @param reason The reason of the disconnection
+    void disconnect(Component reason);
 }

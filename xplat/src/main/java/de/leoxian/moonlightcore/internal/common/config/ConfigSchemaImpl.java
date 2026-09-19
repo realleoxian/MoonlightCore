@@ -6,6 +6,7 @@ import de.leoxian.moonlightcore.common.config.schema.ConfigKey;
 import de.leoxian.moonlightcore.common.config.schema.RestartType;
 import de.leoxian.moonlightcore.common.config.schema.type.ConfigValueType;
 import de.leoxian.moonlightcore.common.config.schema.validator.ConfigValueValidator;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -40,11 +41,13 @@ public final class ConfigSchemaImpl implements ConfigSchema {
     }
 
     @Override
+    @UnmodifiableView
     public Collection<ConfigValue<?>> getConfigValues() {
         return List.copyOf(this.configValues);
     }
 
     @Override
+    @UnmodifiableView
     public Collection<ConfigSchema> getSchemas() {
         return Collections.unmodifiableCollection(this.children.values());
     }

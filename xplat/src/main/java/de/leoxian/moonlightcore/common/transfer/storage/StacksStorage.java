@@ -49,14 +49,31 @@ public abstract class StacksStorage<T extends Resource, S> implements Storage<T>
         input.read(VALUE_IO_KEY, this.codec).ifPresent(stacks -> this.stacks = copyList(stacks));
     }
 
+    /// Create a new stack from the given resource with the given amount
+    /// @param resource The resource of the stack
+    /// @param amount The amount of the resource on the stack
+    /// @return A new stack created from the given resource and amount
     protected abstract S createStack(T resource, int amount);
 
+    /// Retrieves the resource from the given stack
+    /// @param stack The stack
+    /// @return The resource of the stack
     protected abstract T getResourceFrom(S stack);
 
+    /// Retrieves the amount from the given stack
+    /// @param stack The stack
+    /// @return The amount of the stack
     protected abstract int getAmountFrom(S stack);
 
+    /// Create a copy of the given stack
+    /// @param stack The stack
+    /// @return A new copy of the given stack
     protected abstract S copyStack(S stack);
 
+    /// A method invoked when the content of an index changes
+    /// @param index The index that changed
+    /// @param oldStack The old content of that index
+    /// @param newStack The new content of the index
     protected void onContentChanged(int index, S oldStack, S newStack) {
 
     }

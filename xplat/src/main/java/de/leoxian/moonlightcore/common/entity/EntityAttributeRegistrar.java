@@ -13,5 +13,8 @@ public interface EntityAttributeRegistrar {
         XplatAbstraction.INSTANCE.entityAttributes(namespace, initializer);
     }
 
+    /// Registers a default attributes to the given entity type
+    /// @param entityType The entity type
+    /// @param attributes The default attributes
     <E extends LivingEntity> void register(Supplier<EntityType<E>> entityType, AttributeSupplier attributes);
 }

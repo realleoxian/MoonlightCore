@@ -24,5 +24,8 @@ public interface DimensionPlayerRemover {
         player.setDeltaMovement(0.0, 0.0, 0.0);
     };
 
+    /// Removes a player from a dimension
+    /// @param server The server the player it's at
+    /// @param player The player being removed
     void removePlayer(final MinecraftServer server, final ServerPlayer player);
 }

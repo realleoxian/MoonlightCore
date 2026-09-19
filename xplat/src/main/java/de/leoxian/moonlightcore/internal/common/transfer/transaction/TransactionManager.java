@@ -14,6 +14,9 @@ public final class TransactionManager {
     }
 
     public static Transaction openRoot() {
+        if (get().currentDepth > -1) {
+            throw new IllegalStateException("An root transaction its currently active on this thread");
+        }
         return open(null);
     }
 

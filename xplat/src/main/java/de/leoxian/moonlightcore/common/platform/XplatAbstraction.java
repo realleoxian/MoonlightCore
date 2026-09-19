@@ -33,8 +33,6 @@ import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.FlowingFluid;
-import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
@@ -69,13 +67,13 @@ public interface XplatAbstraction {
     void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer);
 
     // |-----| Capabilities |-----|
-    <A, C extends @Nullable Object> ItemCapability<A, C> getItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
+    <A, C extends @Nullable Object> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
-    <A, C extends @Nullable Object> BlockCapability<A, C> getBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
+    <A, C extends @Nullable Object> BlockCapability<A, C> createBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
-    <A, C extends @Nullable Object> BlockCapabilityCache<A, C> getBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context);
+    <A, C extends @Nullable Object> BlockCapabilityCache<A, C> createBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context);
 
-    <A, C extends @Nullable Object> EntityCapability<A, C> getEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
+    <A, C extends @Nullable Object> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
     // |-----| S2C Play Networking |-----|
     <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler);

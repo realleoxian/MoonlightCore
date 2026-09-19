@@ -18,6 +18,7 @@ public final class TransactionImpl implements Transaction {
 
     @Override
     public void addCloseCallback(CloseCallback closeCallback) {
+        this.transactionManager.validateThread();
         this.transactionManager.validateOpen(this);
         this.closeCallbacks.add(closeCallback);
     }
