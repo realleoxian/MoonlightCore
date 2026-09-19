@@ -104,8 +104,8 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     }
 
     @Override
-    public void argumentTypes(String namespace, Consumer<ArgumentTypeRegistrar> initializer) {
-        initializer.accept(new NeoforgeArgumentTypeRegistrar(namespace));
+    public void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer) {
+        initializer.accept(NeoforgeArgumentTypeRegistrar.INSTANCE);
     }
 
     @Override
@@ -136,24 +136,24 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     }
 
     @Override
-    public <A, C> ItemCapability<A, C> getItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+    public <A, C> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
         return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
                 .getItemCapability(id, apiClass, contextClass);
     }
 
     @Override
-    public <A, C> BlockCapability<A, C> getBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+    public <A, C> BlockCapability<A, C> createBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
         return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
                 .getBlockCapability(id, apiClass, contextClass);
     }
 
     @Override
-    public <A, C> BlockCapabilityCache<A, C> getBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context) {
+    public <A, C> BlockCapabilityCache<A, C> createBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context) {
         return new NeoforgeBlockCapabilityCache<>(level, blockPos, capability, context);
     }
 
     @Override
-    public <A, C> EntityCapability<A, C> getEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+    public <A, C> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
         return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
                 .getEntityCapability(id, apiClass, contextClass);
     }

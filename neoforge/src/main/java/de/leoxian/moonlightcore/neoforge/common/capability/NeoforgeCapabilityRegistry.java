@@ -48,8 +48,8 @@ public final class NeoforgeCapabilityRegistry {
 
     private void validateCapabilityTypes(Identifier id, Class<?> actualApi, Class<?> actualContext, Class<?> expectedApi, Class<?> expectedContext) {
         if (actualApi != expectedApi)
-            throw new IllegalStateException("Attempted to register capability " + id + " with existing type class " + actualApi + " != " + expectedApi);
+            throw new IllegalArgumentException("Attempted to register capability " + id + " with existing type class " + actualApi + " != " + expectedApi);
         if (actualContext != expectedContext)
-            throw new IllegalStateException("Attempted to register capability " + id + " with existing context class " + actualContext + " != " + expectedContext);
+            throw new IllegalArgumentException("Attempted to register capability " + id + " with existing context class " + actualContext + " != " + expectedContext);
     }
 }

@@ -15,6 +15,7 @@ import de.leoxian.moonlightcore.client.pack.ClientResourceReloadListenerRegistra
 import de.leoxian.moonlightcore.client.particle.ParticleProviderRegistrar;
 import de.leoxian.moonlightcore.client.platform.XplatClientAbstraction;
 import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
+import de.leoxian.moonlightcore.client.render.ClientTooltipComponentRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
 import de.leoxian.moonlightcore.common.ClientModEntrypoint;
@@ -31,6 +32,7 @@ import de.leoxian.moonlightcore.neoforge.client.network.NeoforgeClientNetworkHan
 import de.leoxian.moonlightcore.neoforge.client.pack.NeoforgeClientResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.neoforge.client.particle.NeoforgeParticleProviderRegistrar;
 import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeBlockEntityRendererRegistrar;
+import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeClientTooltipComponentRegistrar;
 import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeEntityRendererRegistrar;
 import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeRenderPipelineRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.ModEventBuses;
@@ -93,6 +95,13 @@ public class NeoforgeClientAbstraction implements XplatClientAbstraction {
     public void blockEntityRenderers(String namespace, Consumer<BlockEntityRendererRegistrar> initializer) {
         ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((EntityRenderersEvent.RegisterRenderers event) -> {
             initializer.accept(new NeoforgeBlockEntityRendererRegistrar(event));
+        }));
+    }
+
+    @Override
+    public void clientTooltips(String namespace, Consumer<ClientTooltipComponentRegistrar> initializer) {
+        ModEventBuses.getBus(namespace).ifPresent(eventBus ->  eventBus.addListener((RegisterClientTooltipComponentFactoriesEvent event) -> {
+            initializer.accept(new NeoforgeClientTooltipComponentRegistrar(event));
         }));
     }
 
