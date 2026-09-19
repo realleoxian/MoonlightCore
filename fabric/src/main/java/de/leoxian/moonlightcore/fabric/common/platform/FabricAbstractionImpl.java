@@ -27,10 +27,15 @@ import de.leoxian.moonlightcore.fabric.common.capability.FabricBlockCapability;
 import de.leoxian.moonlightcore.fabric.common.capability.FabricBlockCapabilityCache;
 import de.leoxian.moonlightcore.fabric.common.capability.FabricEntityCapability;
 import de.leoxian.moonlightcore.fabric.common.capability.FabricItemCapability;
+import de.leoxian.moonlightcore.fabric.common.command.FabricArgumentTypeRegistrar;
+import de.leoxian.moonlightcore.fabric.common.command.FabricCommandRegistrarContext;
+import de.leoxian.moonlightcore.fabric.common.entity.FabricEntityAttributeRegistrar;
 import de.leoxian.moonlightcore.fabric.common.event.CommonEventHooks;
 import de.leoxian.moonlightcore.fabric.common.fluid.FabricFluidRegistrar;
 import de.leoxian.moonlightcore.fabric.common.network.FabricServerConfigurationNetworkingContext;
 import de.leoxian.moonlightcore.fabric.common.network.FabricServerPlayNetworkingContext;
+import de.leoxian.moonlightcore.fabric.common.pack.FabricDataPackRegistryRegistrar;
+import de.leoxian.moonlightcore.fabric.common.pack.FabricResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.fabric.common.registry.FabricRegistryBuilderImpl;
 import de.leoxian.moonlightcore.fabric.common.resource.FabricModResources;
 import de.leoxian.moonlightcore.internal.common.internal.XplatPermissionHelper;
@@ -98,64 +103,24 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 
     @Override
     public void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
-        initializer.accept(new EntityAttributeRegistrar() {
-            @Override
-            public <E extends LivingEntity> void register(Supplier<EntityType<E>> entityType, AttributeSupplier attributes) {
-                FabricDefaultAttributeRegistry.register(entityType.get(), attributes);
-            }
-        });
+        initializer.accept(FabricEntityAttributeRegistrar.INSTANCE);
     }
 
     @Override
     public void commands(Consumer<CommandRegistrarContext> initializer) {
         CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) -> {
-            initializer.accept(new CommandRegistrarContext() {
-                @Override
-                public CommandDispatcher<CommandSourceStack> dispatcher() {
-                    return dispatcher;
-                }
-
-                @Override
-                public Commands.CommandSelection selection() {
-                    return selection;
-                }
-
-                @Override
-                public CommandBuildContext buildContext() {
-                    return buildContext;
-                }
-            });
+            initializer.accept(new FabricCommandRegistrarContext(dispatcher, selection, buildContext));
         });
     }
 
     @Override
-    public void argumentTypes(String namespace, Consumer<ArgumentTypeRegistrar> initializer) {
-        initializer.accept(new ArgumentTypeRegistrar() {
-            @Override
-            public <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void register(Identifier id, Class<A> argumentType, ArgumentTypeInfo<A, T> info) {
-                ArgumentTypeRegistry.registerArgumentType(id, argumentType, info);
-            }
-
-            @Override
-            public <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void register(String id, Class<A> argumentType, ArgumentTypeInfo<A, T> info) {
-                ArgumentTypeRegistry.registerArgumentType(Identifier.fromNamespaceAndPath(namespace, id), argumentType, info);
-            }
-        });
+    public void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer) {
+        initializer.accept(FabricArgumentTypeRegistrar.INSTANCE);
     }
 
     @Override
     public void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer) {
-        initializer.accept(new ResourceReloadListenerRegistrar() {
-            @Override
-            public void register(Identifier id, Function<HolderLookup.Provider, PreparableReloadListener> listener) {
-                DataResourceLoader.get().registerReloadListener(id, listener);
-            }
-
-            @Override
-            public void addDependency(Identifier first, Identifier second) {
-                DataResourceLoader.get().addListenerOrdering(first, second);
-            }
-        });
+        initializer.accept(FabricResourceReloadListenerRegistrar.INSTANCES);
     }
 
     @Override
@@ -177,35 +142,26 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 
     @Override
     public void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer) {
-        initializer.accept(new DataPackRegistryRegistrar() {
-            @Override
-            public <T> void register(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec) {
-                if (networkCodec == null) {
-                    DynamicRegistries.register(registryKey, codec);
-                } else {
-                    DynamicRegistries.registerSynced(registryKey, codec, networkCodec, DynamicRegistries.SyncOption.SKIP_WHEN_EMPTY);
-                }
-            }
-        });
+        initializer.accept(FabricDataPackRegistryRegistrar.INSTANCE);
     }
 
     @Override
-    public <A, C> ItemCapability<A, C> getItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+    public <A, C> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
         return FabricItemCapability.get(id, apiClass, contextClass);
     }
 
     @Override
-    public <A, C> BlockCapability<A, C> getBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+    public <A, C> BlockCapability<A, C> createBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
         return FabricBlockCapability.get(id, apiClass, contextClass);
     }
 
     @Override
-    public <A, C> BlockCapabilityCache<A, C> getBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context) {
+    public <A, C> BlockCapabilityCache<A, C> createBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context) {
         return new FabricBlockCapabilityCache<>(capability, level, blockPos, context);
     }
 
     @Override
-    public <A, C> EntityCapability<A, C> getEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+    public <A, C> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
         return FabricEntityCapability.get(id, apiClass, contextClass);
     }
 
