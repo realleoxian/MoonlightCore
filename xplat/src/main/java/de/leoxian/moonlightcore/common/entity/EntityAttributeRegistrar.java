@@ -9,7 +9,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface EntityAttributeRegistrar {
-    static void init(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
+    /// Configure and register the default attributes of modded entities
+    /// @param namespace The mod's id
+    /// @param initializer The initializer
+    static void configure(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
         XplatAbstraction.INSTANCE.entityAttributes(namespace, initializer);
     }
 

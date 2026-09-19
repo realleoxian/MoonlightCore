@@ -8,11 +8,10 @@ import net.minecraft.resources.Identifier;
 import java.util.function.Consumer;
 
 public interface ArgumentTypeRegistrar {
-    /// Registers a new argument type registrar to the given namespace
-    /// @param namespace The mod id
+    /// Configure and register custom command argument types.
     /// @param initializer The initializer of the registrar
-    static void init(String namespace, Consumer<ArgumentTypeRegistrar> initializer) {
-        XplatAbstraction.INSTANCE.argumentTypes(namespace, initializer);
+    static void configure(Consumer<ArgumentTypeRegistrar> initializer) {
+        XplatAbstraction.INSTANCE.argumentTypes(initializer);
     }
 
     /// Registers a new [ArgumentType] that can be used on commands
@@ -22,13 +21,4 @@ public interface ArgumentTypeRegistrar {
     /// @param <A> The argument type
     /// @param <T> The argument type properties
     <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void register(Identifier id, Class<A> argumentType, ArgumentTypeInfo<A, T> info);
-
-    /// Registers a new [ArgumentType] that can be used on commands.
-    /// This method uses the given `namespace` when initializing this registrar.
-    /// @param id The identifier of the argument type
-    /// @param argumentType The argument type class
-    /// @param info The argument type serializer
-    /// @param <A> The argument type
-    /// @param <T> The argument type properties
-    <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void register(String id, Class<A> argumentType, ArgumentTypeInfo<A, T> info);
 }

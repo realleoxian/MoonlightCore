@@ -54,7 +54,7 @@ public interface XplatAbstraction {
 
     void commands(Consumer<CommandRegistrarContext> initializer);
 
-    void argumentTypes(String namespace, Consumer<ArgumentTypeRegistrar> initializer);
+    void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer);
 
     void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer);
 

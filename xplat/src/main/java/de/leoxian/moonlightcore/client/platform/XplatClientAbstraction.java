@@ -14,6 +14,7 @@ import de.leoxian.moonlightcore.client.network.ClientPlayNetworking;
 import de.leoxian.moonlightcore.client.pack.ClientResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.client.particle.ParticleProviderRegistrar;
 import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
+import de.leoxian.moonlightcore.client.render.ClientTooltipComponentRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
 import de.leoxian.moonlightcore.common.ClientModEntrypoint;
@@ -40,6 +41,8 @@ public interface XplatClientAbstraction {
     void modelLayers(String namespace, Consumer<ModelLayerRegistrar> initializer);
 
     void blockEntityRenderers(String namespace, Consumer<BlockEntityRendererRegistrar> initializer);
+
+    void clientTooltips(String namespace, Consumer<ClientTooltipComponentRegistrar> initializer);
 
     void entityRenderers(String namespace, Consumer<EntityRendererRegistrar> initializer);
 

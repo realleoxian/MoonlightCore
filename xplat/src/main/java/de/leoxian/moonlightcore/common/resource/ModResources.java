@@ -10,6 +10,9 @@ import java.util.Optional;
 
 @ApiStatus.NonExtendable
 public interface ModResources {
+    /// Retrieve a mod's jar resources
+    /// @param modId The expected mod's id
+    /// @return The mod's jar resources, or `null` if the mod isn't present
     static @Nullable ModResources get(String modId) {
         return XplatAbstraction.INSTANCE.getModResources(modId);
     }

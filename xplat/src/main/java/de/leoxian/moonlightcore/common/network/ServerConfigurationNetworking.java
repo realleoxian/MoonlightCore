@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class ServerConfigurationNetworking {
-    /// Registers a configuration-phase C2S packet payload
+    /// Registers a serverbound packet payload
     /// @param type The packet payload type
     /// @param codec The packet payload codec
     /// @param handler The handler used when the packet its received

@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class ServerPlayNetworking {
-    /// Registers a new Client-To-Server packet payload
+    /// Register a serverbound packet payload
     /// @param type The packet payload type
     /// @param codec The packet payload codec
     /// @param handler The handler used when the packet its received

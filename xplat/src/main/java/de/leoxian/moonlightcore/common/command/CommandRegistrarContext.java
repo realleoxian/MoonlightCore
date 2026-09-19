@@ -9,9 +9,9 @@ import net.minecraft.commands.Commands;
 import java.util.function.Consumer;
 
 public interface CommandRegistrarContext {
-    /// Registers a new command registrar
+    /// Configure and register new modded commands
     /// @param initializer The initializer of the registrar
-    static void init(Consumer<CommandRegistrarContext> initializer) {
+    static void configure(Consumer<CommandRegistrarContext> initializer) {
         XplatAbstraction.INSTANCE.commands(initializer);
     }
 

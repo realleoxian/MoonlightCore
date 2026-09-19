@@ -9,10 +9,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 public interface DataPackRegistryRegistrar {
-    /// Registers a new registrar to the given namespace
+    /// Configure and register modded dynamic registries that may or may not be synced
     /// @param namespace The mod's id the registrar is being added to
     /// @param initializer The registrar initializer
-    static void init(String namespace, Consumer<DataPackRegistryRegistrar> initializer) {
+    static void configure(String namespace, Consumer<DataPackRegistryRegistrar> initializer) {
         XplatAbstraction.INSTANCE.datapackRegistries(namespace, initializer);
     }
 

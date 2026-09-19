@@ -54,7 +54,6 @@ public record SimpleFluidBehavior(ToFloatFunction<LivingEntity> movementSpeed, B
                 return entity.getFluidFallingAdjustedMovement(baseGravity, isFalling, motion);
             })
             .gravityModifier(0)
-            .canRiddenMobsFloat(true)
             .canDrown(true)
             .canSwim(true)
             .supportsBoating(true)
@@ -179,12 +178,6 @@ public record SimpleFluidBehavior(ToFloatFunction<LivingEntity> movementSpeed, B
         @Override
         public Builder supportsBoating(boolean supportsBoating) {
             this.supportsBoating = supportsBoating;
-            return this;
-        }
-
-        @Override
-        public Builder canRiddenMobsFloat(boolean canRiddenMobsFloat) {
-            this.canRiddenMobsFloat = canRiddenMobsFloat;
             return this;
         }
 

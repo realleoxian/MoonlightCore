@@ -9,13 +9,22 @@ import net.minecraft.core.particles.ParticleType;
 import java.util.function.Consumer;
 
 public interface ParticleProviderRegistrar {
-    static void init(String namespace, Consumer<ParticleProviderRegistrar> initializer) {
+    /// Configure and register particle providers
+    /// @param namespace The mod's id to add this registrar to
+    /// @param initializer The initializer of the registrar
+    static void configure(String namespace, Consumer<ParticleProviderRegistrar> initializer) {
         XplatClientAbstraction.INSTANCE.particles(namespace, initializer);
     }
 
+    /// Register a [ParticleProvider] for the given particle type
+    /// @param type The particle type
+    /// @param provider The particle provider
     <T extends ParticleOptions> void registerSpecial(ParticleType<T> type, ParticleProvider<T> provider);
 
-    <T extends ParticleOptions> void registerSpriteSet(ParticleType<T> type, SpriteParticleProvider<T> registration);
+    /// Register a particle provider with access to the sprite set
+    /// @param type The particle type
+    /// @param provider The particle provider
+    <T extends ParticleOptions> void registerSpriteSet(ParticleType<T> type, SpriteParticleProvider<T> provider);
 
     interface SpriteParticleProvider<T extends ParticleOptions> {
         ParticleProvider<T> create(SpriteSet spriteSet);

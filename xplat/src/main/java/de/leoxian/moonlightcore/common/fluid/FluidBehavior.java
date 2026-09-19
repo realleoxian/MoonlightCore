@@ -11,7 +11,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.BiPredicate;
 
-@ApiStatus.Experimental
 public interface FluidBehavior {
     FluidBehavior DEFAULT = SimpleFluidBehavior.DEFAULT;
     FluidBehavior WATER_LIKE = SimpleFluidBehavior.WATER_LIKE;
@@ -35,10 +34,6 @@ public interface FluidBehavior {
     }
 
     default boolean supportsBoating(TagKey<Fluid> fluid, Entity boat) {
-        return false;
-    }
-
-    default boolean canRiddenMobsFloat() {
         return false;
     }
 
@@ -68,8 +63,6 @@ public interface FluidBehavior {
         Builder canDrown(boolean canDrown);
 
         Builder supportsBoating(boolean supportsBoating);
-
-        Builder canRiddenMobsFloat(boolean canRiddenMobsFloat);
 
         Builder canSprint(BiPredicate<TagKey<Fluid>, LivingEntity> predicate);
 

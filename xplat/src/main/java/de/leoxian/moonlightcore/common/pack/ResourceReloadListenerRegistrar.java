@@ -9,7 +9,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface ResourceReloadListenerRegistrar {
-    static void init(Consumer<ResourceReloadListenerRegistrar> initializer) {
+    /// Configure and register modded resource reload listeners
+    /// @param initializer The initializer
+    static void configure(Consumer<ResourceReloadListenerRegistrar> initializer) {
         XplatAbstraction.INSTANCE.serverReloadListeners(initializer);
     }
 
