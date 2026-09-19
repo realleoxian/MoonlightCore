@@ -8,7 +8,10 @@ import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.material.Fluid;
 
-public class FabricFluidRendererRegistrar implements FluidRendererRegistrar {
+public enum FabricFluidRendererRegistrar implements FluidRendererRegistrar {
+    INSTANCE
+    ;
+
     @Override
     public void registerModel(Holder<Fluid> holder, FluidModel.Unbaked model) {
         if (holder.is(k -> "minecraft".equals(k.identifier().getNamespace()))) {
