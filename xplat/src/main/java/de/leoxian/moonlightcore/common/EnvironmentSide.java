@@ -3,11 +3,11 @@ package de.leoxian.moonlightcore.common;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 
 public enum EnvironmentSide {
-    CLIENT,
-    SERVER
-    ;
+	CLIENT,
+	SERVER
+	;
 
-    public static EnvironmentSide current() {
-        return XplatAbstraction.INSTANCE.getEnvironmentSide();
-    }
+	public static EnvironmentSide current() {
+		return XplatAbstraction.INSTANCE.getEnvironmentSide();
+	}
 }

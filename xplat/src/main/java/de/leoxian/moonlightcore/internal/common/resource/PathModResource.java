@@ -8,8 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public record PathModResource(Path nioPath) implements ModResource {
-    @Override
-    public InputStream open() throws IOException {
-        return Files.newInputStream(nioPath());
-    }
+	@Override
+	public InputStream open() throws IOException {
+		return Files.newInputStream(nioPath());
+	}
 }

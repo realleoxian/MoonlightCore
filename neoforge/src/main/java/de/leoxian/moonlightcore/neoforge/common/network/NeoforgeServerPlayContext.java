@@ -17,43 +17,43 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public record NeoforgeServerPlayContext(IPayloadContext context, ServerPlayer player) implements ServerPlayNetworking.Context {
-    @Override
-    public CompletableFuture<Void> enqueueWork(Runnable task) {
-        return context.enqueueWork(task);
-    }
+	@Override
+	public CompletableFuture<Void> enqueueWork(Runnable task) {
+		return context.enqueueWork(task);
+	}
 
-    @Override
-    public <T> CompletableFuture<T> enqueueWork(Supplier<T> task) {
-        return context.enqueueWork(task);
-    }
+	@Override
+	public <T> CompletableFuture<T> enqueueWork(Supplier<T> task) {
+		return context.enqueueWork(task);
+	}
 
-    @Override
-    public ServerGamePacketListenerImpl packetListener() {
-        return player.connection;
-    }
+	@Override
+	public ServerGamePacketListenerImpl packetListener() {
+		return player.connection;
+	}
 
-    @Override
-    public MinecraftServer server() {
-        return player.level().getServer();
-    }
+	@Override
+	public MinecraftServer server() {
+		return player.level().getServer();
+	}
 
-    @Override
-    public PacketSender responseSender() {
-        return new PacketSender() {
-            @Override
-            public Packet<?> createPacket(CustomPacketPayload payload) {
-                return new ClientboundCustomPayloadPacket(payload);
-            }
+	@Override
+	public PacketSender responseSender() {
+		return new PacketSender() {
+			@Override
+			public Packet<?> createPacket(CustomPacketPayload payload) {
+				return new ClientboundCustomPayloadPacket(payload);
+			}
 
-            @Override
-            public void sendPacket(Packet<?> packet, @Nullable ChannelFutureListener callback) {
-                player.connection.send(packet, callback);
-            }
+			@Override
+			public void sendPacket(Packet<?> packet, @Nullable ChannelFutureListener callback) {
+				player.connection.send(packet, callback);
+			}
 
-            @Override
-            public void disconnect(Component reason) {
-                player.connection.disconnect(reason);
-            }
-        };
-    }
+			@Override
+			public void disconnect(Component reason) {
+				player.connection.disconnect(reason);
+			}
+		};
+	}
 }

@@ -12,39 +12,39 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.NonExtendable
 public interface FluidResource extends RegisteredResourceWithData<Fluid> {
-    FluidResource EMPTY = FluidResourceImpl.EMPTY;
-    Codec<FluidResource> CODEC = FluidResourceImpl.CODEC;
-    StreamCodec<RegistryFriendlyByteBuf, FluidResource> STREAM_CODEC = FluidResourceImpl.STREAM_CODEC;
+	FluidResource EMPTY = FluidResourceImpl.EMPTY;
+	Codec<FluidResource> CODEC = FluidResourceImpl.CODEC;
+	StreamCodec<RegistryFriendlyByteBuf, FluidResource> STREAM_CODEC = FluidResourceImpl.STREAM_CODEC;
 
-    /// Creates a new fluid resource from the given fluid and components patch
-    /// @param fluid The fluid
-    /// @param componentPatch The components data
-    static FluidResource of(Fluid fluid, DataComponentPatch componentPatch) {
-        return FluidResourceImpl.of(fluid, componentPatch);
-    }
+	/// Creates a new fluid resource from the given fluid and components patch
+	/// @param fluid The fluid
+	/// @param componentPatch The components data
+	static FluidResource of(Fluid fluid, DataComponentPatch componentPatch) {
+		return FluidResourceImpl.of(fluid, componentPatch);
+	}
 
-    /// Creates a new fluid resource from the given fluid holder and components patch
-    /// @param holder The fluid
-    /// @param componentPatch The components data
-    static FluidResource of(Holder<Fluid> holder, DataComponentPatch componentPatch) {
-        return of(holder.value(), componentPatch);
-    }
+	/// Creates a new fluid resource from the given fluid holder and components patch
+	/// @param holder The fluid
+	/// @param componentPatch The components data
+	static FluidResource of(Holder<Fluid> holder, DataComponentPatch componentPatch) {
+		return of(holder.value(), componentPatch);
+	}
 
-    /// Creates a new fluid resource from the given fluid
-    /// @param fluid The fluid
-    static FluidResource of(Fluid fluid) {
-        return of(fluid, DataComponentPatch.EMPTY);
-    }
+	/// Creates a new fluid resource from the given fluid
+	/// @param fluid The fluid
+	static FluidResource of(Fluid fluid) {
+		return of(fluid, DataComponentPatch.EMPTY);
+	}
 
-    /// Creates a new fluid resource from the given fluid holder
-    /// @param holder The fluid
-    static FluidResource of(Holder<Fluid> holder) {
-        return of(holder.value(), DataComponentPatch.EMPTY);
-    }
+	/// Creates a new fluid resource from the given fluid holder
+	/// @param holder The fluid
+	static FluidResource of(Holder<Fluid> holder) {
+		return of(holder.value(), DataComponentPatch.EMPTY);
+	}
 
-    @Override
-    FluidResource applyPatch(DataComponentPatch componentPatch);
+	@Override
+	FluidResource applyPatch(DataComponentPatch componentPatch);
 
-    /// @return The fluid of this resource
-    Fluid fluid();
+	/// @return The fluid of this resource
+	Fluid fluid();
 }

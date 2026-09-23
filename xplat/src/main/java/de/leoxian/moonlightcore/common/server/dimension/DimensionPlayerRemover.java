@@ -10,22 +10,22 @@ import java.util.Set;
 
 @FunctionalInterface
 public interface DimensionPlayerRemover {
-    DimensionPlayerRemover DEFAULT = (server, player) -> {
-        player.sendSystemMessage(Component.translatable("moonlightcore.message.dimension.remove.deleted", player.level().dimension().identifier()));
-        ServerLevel level = server.getLevel(player.level().getRespawnData().dimension());
-        if (level != null && level != player.level()) {
-            BlockPos pos = player.getRespawnConfig().respawnData().pos();
-            player.teleportTo(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Set.of(), player.getYRot(), player.getXRot(), false);
-        } else {
-            level = server.overworld();
-            BlockPos pos = level.getRespawnData().pos();
-            player.teleportTo(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Set.of(), player.getYRot(), player.getXRot(), false);
-        }
-        player.setDeltaMovement(0.0, 0.0, 0.0);
-    };
+	DimensionPlayerRemover DEFAULT = (server, player) -> {
+		player.sendSystemMessage(Component.translatable("moonlightcore.message.dimension.remove.deleted", player.level().dimension().identifier()));
+		ServerLevel level = server.getLevel(player.level().getRespawnData().dimension());
+		if (level != null && level != player.level()) {
+			BlockPos pos = player.getRespawnConfig().respawnData().pos();
+			player.teleportTo(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Set.of(), player.getYRot(), player.getXRot(), false);
+		} else {
+			level = server.overworld();
+			BlockPos pos = level.getRespawnData().pos();
+			player.teleportTo(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Set.of(), player.getYRot(), player.getXRot(), false);
+		}
+		player.setDeltaMovement(0.0, 0.0, 0.0);
+	};
 
-    /// Removes a player from a dimension
-    /// @param server The server the player it's at
-    /// @param player The player being removed
-    void removePlayer(final MinecraftServer server, final ServerPlayer player);
+	/// Removes a player from a dimension
+	/// @param server The server the player it's at
+	/// @param player The player being removed
+	void removePlayer(final MinecraftServer server, final ServerPlayer player);
 }

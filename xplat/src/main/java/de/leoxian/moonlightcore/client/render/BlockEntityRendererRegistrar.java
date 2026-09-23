@@ -10,15 +10,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface BlockEntityRendererRegistrar {
-    /// Configure and register block entity renderers
-    /// @param namespace The mod's id to add this registrar to
-    /// @param initializer The initializer of the registrar
-    static void configure(String namespace, Consumer<BlockEntityRendererRegistrar> initializer) {
-        XplatClientAbstraction.INSTANCE.blockEntityRenderers(namespace, initializer);
-    }
+	/// Configure and register block entity renderers
+	/// @param namespace The mod's id to add this registrar to
+	/// @param initializer The initializer of the registrar
+	static void configure(String namespace, Consumer<BlockEntityRendererRegistrar> initializer) {
+		XplatClientAbstraction.INSTANCE.blockEntityRenderers(namespace, initializer);
+	}
 
-    /// Register a renderer to the given block entity type
-    /// @param blockEntityType The block entity type
-    /// @param provider The renderer provider
-    <T extends BlockEntity, S extends BlockEntityRenderState> void register(Supplier<BlockEntityType<T>> blockEntityType, BlockEntityRendererProvider<T, S> provider);
+	/// Register a renderer to the given block entity type
+	/// @param blockEntityType The block entity type
+	/// @param provider The renderer provider
+	<T extends BlockEntity, S extends BlockEntityRenderState> void register(Supplier<BlockEntityType<T>> blockEntityType, BlockEntityRendererProvider<T, S> provider);
 }

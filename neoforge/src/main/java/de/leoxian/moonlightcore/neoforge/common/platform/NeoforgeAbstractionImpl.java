@@ -14,11 +14,9 @@ import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
-import de.leoxian.moonlightcore.common.registry.DeferredHolder;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
-import de.leoxian.moonlightcore.neoforge.common.ModDeferredRegisters;
 import de.leoxian.moonlightcore.neoforge.common.ModEventBuses;
 import de.leoxian.moonlightcore.neoforge.common.capability.NeoforgeBlockCapabilityCache;
 import de.leoxian.moonlightcore.neoforge.common.capability.NeoforgeCapabilityRegistry;
@@ -66,171 +64,171 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class NeoforgeAbstractionImpl implements XplatAbstraction {
-    private final List<Consumer<CommandRegistrarContext>> pendingCommandRegistrations = new ArrayList<>();
+	private final List<Consumer<CommandRegistrarContext>> pendingCommandRegistrations = new ArrayList<>();
 
-    private final PermissionsHelper permissionsHelper = new NeoforgePermissionsHelper();
+	private final PermissionsHelper permissionsHelper = new NeoforgePermissionsHelper();
 
-    public NeoforgeAbstractionImpl() {
-        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> {
-            CommandRegistrarContext context = new NeoforgeCommandRegistrarContext(event);
-            pendingCommandRegistrations.forEach(c -> c.accept(context));
-            pendingCommandRegistrations.clear();
-        });
-    }
+	public NeoforgeAbstractionImpl() {
+		NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> {
+			CommandRegistrarContext context = new NeoforgeCommandRegistrarContext(event);
+			pendingCommandRegistrations.forEach(c -> c.accept(context));
+			pendingCommandRegistrations.clear();
+		});
+	}
 
-    @Override
-    public void fluids(String namespace, Consumer<FluidRegistrar> initializer) {
-        initializer.accept(new NeoforgeFluidRegistrar(namespace));
-    }
+	@Override
+	public void fluids(String namespace, Consumer<FluidRegistrar> initializer) {
+		initializer.accept(new NeoforgeFluidRegistrar(namespace));
+	}
 
-    @Override
-    public void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
-        initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeEntityAttributeRegistrar.class));
-    }
+	@Override
+	public void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
+		initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeEntityAttributeRegistrar.class));
+	}
 
-    @Override
-    public void commands(Consumer<CommandRegistrarContext> initializer) {
-        this.pendingCommandRegistrations.add(initializer);
-    }
+	@Override
+	public void commands(Consumer<CommandRegistrarContext> initializer) {
+		this.pendingCommandRegistrations.add(initializer);
+	}
 
-    @Override
-    public void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer) {
-        initializer.accept(NeoforgeArgumentTypeRegistrar.INSTANCE);
-    }
+	@Override
+	public void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer) {
+		initializer.accept(NeoforgeArgumentTypeRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer) {
-        NeoForge.EVENT_BUS.addListener((AddServerReloadListenersEvent event) ->
-                initializer.accept(new NeoforgeResourceReloadListenerRegistrar(event)));
-    }
+	@Override
+	public void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer) {
+		NeoForge.EVENT_BUS.addListener((AddServerReloadListenersEvent event) ->
+				initializer.accept(new NeoforgeResourceReloadListenerRegistrar(event)));
+	}
 
-    @Override
-    public SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound) {
-        return new DeferredSoundType(volume, pitch, breakSound, stepSound, placeSound, hitSound, fallSound);
-    }
+	@Override
+	public SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound) {
+		return new DeferredSoundType(volume, pitch, breakSound, stepSound, placeSound, hitSound, fallSound);
+	}
 
-    @Override
-    public <T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey) {
-        return new NeoforgeRegistryBuilder<>(registryKey);
-    }
+	@Override
+	public <T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey) {
+		return new NeoforgeRegistryBuilder<>(registryKey);
+	}
 
-    @Override
-    public void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer) {
-        initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeDataPackRegistryRegistrar.class));
-    }
+	@Override
+	public void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer) {
+		initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeDataPackRegistryRegistrar.class));
+	}
 
-    @Override
-    public <A, C> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
-        return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
-                .getItemCapability(id, apiClass, contextClass);
-    }
+	@Override
+	public <A, C> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+		return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
+				.getItemCapability(id, apiClass, contextClass);
+	}
 
-    @Override
-    public <A, C> BlockCapability<A, C> createBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
-        return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
-                .getBlockCapability(id, apiClass, contextClass);
-    }
+	@Override
+	public <A, C> BlockCapability<A, C> createBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+		return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
+				.getBlockCapability(id, apiClass, contextClass);
+	}
 
-    @Override
-    public <A, C> BlockCapabilityCache<A, C> createBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context) {
-        return new NeoforgeBlockCapabilityCache<>(level, blockPos, capability, context);
-    }
+	@Override
+	public <A, C> BlockCapabilityCache<A, C> createBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context) {
+		return new NeoforgeBlockCapabilityCache<>(level, blockPos, capability, context);
+	}
 
-    @Override
-    public <A, C> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
-        return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
-                .getEntityCapability(id, apiClass, contextClass);
-    }
+	@Override
+	public <A, C> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
+		return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
+				.getEntityCapability(id, apiClass, contextClass);
+	}
 
-    @Override
-    public <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler) {
-        ModEventBuses.registerListener(type.id().getNamespace(), NeoforgeServerNetworkHandler.class)
-                .registerPlayPayload(type, codec, handler);
-    }
+	@Override
+	public <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler) {
+		ModEventBuses.registerListener(type.id().getNamespace(), NeoforgeServerNetworkHandler.class)
+				.registerPlayPayload(type, codec, handler);
+	}
 
-    @Override
-    public boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type) {
-        return player.connection.hasChannel(type);
-    }
+	@Override
+	public boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type) {
+		return player.connection.hasChannel(type);
+	}
 
-    @Override
-    public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler) {
-        ModEventBuses.registerListener(type.id().getNamespace(), NeoforgeServerNetworkHandler.class)
-                .registerConfigurationPayload(type, codec, handler);
-    }
+	@Override
+	public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler) {
+		ModEventBuses.registerListener(type.id().getNamespace(), NeoforgeServerNetworkHandler.class)
+				.registerConfigurationPayload(type, codec, handler);
+	}
 
-    @Override
-    public boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type) {
-        return packetListener.hasChannel(type);
-    }
+	@Override
+	public boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type) {
+		return packetListener.hasChannel(type);
+	}
 
-    @Override
-    public void addConfigurationTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task) {
-        ModEventBuses.registerListener(modId, NeoforgeServerNetworkHandler.class)
-                .addTask(task);
-    }
+	@Override
+	public void addConfigurationTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task) {
+		ModEventBuses.registerListener(modId, NeoforgeServerNetworkHandler.class)
+				.addTask(task);
+	}
 
-    @Override
-    public void completeCurrentConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type) {
-        packetListener.finishCurrentTask(type);
-    }
+	@Override
+	public void completeCurrentConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type) {
+		packetListener.finishCurrentTask(type);
+	}
 
-    @Override
-    public @Nullable ModResources getModResources(String modId) {
-        IModFileInfo modFile = ModList.get().getModFileById(modId);
-        if (modFile == null) {
-            return null;
-        }
-        return new NeoforgeModResources(modFile.getFile().getContents());
-    }
+	@Override
+	public @Nullable ModResources getModResources(String modId) {
+		IModFileInfo modFile = ModList.get().getModFileById(modId);
+		if (modFile == null) {
+			return null;
+		}
+		return new NeoforgeModResources(modFile.getFile().getContents());
+	}
 
-    @Override
-    public PermissionsHelper getPermissionHelper() {
-        return this.permissionsHelper;
-    }
+	@Override
+	public PermissionsHelper getPermissionHelper() {
+		return this.permissionsHelper;
+	}
 
-    @Override
-    public boolean isModLoaded(String modId) {
-        return ModList.get().isLoaded(modId);
-    }
+	@Override
+	public boolean isModLoaded(String modId) {
+		return ModList.get().isLoaded(modId);
+	}
 
-    @Override
-    public MinecraftServer getCurrentServer() {
-        return ServerLifecycleHooks.getCurrentServer();
-    }
+	@Override
+	public MinecraftServer getCurrentServer() {
+		return ServerLifecycleHooks.getCurrentServer();
+	}
 
-    @Override
-    public Path getConfigDirectory() {
-        return FMLPaths.CONFIGDIR.get();
-    }
+	@Override
+	public Path getConfigDirectory() {
+		return FMLPaths.CONFIGDIR.get();
+	}
 
-    @Override
-    public Path getGameDirectory() {
-        return FMLLoader.getCurrent().getGameDir();
-    }
+	@Override
+	public Path getGameDirectory() {
+		return FMLLoader.getCurrent().getGameDir();
+	}
 
-    @Override
-    public EnvironmentSide getEnvironmentSide() {
-        return FMLEnvironment.getDist().isClient() ? EnvironmentSide.CLIENT : EnvironmentSide.SERVER;
-    }
+	@Override
+	public EnvironmentSide getEnvironmentSide() {
+		return FMLEnvironment.getDist().isClient() ? EnvironmentSide.CLIENT : EnvironmentSide.SERVER;
+	}
 
-    @Override
-    public boolean isDevelopmentWorkspace() {
-        return !FMLEnvironment.isProduction();
-    }
+	@Override
+	public boolean isDevelopmentWorkspace() {
+		return !FMLEnvironment.isProduction();
+	}
 
-    @Override
-    public boolean isNeoforge() {
-        return true;
-    }
+	@Override
+	public boolean isNeoforge() {
+		return true;
+	}
 
-    @Override
-    public boolean isFabric() {
-        return false;
-    }
+	@Override
+	public boolean isFabric() {
+		return false;
+	}
 
-    @Override
-    public void initialize() {
+	@Override
+	public void initialize() {
 
-    }
+	}
 }

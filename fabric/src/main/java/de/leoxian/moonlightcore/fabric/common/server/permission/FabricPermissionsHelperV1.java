@@ -13,34 +13,34 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public class FabricPermissionsHelperV1 extends XplatPermissionHelper {
-    private final Map<Identifier, PermissionNode<?>> nodes = new ConcurrentHashMap<>();
+	private final Map<Identifier, PermissionNode<?>> nodes = new ConcurrentHashMap<>();
 
-    public FabricPermissionsHelperV1() {
+	public FabricPermissionsHelperV1() {
 
-    }
+	}
 
-    @Override
-    public void registerPermission(Identifier id, Function<PermissionContext, Boolean> permissionResolver) {
-        super.registerPermission(id, permissionResolver);
-        this.nodes.put(id, PermissionNode.of(id));
-    }
+	@Override
+	public void registerPermission(Identifier id, Function<PermissionContext, Boolean> permissionResolver) {
+		super.registerPermission(id, permissionResolver);
+		this.nodes.put(id, PermissionNode.of(id));
+	}
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean hasPermission(CommandSourceStack commandSourceStack, Identifier id) {
-        PermissionNode<Boolean> node = (PermissionNode<Boolean>) this.nodes.get(id);
-        if (node == null) {
-            return false;
-        }
-        return PermissionPredicates.require(node, super.hasPermission(commandSourceStack, id)).test(commandSourceStack);
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean hasPermission(CommandSourceStack commandSourceStack, Identifier id) {
+		PermissionNode<Boolean> node = (PermissionNode<Boolean>) this.nodes.get(id);
+		if (node == null) {
+			return false;
+		}
+		return PermissionPredicates.require(node, super.hasPermission(commandSourceStack, id)).test(commandSourceStack);
+	}
 
-    @Override
-    public boolean hasPermission(ServerPlayer player, Identifier id) {
-        PermissionNode<Boolean> node = (PermissionNode<Boolean>) this.nodes.get(id);
-        if (node == null) {
-            return false;
-        }
-        return PermissionPredicates.require(node, super.hasPermission(player, id)).test(player);
-    }
+	@Override
+	public boolean hasPermission(ServerPlayer player, Identifier id) {
+		PermissionNode<Boolean> node = (PermissionNode<Boolean>) this.nodes.get(id);
+		if (node == null) {
+			return false;
+		}
+		return PermissionPredicates.require(node, super.hasPermission(player, id)).test(player);
+	}
 }

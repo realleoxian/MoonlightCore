@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public enum FabricBlockColorRegistrar implements BlockColorRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public void register(List<BlockTintSource> tintSources, Supplier<Block> blocks) {
-        BlockColorRegistry.register(tintSources, blocks.get());
-    }
+	@Override
+	public void register(List<BlockTintSource> tintSources, Supplier<Block> blocks) {
+		BlockColorRegistry.register(tintSources, blocks.get());
+	}
 }

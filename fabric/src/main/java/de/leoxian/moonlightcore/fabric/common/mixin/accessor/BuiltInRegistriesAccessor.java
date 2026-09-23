@@ -10,8 +10,8 @@ import java.util.function.Supplier;
 
 @Mixin(BuiltInRegistries.class)
 public interface BuiltInRegistriesAccessor {
-    @Accessor
-    static Map<Identifier, Supplier<?>> getLOADERS() {
-        throw new AssertionError();
-    }
+	@Accessor
+	static Map<Identifier, Supplier<?>> getLOADERS() {
+		throw new AssertionError();
+	}
 }

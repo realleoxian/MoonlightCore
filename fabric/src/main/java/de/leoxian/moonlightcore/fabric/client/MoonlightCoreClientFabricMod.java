@@ -7,14 +7,14 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class MoonlightCoreClientFabricMod implements ClientModInitializer {
-    @Override
-    public void onInitializeClient() {
-        XplatClientAbstraction.INSTANCE.initialize();
-        MoonlightCoreClient.initializeClientMod();
+	@Override
+	public void onInitializeClient() {
+		XplatClientAbstraction.INSTANCE.initialize();
+		MoonlightCoreClient.initializeClientMod();
 
-        FabricLoader.getInstance().getEntrypointContainers("moonlightcore", MoonlightCoreInitializer.class).forEach(entrypoint -> {
-            MoonlightCoreInitializer initializer = entrypoint.getEntrypoint();
-            initializer.onInitializedClient();
-        });
-    }
+		FabricLoader.getInstance().getEntrypointContainers("moonlightcore", MoonlightCoreInitializer.class).forEach(entrypoint -> {
+			MoonlightCoreInitializer initializer = entrypoint.getEntrypoint();
+			initializer.onInitializedClient();
+		});
+	}
 }

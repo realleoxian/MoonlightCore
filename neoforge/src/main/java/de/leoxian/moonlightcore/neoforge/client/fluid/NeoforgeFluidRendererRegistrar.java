@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,76 +29,76 @@ import java.util.Map;
 
 @EventBusSubscriber
 public class NeoforgeFluidRendererRegistrar implements FluidRendererRegistrar, ModEventBusRegistrable {
-    private final Map<Holder<Fluid>, FluidModel.Unbaked> models = new HashMap<>();
-    private static final Map<Holder<Fluid>, FluidRenderHandler> renderHandlers = new HashMap<>();
+	private final Map<Holder<Fluid>, FluidModel.Unbaked> models = new HashMap<>();
+	private static final Map<Holder<Fluid>, FluidRenderHandler> renderHandlers = new HashMap<>();
 
-    @Override
-    public void register(IEventBus modEventBus) {
-        modEventBus.addListener((RegisterFluidModelsEvent event) -> this.models.forEach((fluidHolder, unbaked) -> event.register(unbaked, fluidHolder.value())));
-        modEventBus.addListener((RegisterColorHandlersEvent.BlockTintSources event) -> {
-            renderHandlers.forEach((fluidHolder, renderHandler) -> {
-                Block block = fluidHolder.value().defaultFluidState().createLegacyBlock().getBlock();
-                if (block != Blocks.AIR) {
-                    final Fluid targetFluid = fluidHolder.value();
+	@Override
+	public void register(IEventBus modEventBus) {
+		modEventBus.addListener((RegisterFluidModelsEvent event) -> this.models.forEach((fluidHolder, unbaked) -> event.register(unbaked, fluidHolder.value())));
+		modEventBus.addListener((RegisterColorHandlersEvent.BlockTintSources event) -> {
+			renderHandlers.forEach((fluidHolder, renderHandler) -> {
+				Block block = fluidHolder.value().defaultFluidState().createLegacyBlock().getBlock();
+				if (block != Blocks.AIR) {
+					final Fluid targetFluid = fluidHolder.value();
 
-                    event.register(List.of(new FluidTintSource() {
-                        final FluidResource resource = FluidResource.of(targetFluid);
+					event.register(List.of(new FluidTintSource() {
+						final FluidResource resource = FluidResource.of(targetFluid);
 
-                        @Override
-                        public int color(FluidState state) {
-                            return renderHandler.getColor(resource, null, null);
-                        }
+						@Override
+						public int color(FluidState state) {
+							return renderHandler.getColor(resource, null, null);
+						}
 
-                        @Override
-                        public int colorAsTerrainParticle(BlockState state, BlockAndTintGetter level, BlockPos pos) {
-                            return renderHandler.getColor(resource, level, pos);
-                        }
+						@Override
+						public int colorAsTerrainParticle(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+							return renderHandler.getColor(resource, level, pos);
+						}
 
-                        @Override
-                        public int colorInWorld(FluidState fluidState, BlockState blockState, BlockAndTintGetter level, BlockPos pos) {
-                            return renderHandler.getColor(resource, level, pos);
-                        }
-                    }));
-                }
-            });
-        });
-        modEventBus.addListener((RegisterClientExtensionsEvent event) -> {
-            renderHandlers.forEach((fluidHolder, renderHandler) -> {
-                FluidType type = fluidHolder.value().getFluidType();
-                if (!event.isFluidTypeRegistered(type)) {
-                    event.registerFluidType(new NeoforgeFluidRenderHandler(fluidHolder, renderHandler), type);
-                }
-            });
-        });
-    }
+						@Override
+						public int colorInWorld(FluidState fluidState, BlockState blockState, BlockAndTintGetter level, BlockPos pos) {
+							return renderHandler.getColor(resource, level, pos);
+						}
+					}));
+				}
+			});
+		});
+		modEventBus.addListener((RegisterClientExtensionsEvent event) -> {
+			renderHandlers.forEach((fluidHolder, renderHandler) -> {
+				FluidType type = fluidHolder.value().getFluidType();
+				if (!event.isFluidTypeRegistered(type)) {
+					event.registerFluidType(new NeoforgeFluidRenderHandler(fluidHolder, renderHandler), type);
+				}
+			});
+		});
+	}
 
-    @SubscribeEvent
-    public static void registerTooltips(FluidTooltipEvent event) {
-        renderHandlers.forEach((fluidHolder, renderHandler) -> {
-            FluidResource resource = FluidResource.of(fluidHolder.value());
-            renderHandler.appendTooltip(resource, event.getToolTip(), event.getFlags());
-        });
-    }
+	@SubscribeEvent
+	public static void registerTooltips(FluidTooltipEvent event) {
+		renderHandlers.forEach((fluidHolder, renderHandler) -> {
+			FluidResource resource = FluidResource.of(fluidHolder.value());
+			renderHandler.appendTooltip(resource, event.getToolTip(), event.getFlags());
+		});
+	}
 
-    @Override
-    public void registerModel(Holder<Fluid> holder, FluidModel.Unbaked model) {
-        if (holder.is(k -> "minecraft".equals(k.identifier().getNamespace()))) {
-            throw new IllegalArgumentException("May not register a fluid model to a vanilla fluid");
-        }
+	@Override
+	public void registerModel(Holder<Fluid> holder, FluidModel.Unbaked model) {
+		if (holder.is(k -> "minecraft".equals(k.identifier().getNamespace()))) {
+			throw new IllegalArgumentException("May not register a fluid model to a vanilla fluid");
+		}
 
-        if (this.models.putIfAbsent(holder, model) != null) {
-            throw new IllegalArgumentException("May not register duplicated fluid model");
-        }
-    }
+		if (this.models.putIfAbsent(holder, model) != null) {
+			throw new IllegalArgumentException("May not register duplicated fluid model");
+		}
+	}
 
-    @Override
-    public void registerRenderHandler(Holder<Fluid> holder, FluidRenderHandler renderHandler) {
-        if (holder.is(k -> "minecraft".equalsIgnoreCase(k.identifier().getNamespace()))) {
-            throw new IllegalArgumentException("May not register a fluid render handler to a vanilla fluid");
-        }
+	@Override
+	public void registerRenderHandler(Holder<Fluid> holder, FluidRenderHandler renderHandler) {
+		if (holder.is(k -> "minecraft".equalsIgnoreCase(k.identifier().getNamespace()))) {
+			throw new IllegalArgumentException("May not register a fluid render handler to a vanilla fluid");
+		}
 
-        if (this.renderHandlers.putIfAbsent(holder, renderHandler) != null) {
-            throw new IllegalArgumentException("May not register duplicated fluid render handler");
-        }
-    }
+		if (this.renderHandlers.putIfAbsent(holder, renderHandler) != null) {
+			throw new IllegalArgumentException("May not register duplicated fluid render handler");
+		}
+	}
 }

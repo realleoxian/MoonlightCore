@@ -6,20 +6,20 @@ import java.time.Duration;
 import java.util.concurrent.Future;
 
 public final class DelayedRunnable {
-    private final Duration duration;
-    private final Runnable task;
+	private final Duration duration;
+	private final Runnable task;
 
-    private volatile @Nullable Future<?> future;
+	private volatile @Nullable Future<?> future;
 
-    public DelayedRunnable(Duration duration, Runnable task) {
-        this.duration = duration;
-        this.task = task;
-    }
+	public DelayedRunnable(Duration duration, Runnable task) {
+		this.duration = duration;
+		this.task = task;
+	}
 
-    public synchronized void run() {
-        if (this.future != null) {
-            this.future.cancel(false);
-        }
-        this.future = DelayedExecutor.INSTANCE.schedule(this.task, this.duration);
-    }
+	public synchronized void run() {
+		if (this.future != null) {
+			this.future.cancel(false);
+		}
+		this.future = DelayedExecutor.INSTANCE.schedule(this.task, this.duration);
+	}
 }

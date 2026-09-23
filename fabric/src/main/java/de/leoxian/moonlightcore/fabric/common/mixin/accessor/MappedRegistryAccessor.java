@@ -6,6 +6,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(MappedRegistry.class)
 public interface MappedRegistryAccessor {
-    @Accessor
-    void setFrozen(boolean frozen);
+	@Accessor
+	void setFrozen(boolean frozen);
 }

@@ -9,9 +9,9 @@ import java.util.List;
 
 @Mixin(HolderSet.Named.class)
 public interface HolderSetNamedAccessor<T> {
-    @Accessor
-    void setContents(List<Holder<T>> contents);
+	@Accessor
+	void setContents(List<Holder<T>> contents);
 
-    @Accessor
-    List<Holder<T>> getContents();
+	@Accessor
+	List<Holder<T>> getContents();
 }

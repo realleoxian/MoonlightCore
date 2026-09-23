@@ -13,7 +13,6 @@ import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
-import de.leoxian.moonlightcore.common.registry.DeferredHolder;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
@@ -42,69 +41,69 @@ import java.util.function.Supplier;
 
 @ApiStatus.NonExtendable
 public interface XplatAbstraction {
-    XplatAbstraction INSTANCE = ServiceLoader.load(XplatAbstractionFactory.class).findFirst().orElseThrow().create();
+	XplatAbstraction INSTANCE = ServiceLoader.load(XplatAbstractionFactory.class).findFirst().orElseThrow().create();
 
-    // |-----| Registrars |-----|
-    void fluids(String namespace, Consumer<FluidRegistrar> initializer);
+	// |-----| Registrars |-----|
+	void fluids(String namespace, Consumer<FluidRegistrar> initializer);
 
-    void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer);
+	void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer);
 
-    void commands(Consumer<CommandRegistrarContext> initializer);
+	void commands(Consumer<CommandRegistrarContext> initializer);
 
-    void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer);
+	void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer);
 
-    void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer);
+	void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer);
 
-    SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound);
+	SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound);
 
-    <T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey);
+	<T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey);
 
-    void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer);
+	void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer);
 
-    // |-----| Capabilities |-----|
-    <A, C extends @Nullable Object> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
+	// |-----| Capabilities |-----|
+	<A, C extends @Nullable Object> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
-    <A, C extends @Nullable Object> BlockCapability<A, C> createBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
+	<A, C extends @Nullable Object> BlockCapability<A, C> createBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
-    <A, C extends @Nullable Object> BlockCapabilityCache<A, C> createBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context);
+	<A, C extends @Nullable Object> BlockCapabilityCache<A, C> createBlockCapabilityCache(BlockCapability<A, C> capability, ServerLevel level, BlockPos blockPos, C context);
 
-    <A, C extends @Nullable Object> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
+	<A, C extends @Nullable Object> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
-    // |-----| S2C Play Networking |-----|
-    <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler);
+	// |-----| S2C Play Networking |-----|
+	<T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler);
 
-    boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type);
+	boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type);
 
-    // |-----| S2C Configuration Networking |-----|
-    <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler);
+	// |-----| S2C Configuration Networking |-----|
+	<T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler);
 
-    boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type);
+	boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type);
 
-    void addConfigurationTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task);
+	void addConfigurationTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task);
 
-    void completeCurrentConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type);
+	void completeCurrentConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type);
 
-    // |-----| Platform |-----|
-    @Nullable
-    ModResources getModResources(String modId);
+	// |-----| Platform |-----|
+	@Nullable
+	ModResources getModResources(String modId);
 
-    PermissionsHelper getPermissionHelper();
+	PermissionsHelper getPermissionHelper();
 
-    boolean isModLoaded(String modId);
+	boolean isModLoaded(String modId);
 
-    MinecraftServer getCurrentServer();
+	MinecraftServer getCurrentServer();
 
-    Path getConfigDirectory();
+	Path getConfigDirectory();
 
-    Path getGameDirectory();
+	Path getGameDirectory();
 
-    EnvironmentSide getEnvironmentSide();
+	EnvironmentSide getEnvironmentSide();
 
-    boolean isDevelopmentWorkspace();
+	boolean isDevelopmentWorkspace();
 
-    boolean isNeoforge();
+	boolean isNeoforge();
 
-    boolean isFabric();
+	boolean isFabric();
 
-    void initialize();
+	void initialize();
 }

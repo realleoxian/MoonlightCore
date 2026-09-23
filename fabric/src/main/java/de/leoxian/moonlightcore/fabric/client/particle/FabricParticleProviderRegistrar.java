@@ -7,16 +7,16 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 
 public enum FabricParticleProviderRegistrar implements ParticleProviderRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public <T extends ParticleOptions> void registerSpecial(ParticleType<T> type, ParticleProvider<T> provider) {
-        ParticleProviderRegistry.getInstance().register(type, provider);
-    }
+	@Override
+	public <T extends ParticleOptions> void registerSpecial(ParticleType<T> type, ParticleProvider<T> provider) {
+		ParticleProviderRegistry.getInstance().register(type, provider);
+	}
 
-    @Override
-    public <T extends ParticleOptions> void registerSpriteSet(ParticleType<T> type, SpriteParticleProvider<T> provider) {
-        ParticleProviderRegistry.getInstance().register(type, provider::create);
-    }
+	@Override
+	public <T extends ParticleOptions> void registerSpriteSet(ParticleType<T> type, SpriteParticleProvider<T> provider) {
+		ParticleProviderRegistry.getInstance().register(type, provider::create);
+	}
 }

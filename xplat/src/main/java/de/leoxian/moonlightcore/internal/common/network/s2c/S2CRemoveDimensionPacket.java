@@ -11,23 +11,23 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
 public record S2CRemoveDimensionPacket(Identifier identifier) implements CustomPacketPayload {
-    public static final Type<S2CRemoveDimensionPacket> TYPE = new Type<>(Identifier.parse("moonlightcore:remove_dimension"));
-    public static final StreamCodec<ByteBuf, S2CRemoveDimensionPacket> STREAM_CODEC = StreamCodec.composite(
-            Identifier.STREAM_CODEC, S2CRemoveDimensionPacket::identifier,
-            S2CRemoveDimensionPacket::new
-    );
+	public static final Type<S2CRemoveDimensionPacket> TYPE = new Type<>(Identifier.parse("moonlightcore:remove_dimension"));
+	public static final StreamCodec<ByteBuf, S2CRemoveDimensionPacket> STREAM_CODEC = StreamCodec.composite(
+			Identifier.STREAM_CODEC, S2CRemoveDimensionPacket::identifier,
+			S2CRemoveDimensionPacket::new
+	);
 
-    public static void handle(S2CRemoveDimensionPacket packet, ClientPlayNetworking.Context context) {
-        Identifier id = packet.identifier();
-        ClientPacketListener packetListener = context.packetListener();
-        context.enqueueWork(() -> {
-            DynamicRegistryUtils.unregister(packetListener.registryAccess().lookupOrThrow(Registries.DIMENSION_TYPE), id);
-            packetListener.levels().remove(ResourceKey.create(Registries.DIMENSION, id));
-        });
-    }
+	public static void handle(S2CRemoveDimensionPacket packet, ClientPlayNetworking.Context context) {
+		Identifier id = packet.identifier();
+		ClientPacketListener packetListener = context.packetListener();
+		context.enqueueWork(() -> {
+			DynamicRegistryUtils.unregister(packetListener.registryAccess().lookupOrThrow(Registries.DIMENSION_TYPE), id);
+			packetListener.levels().remove(ResourceKey.create(Registries.DIMENSION, id));
+		});
+	}
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

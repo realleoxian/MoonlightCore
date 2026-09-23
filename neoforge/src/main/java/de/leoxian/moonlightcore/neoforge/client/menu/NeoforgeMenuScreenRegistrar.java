@@ -11,8 +11,8 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import java.util.function.Supplier;
 
 public record NeoforgeMenuScreenRegistrar(RegisterMenuScreensEvent event) implements MenuScreenRegistrar {
-    @Override
-    public <T extends AbstractContainerMenu, S extends Screen & MenuAccess<T>> void register(Supplier<MenuType<T>> menuType, MenuScreenFactory<T, S> factory) {
-        event.register(menuType.get(), factory::create);
-    }
+	@Override
+	public <T extends AbstractContainerMenu, S extends Screen & MenuAccess<T>> void register(Supplier<MenuType<T>> menuType, MenuScreenFactory<T, S> factory) {
+		event.register(menuType.get(), factory::create);
+	}
 }

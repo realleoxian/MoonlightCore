@@ -8,8 +8,8 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import java.util.function.Supplier;
 
 public record NeoforgeModelLayerRegistrar(EntityRenderersEvent.RegisterLayerDefinitions event) implements ModelLayerRegistrar {
-    @Override
-    public void register(ModelLayerLocation location, Supplier<LayerDefinition> sup) {
-        event.registerLayerDefinition(location, sup);
-    }
+	@Override
+	public void register(ModelLayerLocation location, Supplier<LayerDefinition> sup) {
+		event.registerLayerDefinition(location, sup);
+	}
 }

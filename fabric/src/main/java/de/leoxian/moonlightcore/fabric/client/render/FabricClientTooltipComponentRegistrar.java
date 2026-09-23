@@ -8,16 +8,16 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import java.util.function.Function;
 
 public enum FabricClientTooltipComponentRegistrar implements ClientTooltipComponentRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public <T extends TooltipComponent> void register(Class<T> type, Function<? super T, ? extends ClientTooltipComponent> factory) {
-        ClientTooltipComponentCallback.EVENT.register(data -> {
-            if (data.getClass() == type) {
-                return factory.apply(type.cast(data));
-            }
-            return null;
-        });
-    }
+	@Override
+	public <T extends TooltipComponent> void register(Class<T> type, Function<? super T, ? extends ClientTooltipComponent> factory) {
+		ClientTooltipComponentCallback.EVENT.register(data -> {
+			if (data.getClass() == type) {
+				return factory.apply(type.cast(data));
+			}
+			return null;
+		});
+	}
 }

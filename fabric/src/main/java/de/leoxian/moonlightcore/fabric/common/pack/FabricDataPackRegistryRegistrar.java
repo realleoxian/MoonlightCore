@@ -8,15 +8,15 @@ import net.minecraft.resources.ResourceKey;
 import org.jspecify.annotations.Nullable;
 
 public enum FabricDataPackRegistryRegistrar implements DataPackRegistryRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public <T> void register(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec) {
-        if (networkCodec == null) {
-            DynamicRegistries.register(registryKey, codec);
-        } else {
-            DynamicRegistries.registerSynced(registryKey, codec, networkCodec, DynamicRegistries.SyncOption.SKIP_WHEN_EMPTY);
-        }
-    }
+	@Override
+	public <T> void register(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec) {
+		if (networkCodec == null) {
+			DynamicRegistries.register(registryKey, codec);
+		} else {
+			DynamicRegistries.registerSynced(registryKey, codec, networkCodec, DynamicRegistries.SyncOption.SKIP_WHEN_EMPTY);
+		}
+	}
 }

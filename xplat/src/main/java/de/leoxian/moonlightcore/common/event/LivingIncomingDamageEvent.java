@@ -7,16 +7,16 @@ import net.minecraft.world.entity.LivingEntity;
 
 @FunctionalInterface
 public interface LivingIncomingDamageEvent {
-    Event<LivingIncomingDamageEvent> EVENT = Event.create(LivingIncomingDamageEvent.class, listeners -> (livingEntity, damageSource, damageAmount) -> {
-       var result = EventResult.TRUE;
-       for (final var listener : listeners) {
-           result = listener.onLivingIncomingDamage(livingEntity, damageSource, damageAmount);
-           if (result.cancelFurtherEventProcessing()) {
-               break;
-           }
-       }
-       return result;
-    });
+	Event<LivingIncomingDamageEvent> EVENT = Event.create(LivingIncomingDamageEvent.class, listeners -> (livingEntity, damageSource, damageAmount) -> {
+	var result = EventResult.TRUE;
+	for (final var listener : listeners) {
+		result = listener.onLivingIncomingDamage(livingEntity, damageSource, damageAmount);
+		if (result.cancelFurtherEventProcessing()) {
+			break;
+		}
+	}
+	return result;
+	});
 
-    EventResult onLivingIncomingDamage(LivingEntity livingEntity, DamageSource damageSource, float damageAmount);
+	EventResult onLivingIncomingDamage(LivingEntity livingEntity, DamageSource damageSource, float damageAmount);
 }

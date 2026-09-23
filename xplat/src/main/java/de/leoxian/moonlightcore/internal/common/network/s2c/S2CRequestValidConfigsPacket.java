@@ -11,29 +11,29 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
 public enum S2CRequestValidConfigsPacket implements CustomPacketPayload {
-    INSTANCE
-    ;
-    public static final Type<S2CRequestValidConfigsPacket> TYPE = new Type<>(Identifier.parse("moonlightcore:request_valid_configs"));
-    public static final StreamCodec<ByteBuf, S2CRequestValidConfigsPacket> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+	INSTANCE
+	;
+	public static final Type<S2CRequestValidConfigsPacket> TYPE = new Type<>(Identifier.parse("moonlightcore:request_valid_configs"));
+	public static final StreamCodec<ByteBuf, S2CRequestValidConfigsPacket> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
-    public static void handleConfiguration(S2CRequestValidConfigsPacket packet, ClientConfigurationNetworking.Context context) {
-        context.minecraft().execute(() -> {
-            if (ClientPlayNetworking.canSend(S2CRequestValidConfigsPacket.TYPE)) {
-                ClientPacketDistributor.sendToServer(new C2SAcceptedValidConfigs(ConfigRegistry.getSyncableConfigs()));
-            }
-        });
-    }
+	public static void handleConfiguration(S2CRequestValidConfigsPacket packet, ClientConfigurationNetworking.Context context) {
+		context.minecraft().execute(() -> {
+			if (ClientPlayNetworking.canSend(S2CRequestValidConfigsPacket.TYPE)) {
+				ClientPacketDistributor.sendToServer(new C2SAcceptedValidConfigs(ConfigRegistry.getSyncableConfigs()));
+			}
+		});
+	}
 
-    public static void handlePlay(S2CRequestValidConfigsPacket packet, ClientPlayNetworking.Context context) {
-        context.minecraft().execute(() -> {
-            if (ClientPlayNetworking.canSend(S2CRequestValidConfigsPacket.TYPE)) {
-                ClientPacketDistributor.sendToServer(new C2SAcceptedValidConfigs(ConfigRegistry.getSyncableConfigs()));
-            }
-        });
-    }
+	public static void handlePlay(S2CRequestValidConfigsPacket packet, ClientPlayNetworking.Context context) {
+		context.minecraft().execute(() -> {
+			if (ClientPlayNetworking.canSend(S2CRequestValidConfigsPacket.TYPE)) {
+				ClientPacketDistributor.sendToServer(new C2SAcceptedValidConfigs(ConfigRegistry.getSyncableConfigs()));
+			}
+		});
+	}
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

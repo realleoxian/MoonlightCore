@@ -25,35 +25,35 @@ import net.minecraft.world.level.material.Fluid;
 import java.util.function.Supplier;
 
 public record FabricFluidRegistrar(String namespace) implements FluidRegistrar {
-    @Override
-    public void register(String id, TagKey<Fluid> fluidType, FluidProperties properties, FluidAttributesHandler propertiesHandler, FluidBehavior entityInteraction) {
-        Identifier identifier = Identifier.fromNamespaceAndPath(namespace, id);
+	@Override
+	public void register(String id, TagKey<Fluid> fluidType, FluidProperties properties, FluidAttributesHandler propertiesHandler, FluidBehavior entityInteraction) {
+		Identifier identifier = Identifier.fromNamespaceAndPath(namespace, id);
 
-        Supplier<Fluid> sourceGetter = () -> BuiltInRegistries.FLUID.getValue(identifier);
-        Supplier<Fluid> flowingGetter = () -> BuiltInRegistries.FLUID.getValue(identifier.withPath(s -> s + "_flowing"));
-        Supplier<Item> bucketGetter = () -> BuiltInRegistries.ITEM.getValue(identifier.withPath(s -> s + "_bucket"));
-        Supplier<Block> blockGetter = () -> BuiltInRegistries.BLOCK.getValue(identifier);
+		Supplier<Fluid> sourceGetter = () -> BuiltInRegistries.FLUID.getValue(identifier);
+		Supplier<Fluid> flowingGetter = () -> BuiltInRegistries.FLUID.getValue(identifier.withPath(s -> s + "_flowing"));
+		Supplier<Item> bucketGetter = () -> BuiltInRegistries.ITEM.getValue(identifier.withPath(s -> s + "_bucket"));
+		Supplier<Block> blockGetter = () -> BuiltInRegistries.BLOCK.getValue(identifier);
 
-        Fluid sourceFluid = Registry.register(BuiltInRegistries.FLUID, identifier,
-                new FabricBaseFluid.Source(flowingGetter, sourceGetter, bucketGetter, blockGetter,
-                        properties.slopeFindDistance(), properties.levelDecreasePerBlock(), properties.explosionResistance(), properties.tickRate()));
+		Fluid sourceFluid = Registry.register(BuiltInRegistries.FLUID, identifier,
+				new FabricBaseFluid.Source(flowingGetter, sourceGetter, bucketGetter, blockGetter,
+						properties.slopeFindDistance(), properties.levelDecreasePerBlock(), properties.explosionResistance(), properties.tickRate()));
 
-        Fluid flowingFluid = Registry.register(BuiltInRegistries.FLUID, identifier.withPath(s -> s + "_flowing"),
-                new FabricBaseFluid.Flowing(flowingGetter, sourceGetter, bucketGetter, blockGetter,
-                        properties.slopeFindDistance(), properties.levelDecreasePerBlock(), properties.explosionResistance(), properties.tickRate()));
+		Fluid flowingFluid = Registry.register(BuiltInRegistries.FLUID, identifier.withPath(s -> s + "_flowing"),
+				new FabricBaseFluid.Flowing(flowingGetter, sourceGetter, bucketGetter, blockGetter,
+						properties.slopeFindDistance(), properties.levelDecreasePerBlock(), properties.explosionResistance(), properties.tickRate()));
 
-        Registry.register(BuiltInRegistries.ITEM, identifier.withPath(s -> s + "_bucket"),
-                new BucketItem(sourceFluid, new Item.Properties()
-                        .craftRemainder(Items.BUCKET)
-                        .stacksTo(1)
-                        .setId(ResourceKey.create(Registries.ITEM, identifier.withPath(s -> s + "_bucket")))));
+		Registry.register(BuiltInRegistries.ITEM, identifier.withPath(s -> s + "_bucket"),
+				new BucketItem(sourceFluid, new Item.Properties()
+						.craftRemainder(Items.BUCKET)
+						.stacksTo(1)
+						.setId(ResourceKey.create(Registries.ITEM, identifier.withPath(s -> s + "_bucket")))));
 
-        Registry.register(BuiltInRegistries.BLOCK, identifier,
-                new LiquidBlock((FlowingFluid) flowingFluid, BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
-                        .setId(ResourceKey.create(Registries.BLOCK, identifier))));
+		Registry.register(BuiltInRegistries.BLOCK, identifier,
+				new LiquidBlock((FlowingFluid) flowingFluid, BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
+						.setId(ResourceKey.create(Registries.BLOCK, identifier))));
 
-        EntityFluidInteractionRegistry.register(fluidType, new FabricFluidBehaviorWrapper(propertiesHandler, entityInteraction));
-        FluidVariantAttributes.register(sourceFluid, new FluidAttributeHandlerWrapper(propertiesHandler));
-        FluidVariantAttributes.register(flowingFluid, new FluidAttributeHandlerWrapper(propertiesHandler));
-    }
+		EntityFluidInteractionRegistry.register(fluidType, new FabricFluidBehaviorWrapper(propertiesHandler, entityInteraction));
+		FluidVariantAttributes.register(sourceFluid, new FluidAttributeHandlerWrapper(propertiesHandler));
+		FluidVariantAttributes.register(flowingFluid, new FluidAttributeHandlerWrapper(propertiesHandler));
+	}
 }

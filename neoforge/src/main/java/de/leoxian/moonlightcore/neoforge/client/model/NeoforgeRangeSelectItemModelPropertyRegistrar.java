@@ -7,8 +7,8 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
 
 public record NeoforgeRangeSelectItemModelPropertyRegistrar(RegisterRangeSelectItemModelPropertyEvent event) implements RangeSelectItemModelPropertyRegistrar {
-    @Override
-    public void register(Identifier id, MapCodec<? extends RangeSelectItemModelProperty> source) {
-        event.register(id, source);
-    }
+	@Override
+	public void register(Identifier id, MapCodec<? extends RangeSelectItemModelProperty> source) {
+		event.register(id, source);
+	}
 }

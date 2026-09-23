@@ -8,21 +8,21 @@ import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import java.util.function.Consumer;
 
 public final class ServerConfigurationConnectionEvents {
-    public static final Event<Configure> BEFORE_CONFIGURE = Event.create(Configure.class, listeners -> (listener, server, tasksSender, taskFinisher) -> {
-       for (Configure configure : listeners) {
-           configure.onSendConfiguration(listener, server, tasksSender, taskFinisher);
-       }
-    });
-    public static final Event<Configure> CONFIGURE = Event.create(Configure.class, listeners -> (listener, server, tasksSender, taskFinisher) -> {
-        for (Configure configure : listeners) {
-            configure.onSendConfiguration(listener, server, tasksSender, taskFinisher);
-        }
-    });
+	public static final Event<Configure> BEFORE_CONFIGURE = Event.create(Configure.class, listeners -> (listener, server, tasksSender, taskFinisher) -> {
+	for (Configure configure : listeners) {
+		configure.onSendConfiguration(listener, server, tasksSender, taskFinisher);
+	}
+	});
+	public static final Event<Configure> CONFIGURE = Event.create(Configure.class, listeners -> (listener, server, tasksSender, taskFinisher) -> {
+		for (Configure configure : listeners) {
+			configure.onSendConfiguration(listener, server, tasksSender, taskFinisher);
+		}
+	});
 
-    @FunctionalInterface
-    public interface Configure {
-        void onSendConfiguration(ServerConfigurationPacketListenerImpl listener, MinecraftServer server, Consumer<ConfigurationTask> tasksSender, Consumer<ConfigurationTask.Type> taskFinisher);
-    }
+	@FunctionalInterface
+	public interface Configure {
+		void onSendConfiguration(ServerConfigurationPacketListenerImpl listener, MinecraftServer server, Consumer<ConfigurationTask> tasksSender, Consumer<ConfigurationTask.Type> taskFinisher);
+	}
 
-    private ServerConfigurationConnectionEvents() {}
+	private ServerConfigurationConnectionEvents() {}
 }

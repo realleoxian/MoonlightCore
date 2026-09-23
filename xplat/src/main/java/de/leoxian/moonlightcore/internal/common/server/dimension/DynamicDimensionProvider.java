@@ -8,13 +8,13 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public interface DynamicDimensionProvider {
-    void moonlightcore$removeLevel(ResourceKey<Level> key, @Nullable DimensionPlayerRemover playerRemover, boolean removeFiles);
+	void moonlightcore$removeLevel(ResourceKey<Level> key, @Nullable DimensionPlayerRemover playerRemover, boolean removeFiles);
 
-    void moonlightcore$deleteLevelData(ResourceKey<Level> key);
+	void moonlightcore$deleteLevelData(ResourceKey<Level> key);
 
-    void moonlightcore$registerLevel(ServerLevel level);
+	void moonlightcore$registerLevel(ServerLevel level);
 
-    boolean moonlightcore$isPendingCreation(ServerLevel level);
+	boolean moonlightcore$isPendingCreation(ServerLevel level);
 
-    DynamicDimensionRegistry moonlightcore$registry();
+	DynamicDimensionRegistry moonlightcore$registry();
 }

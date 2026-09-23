@@ -13,24 +13,24 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.DimensionType;
 
 public record S2CCreateDimension(Identifier id, DimensionType dimensionType) implements CustomPacketPayload {
-    public static final Type<S2CCreateDimension> TYPE = new Type<>(Identifier.parse("moonlightcore:create_dimension"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, S2CCreateDimension> STREAM_CODEC = StreamCodec.composite(
-            Identifier.STREAM_CODEC, S2CCreateDimension::id,
-            ByteBufCodecs.fromCodec(DimensionType.DIRECT_CODEC), S2CCreateDimension::dimensionType,
-            S2CCreateDimension::new
-    );
+	public static final Type<S2CCreateDimension> TYPE = new Type<>(Identifier.parse("moonlightcore:create_dimension"));
+	public static final StreamCodec<RegistryFriendlyByteBuf, S2CCreateDimension> STREAM_CODEC = StreamCodec.composite(
+			Identifier.STREAM_CODEC, S2CCreateDimension::id,
+			ByteBufCodecs.fromCodec(DimensionType.DIRECT_CODEC), S2CCreateDimension::dimensionType,
+			S2CCreateDimension::new
+	);
 
-    public static void handle(S2CCreateDimension packet, ClientPlayNetworking.Context context) {
-        Identifier id = packet.id();
-        ClientPacketListener packetListener = context.packetListener();
-        context.enqueueWork(() -> {
-            DynamicRegistryUtils.register(packetListener.registryAccess().lookupOrThrow(Registries.DIMENSION_TYPE), id, packet::dimensionType);
-            packetListener.levels().add(ResourceKey.create(Registries.DIMENSION, id));
-        });
-    }
+	public static void handle(S2CCreateDimension packet, ClientPlayNetworking.Context context) {
+		Identifier id = packet.id();
+		ClientPacketListener packetListener = context.packetListener();
+		context.enqueueWork(() -> {
+			DynamicRegistryUtils.register(packetListener.registryAccess().lookupOrThrow(Registries.DIMENSION_TYPE), id, packet::dimensionType);
+			packetListener.levels().add(ResourceKey.create(Registries.DIMENSION, id));
+		});
+	}
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

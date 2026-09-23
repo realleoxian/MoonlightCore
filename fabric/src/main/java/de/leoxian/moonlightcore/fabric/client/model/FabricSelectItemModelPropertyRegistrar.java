@@ -6,11 +6,11 @@ import net.minecraft.client.renderer.item.properties.select.SelectItemModelPrope
 import net.minecraft.resources.Identifier;
 
 public enum FabricSelectItemModelPropertyRegistrar implements SelectItemModelPropertyRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public void register(Identifier identifier, SelectItemModelProperty.Type<?, ?> type) {
-        SelectItemModelProperties.ID_MAPPER.put(identifier, type);
-    }
+	@Override
+	public void register(Identifier identifier, SelectItemModelProperty.Type<?, ?> type) {
+		SelectItemModelProperties.ID_MAPPER.put(identifier, type);
+	}
 }

@@ -17,48 +17,48 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public record NeoforgeClientPlayNetworkingContext(IPayloadContext context) implements ClientPlayNetworking.Context {
-    @Override
-    public CompletableFuture<Void> enqueueWork(Runnable task) {
-        return context.enqueueWork(task);
-    }
+	@Override
+	public CompletableFuture<Void> enqueueWork(Runnable task) {
+		return context.enqueueWork(task);
+	}
 
-    @Override
-    public <T> CompletableFuture<T> enqueueWork(Supplier<T> task) {
-        return context.enqueueWork(task);
-    }
+	@Override
+	public <T> CompletableFuture<T> enqueueWork(Supplier<T> task) {
+		return context.enqueueWork(task);
+	}
 
-    @Override
-    public ClientPacketListener packetListener() {
-        return minecraft().getConnection();
-    }
+	@Override
+	public ClientPacketListener packetListener() {
+		return minecraft().getConnection();
+	}
 
-    @Override
-    public Minecraft minecraft() {
-        return Minecraft.getInstance();
-    }
+	@Override
+	public Minecraft minecraft() {
+		return Minecraft.getInstance();
+	}
 
-    @Override
-    public LocalPlayer player() {
-        return minecraft().player;
-    }
+	@Override
+	public LocalPlayer player() {
+		return minecraft().player;
+	}
 
-    @Override
-    public PacketSender responseSender() {
-        return new PacketSender() {
-            @Override
-            public Packet<?> createPacket(CustomPacketPayload payload) {
-                return new ServerboundCustomPayloadPacket(payload);
-            }
+	@Override
+	public PacketSender responseSender() {
+		return new PacketSender() {
+			@Override
+			public Packet<?> createPacket(CustomPacketPayload payload) {
+				return new ServerboundCustomPayloadPacket(payload);
+			}
 
-            @Override
-            public void sendPacket(Packet<?> packet, @Nullable ChannelFutureListener callback) {
-                context().connection().send(packet, callback);
-            }
+			@Override
+			public void sendPacket(Packet<?> packet, @Nullable ChannelFutureListener callback) {
+				context().connection().send(packet, callback);
+			}
 
-            @Override
-            public void disconnect(Component reason) {
-                context().disconnect(reason);
-            }
-        };
-    }
+			@Override
+			public void disconnect(Component reason) {
+				context().disconnect(reason);
+			}
+		};
+	}
 }

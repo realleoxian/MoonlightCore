@@ -8,24 +8,24 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 
 public final class ItemStorage {
-    public static final BlockCapability<Storage<ItemResource>, Direction> BLOCK = BlockCapability.create(
-            Identifier.fromNamespaceAndPath("moonlightcore", "item_sided_storage"),
-            Storage.asClass(),
-            Direction.class);
-    public static final EntityCapability<Storage<ItemResource>, Void> ENTITY = EntityCapability.create(
-            Identifier.fromNamespaceAndPath("moonlightcore", "item_entity_storage"),
-            Storage.asClass(),
-            Void.class
-    );
+	public static final BlockCapability<Storage<ItemResource>, Direction> BLOCK = BlockCapability.create(
+			Identifier.fromNamespaceAndPath("moonlightcore", "item_sided_storage"),
+			Storage.asClass(),
+			Direction.class);
+	public static final EntityCapability<Storage<ItemResource>, Void> ENTITY = EntityCapability.create(
+			Identifier.fromNamespaceAndPath("moonlightcore", "item_entity_storage"),
+			Storage.asClass(),
+			Void.class
+	);
 
-    static {
-        BLOCK.registerFallback((_, _, _, blockEntity, context) -> {
-            if (blockEntity instanceof SidedStorageBlockEntity sidedStorageBlockEntity) {
-                return sidedStorageBlockEntity.getItemStorage(context);
-            }
-            return null;
-        });
-    }
+	static {
+		BLOCK.registerFallback((_, _, _, blockEntity, context) -> {
+			if (blockEntity instanceof SidedStorageBlockEntity sidedStorageBlockEntity) {
+				return sidedStorageBlockEntity.getItemStorage(context);
+			}
+			return null;
+		});
+	}
 
-    private ItemStorage() {}
+	private ItemStorage() {}
 }

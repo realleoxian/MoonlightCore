@@ -10,14 +10,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
 public class PlayerMixin {
-    @Inject(
-            method = "die",
-            at = @At(value = "HEAD"),
-            cancellable = true
-    )
-    private void moonlightcore$dispatchLivingDeathEvent(DamageSource source, CallbackInfo ci) {
-        if (LivingDeathEvent.EVENT.doFire().onLivingDeath((Player) (Object) this, source).isFalse()) {
-            ci.cancel();
-        }
-    }
+	@Inject(
+			method = "die",
+			at = @At(value = "HEAD"),
+			cancellable = true
+	)
+	private void moonlightcore$dispatchLivingDeathEvent(DamageSource source, CallbackInfo ci) {
+		if (LivingDeathEvent.EVENT.doFire().onLivingDeath((Player) (Object) this, source).isFalse()) {
+			ci.cancel();
+		}
+	}
 }

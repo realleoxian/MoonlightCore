@@ -5,6 +5,10 @@ plugins {
     id 'com.diffplug.spotless' version '8.7.0'
 }
 
+repositories {
+    mavenCentral()
+}
+
 spotless {
     java {
         target "**/src/*/java/de/leoxian/moonlightcore/**/*.java"

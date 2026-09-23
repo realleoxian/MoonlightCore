@@ -12,14 +12,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
-    @Inject(
-            method = "gameEvent",
-            at = @At(value = "HEAD"),
-            cancellable = true
-    )
-    private void moonlightcore$dispatchVanillaGameEvent(Holder<GameEvent> gameEvent, Vec3 position, GameEvent.Context context, CallbackInfo ci) {
-        if (VanillaGameEventCallback.EVENT.doFire().onVanillaGameEvent((ServerLevel) (Object) this, gameEvent, context, position).isDeny()) {
-            ci.cancel();
-        }
-    }
+	@Inject(
+			method = "gameEvent",
+			at = @At(value = "HEAD"),
+			cancellable = true
+	)
+	private void moonlightcore$dispatchVanillaGameEvent(Holder<GameEvent> gameEvent, Vec3 position, GameEvent.Context context, CallbackInfo ci) {
+		if (VanillaGameEventCallback.EVENT.doFire().onVanillaGameEvent((ServerLevel) (Object) this, gameEvent, context, position).isDeny()) {
+			ci.cancel();
+		}
+	}
 }

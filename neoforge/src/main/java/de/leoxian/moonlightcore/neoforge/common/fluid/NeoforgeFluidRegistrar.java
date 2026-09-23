@@ -25,31 +25,31 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import java.util.function.Supplier;
 
 public record NeoforgeFluidRegistrar(String namespace) implements FluidRegistrar {
-    @Override
-    public void register(String id, TagKey<Fluid> fluidType, FluidProperties properties, FluidAttributesHandler propertiesHandler, FluidBehavior entityInteraction) {
-        Supplier<FluidType> fluidTypeValue = ModDeferredRegisters.get(NeoForgeRegistries.FLUID_TYPES, namespace())
-                .register(id, () -> new NeoforgeFluidTypeImpl(fluidType, propertiesHandler, entityInteraction));
+	@Override
+	public void register(String id, TagKey<Fluid> fluidType, FluidProperties properties, FluidAttributesHandler propertiesHandler, FluidBehavior entityInteraction) {
+		Supplier<FluidType> fluidTypeValue = ModDeferredRegisters.get(NeoForgeRegistries.FLUID_TYPES, namespace())
+				.register(id, () -> new NeoforgeFluidTypeImpl(fluidType, propertiesHandler, entityInteraction));
 
-        Identifier identifier = Identifier.fromNamespaceAndPath(namespace, id);
-        Supplier<? extends Fluid> sourceGetter = () -> BuiltInRegistries.FLUID.getValue(identifier);
-        Supplier<? extends FlowingFluid> flowingGetter = () -> (FlowingFluid) BuiltInRegistries.FLUID.getValue(identifier.withPath(s -> s + "_flowing"));
-        Supplier<? extends Item> bucketGetter = () -> BuiltInRegistries.ITEM.getValue(identifier.withPath(s -> s + "_bucket"));
-        Supplier<? extends LiquidBlock> blockGetter = () -> (LiquidBlock) BuiltInRegistries.BLOCK.getValue(identifier);
-        BaseFlowingFluid.Properties neoProperties = new BaseFlowingFluid.Properties(fluidTypeValue, sourceGetter, flowingGetter)
-                .block(blockGetter)
-                .bucket(bucketGetter)
-                .slopeFindDistance(properties.slopeFindDistance())
-                .levelDecreasePerBlock(properties.levelDecreasePerBlock())
-                .tickRate(properties.tickRate())
-                .explosionResistance(properties.explosionResistance());
+		Identifier identifier = Identifier.fromNamespaceAndPath(namespace, id);
+		Supplier<? extends Fluid> sourceGetter = () -> BuiltInRegistries.FLUID.getValue(identifier);
+		Supplier<? extends FlowingFluid> flowingGetter = () -> (FlowingFluid) BuiltInRegistries.FLUID.getValue(identifier.withPath(s -> s + "_flowing"));
+		Supplier<? extends Item> bucketGetter = () -> BuiltInRegistries.ITEM.getValue(identifier.withPath(s -> s + "_bucket"));
+		Supplier<? extends LiquidBlock> blockGetter = () -> (LiquidBlock) BuiltInRegistries.BLOCK.getValue(identifier);
+		BaseFlowingFluid.Properties neoProperties = new BaseFlowingFluid.Properties(fluidTypeValue, sourceGetter, flowingGetter)
+				.block(blockGetter)
+				.bucket(bucketGetter)
+				.slopeFindDistance(properties.slopeFindDistance())
+				.levelDecreasePerBlock(properties.levelDecreasePerBlock())
+				.tickRate(properties.tickRate())
+				.explosionResistance(properties.explosionResistance());
 
-        ModDeferredRegisters.get(Registries.FLUID, namespace).register(id, () -> new BaseFlowingFluid.Source(neoProperties));
-        ModDeferredRegisters.get(Registries.FLUID, namespace).register(id + "_flowing", () -> new BaseFlowingFluid.Flowing(neoProperties));
-        ModDeferredRegisters.get(Registries.ITEM, namespace).register(id + "_bucket", k -> new BucketItem(sourceGetter.get(), new Item.Properties()
-                .craftRemainder(Items.BUCKET)
-                .stacksTo(1)
-                .setId(ResourceKey.create(Registries.ITEM, k))));
-        ModDeferredRegisters.get(Registries.BLOCK, namespace).register(id, k -> new LiquidBlock(flowingGetter.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
-                .setId(ResourceKey.create(Registries.BLOCK, k))));
-    }
+		ModDeferredRegisters.get(Registries.FLUID, namespace).register(id, () -> new BaseFlowingFluid.Source(neoProperties));
+		ModDeferredRegisters.get(Registries.FLUID, namespace).register(id + "_flowing", () -> new BaseFlowingFluid.Flowing(neoProperties));
+		ModDeferredRegisters.get(Registries.ITEM, namespace).register(id + "_bucket", k -> new BucketItem(sourceGetter.get(), new Item.Properties()
+				.craftRemainder(Items.BUCKET)
+				.stacksTo(1)
+				.setId(ResourceKey.create(Registries.ITEM, k))));
+		ModDeferredRegisters.get(Registries.BLOCK, namespace).register(id, k -> new LiquidBlock(flowingGetter.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
+				.setId(ResourceKey.create(Registries.BLOCK, k))));
+	}
 }

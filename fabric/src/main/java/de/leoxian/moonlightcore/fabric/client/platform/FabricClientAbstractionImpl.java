@@ -48,111 +48,111 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import java.util.function.Consumer;
 
 public class FabricClientAbstractionImpl implements XplatClientAbstraction {
-    @Override
-    public void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer) {
-        initializer.accept(FabricFluidRendererRegistrar.INSTANCE);
-    }
+	@Override
+	public void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer) {
+		initializer.accept(FabricFluidRendererRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void guiLayers(String namespace, Consumer<GuiLayerRegistrar> initializer) {
-        initializer.accept(FabricGuiLayerRegistrar.INSTANCE);
-    }
+	@Override
+	public void guiLayers(String namespace, Consumer<GuiLayerRegistrar> initializer) {
+		initializer.accept(FabricGuiLayerRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void keyMappings(String namespace, Consumer<KeyMappingRegistrar> initializer) {
-        initializer.accept(FabricKeyMappingRegistrar.INSTANCE);
-    }
+	@Override
+	public void keyMappings(String namespace, Consumer<KeyMappingRegistrar> initializer) {
+		initializer.accept(FabricKeyMappingRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void modelLayers(String namespace, Consumer<ModelLayerRegistrar> initializer) {
-        initializer.accept(FabricModelLayerRegistrar.INSTANCE);
-    }
+	@Override
+	public void modelLayers(String namespace, Consumer<ModelLayerRegistrar> initializer) {
+		initializer.accept(FabricModelLayerRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void blockEntityRenderers(String namespace, Consumer<BlockEntityRendererRegistrar> initializer) {
-        initializer.accept(FabricBlockEntityRendererRegistrar.INSTANCE);
-    }
+	@Override
+	public void blockEntityRenderers(String namespace, Consumer<BlockEntityRendererRegistrar> initializer) {
+		initializer.accept(FabricBlockEntityRendererRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void clientTooltips(String namespace, Consumer<ClientTooltipComponentRegistrar> initializer) {
-        initializer.accept(FabricClientTooltipComponentRegistrar.INSTANCE);
-    }
+	@Override
+	public void clientTooltips(String namespace, Consumer<ClientTooltipComponentRegistrar> initializer) {
+		initializer.accept(FabricClientTooltipComponentRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void entityRenderers(String namespace, Consumer<EntityRendererRegistrar> initializer) {
-        initializer.accept(FabricEntityRendererRegistrar.INSTANCE);
-    }
+	@Override
+	public void entityRenderers(String namespace, Consumer<EntityRendererRegistrar> initializer) {
+		initializer.accept(FabricEntityRendererRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void particles(String namespace, Consumer<ParticleProviderRegistrar> initializer) {
-        initializer.accept(FabricParticleProviderRegistrar.INSTANCE);
-    }
+	@Override
+	public void particles(String namespace, Consumer<ParticleProviderRegistrar> initializer) {
+		initializer.accept(FabricParticleProviderRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void renderPipelines(String namespace, Consumer<RenderPipelineRegistrar> initializer) {
-        initializer.accept(FabricRenderPipelineRegistrar.INSTANCE);
-    }
+	@Override
+	public void renderPipelines(String namespace, Consumer<RenderPipelineRegistrar> initializer) {
+		initializer.accept(FabricRenderPipelineRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void blockColor(String namespace, Consumer<BlockColorRegistrar> initializer) {
-        initializer.accept(FabricBlockColorRegistrar.INSTANCE);
-    }
+	@Override
+	public void blockColor(String namespace, Consumer<BlockColorRegistrar> initializer) {
+		initializer.accept(FabricBlockColorRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void menuScreens(String namespace, Consumer<MenuScreenRegistrar> initializer) {
-        initializer.accept(FabricMenuScreenRegistrar.INSTANCE);
-    }
+	@Override
+	public void menuScreens(String namespace, Consumer<MenuScreenRegistrar> initializer) {
+		initializer.accept(FabricMenuScreenRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void resourceReloadListeners(String namespace, Consumer<ClientResourceReloadListenerRegistrar> initializer) {
-        initializer.accept(FabricClientResourceReloadListenerRegistrar.INSTANCE);
-    }
+	@Override
+	public void resourceReloadListeners(String namespace, Consumer<ClientResourceReloadListenerRegistrar> initializer) {
+		initializer.accept(FabricClientResourceReloadListenerRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void selectItemModelProperties(String namespace, Consumer<SelectItemModelPropertyRegistrar> initializer) {
-        initializer.accept(FabricSelectItemModelPropertyRegistrar.INSTANCE);
-    }
+	@Override
+	public void selectItemModelProperties(String namespace, Consumer<SelectItemModelPropertyRegistrar> initializer) {
+		initializer.accept(FabricSelectItemModelPropertyRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void rangeSelectItemModelProperties(String namespace, Consumer<RangeSelectItemModelPropertyRegistrar> initializer) {
-        initializer.accept(FabricRangeSelectItemModelPropertyRegistrar.INSTANCE);
-    }
+	@Override
+	public void rangeSelectItemModelProperties(String namespace, Consumer<RangeSelectItemModelPropertyRegistrar> initializer) {
+		initializer.accept(FabricRangeSelectItemModelPropertyRegistrar.INSTANCE);
+	}
 
-    @Override
-    public void commands(Consumer<ClientCommandsContext> initializer) {
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext) -> {
-            initializer.accept(new FabricClientCommandsContext((CommandDispatcher<SharedSuggestionProvider>) (CommandDispatcher) dispatcher, buildContext));
-        });
-    }
+	@Override
+	public void commands(Consumer<ClientCommandsContext> initializer) {
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext) -> {
+			initializer.accept(new FabricClientCommandsContext((CommandDispatcher<SharedSuggestionProvider>) (CommandDispatcher) dispatcher, buildContext));
+		});
+	}
 
-    @Override
-    public <MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ClientPlayNetworking.Handler<MSG> handler) {
-        PayloadTypeRegistry.clientboundPlay().register(type, streamCodec);
-        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
-            handler.handle(payload, new FabricClientPlayNetworkingContext(context));
-        });
-    }
+	@Override
+	public <MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ClientPlayNetworking.Handler<MSG> handler) {
+		PayloadTypeRegistry.clientboundPlay().register(type, streamCodec);
+		net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
+			handler.handle(payload, new FabricClientPlayNetworkingContext(context));
+		});
+	}
 
-    @Override
-    public boolean canSendPlayPayload(CustomPacketPayload.Type<?> type) {
-        return net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.canSend(type);
-    }
+	@Override
+	public boolean canSendPlayPayload(CustomPacketPayload.Type<?> type) {
+		return net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.canSend(type);
+	}
 
-    @Override
-    public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler) {
-        PayloadTypeRegistry.clientboundConfiguration().register(type, streamCodec);
-        net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> {
-           handler.handle(payload, new FabricClientConfigurationNetworkingContext(context));
-        });
-    }
+	@Override
+	public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler) {
+		PayloadTypeRegistry.clientboundConfiguration().register(type, streamCodec);
+		net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> {
+		handler.handle(payload, new FabricClientConfigurationNetworkingContext(context));
+		});
+	}
 
-    @Override
-    public boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type) {
-        return net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.canSend(type);
-    }
+	@Override
+	public boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type) {
+		return net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.canSend(type);
+	}
 
-    @Override
-    public void initialize() {
-        ClientEventHooks.bindFabricApiEvents();
-    }
+	@Override
+	public void initialize() {
+		ClientEventHooks.bindFabricApiEvents();
+	}
 }

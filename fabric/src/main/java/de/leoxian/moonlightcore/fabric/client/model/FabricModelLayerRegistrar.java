@@ -8,11 +8,11 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import java.util.function.Supplier;
 
 public enum FabricModelLayerRegistrar implements ModelLayerRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public void register(ModelLayerLocation location, Supplier<LayerDefinition> sup) {
-        ModelLayerRegistry.registerModelLayer(location, sup::get);
-    }
+	@Override
+	public void register(ModelLayerLocation location, Supplier<LayerDefinition> sup) {
+		ModelLayerRegistry.registerModelLayer(location, sup::get);
+	}
 }

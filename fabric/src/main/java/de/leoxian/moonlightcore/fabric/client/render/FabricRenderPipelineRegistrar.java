@@ -5,11 +5,11 @@ import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
 import net.minecraft.client.renderer.RenderPipelines;
 
 public enum FabricRenderPipelineRegistrar implements RenderPipelineRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public void register(RenderPipeline pipeline) {
-        RenderPipelines.register(pipeline);
-    }
+	@Override
+	public void register(RenderPipeline pipeline) {
+		RenderPipelines.register(pipeline);
+	}
 }

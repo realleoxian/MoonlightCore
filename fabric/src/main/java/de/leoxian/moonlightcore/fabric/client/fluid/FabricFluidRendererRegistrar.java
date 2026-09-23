@@ -9,22 +9,22 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.level.material.Fluid;
 
 public enum FabricFluidRendererRegistrar implements FluidRendererRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public void registerModel(Holder<Fluid> holder, FluidModel.Unbaked model) {
-        if (holder.is(k -> "minecraft".equals(k.identifier().getNamespace()))) {
-            throw new IllegalArgumentException("May not register a fluid model to a vanilla fluid");
-        }
-        FluidRenderingRegistry.register(holder.value(), model);
-    }
+	@Override
+	public void registerModel(Holder<Fluid> holder, FluidModel.Unbaked model) {
+		if (holder.is(k -> "minecraft".equals(k.identifier().getNamespace()))) {
+			throw new IllegalArgumentException("May not register a fluid model to a vanilla fluid");
+		}
+		FluidRenderingRegistry.register(holder.value(), model);
+	}
 
-    @Override
-    public void registerRenderHandler(Holder<Fluid> holder, FluidRenderHandler renderHandler) {
-        if (holder.is(k -> "minecraft".equals(k.identifier().getNamespace()))) {
-            throw new IllegalArgumentException("May not register a fluid render handler to a vanilla fluid");
-        }
-        FluidVariantRendering.register(holder.value(), new FabricFluidRenderHandlerImpl(renderHandler));
-    }
+	@Override
+	public void registerRenderHandler(Holder<Fluid> holder, FluidRenderHandler renderHandler) {
+		if (holder.is(k -> "minecraft".equals(k.identifier().getNamespace()))) {
+			throw new IllegalArgumentException("May not register a fluid render handler to a vanilla fluid");
+		}
+		FluidVariantRendering.register(holder.value(), new FabricFluidRenderHandlerImpl(renderHandler));
+	}
 }

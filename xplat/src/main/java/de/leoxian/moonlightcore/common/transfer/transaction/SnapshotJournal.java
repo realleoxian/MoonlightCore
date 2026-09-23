@@ -7,76 +7,76 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 
 public abstract class SnapshotJournal<T extends @Nullable Object> implements TransactionContext.RootCloseCallback, Transaction.CloseCallback {
-    private static final Object NO_SNAPSHOT = new Object();
+	private static final Object NO_SNAPSHOT = new Object();
 
-    private final ArrayList<T> snapshots = new ArrayList<>();
-    private @Nullable T originalState = null;
+	private final ArrayList<T> snapshots = new ArrayList<>();
+	private @Nullable T originalState = null;
 
-    /// @return A new **nonnull** object containing the current state of this journal. `null` **may not be
-    /// returned, or an exception will be thrown!**
-    protected abstract T createSnapshot();
+	/// @return A new **nonnull** object containing the current state of this journal. `null` **may not be
+	/// returned, or an exception will be thrown!**
+	protected abstract T createSnapshot();
 
-    /// Reads a previous state created by [#createSnapshot()
-    /// @param snapshot The snapshot state
-    protected abstract void readSnapshot(T snapshot);
+	/// Reads a previous state created by [#createSnapshot()
+	/// @param snapshot The snapshot state
+	protected abstract void readSnapshot(T snapshot);
 
-    /// Signals that the snapshot will not be used anymore, and is safe to cache for future calls to
-    /// [#createSnapshot()], or discard entirely.
-    /// @param snapshot The released snapshot
-    protected void releaseSnapshot(T snapshot) {
-    }
+	/// Signals that the snapshot will not be used anymore, and is safe to cache for future calls to
+	/// [#createSnapshot()], or discard entirely.
+	/// @param snapshot The released snapshot
+	protected void releaseSnapshot(T snapshot) {
+	}
 
-    /// Called after the root transaction was successfully commited, to perform irreversible
-    /// actions such as `setChanged()` or neighbor updates.
-    /// @param originalState The state of the journal before all transactional operations, corresponds to the first snapshot created by [#createSnapshot()]
-    protected void onRootCommit(T originalState) {
+	/// Called after the root transaction was successfully commited, to perform irreversible
+	/// actions such as `setChanged()` or neighbor updates.
+	/// @param originalState The state of the journal before all transactional operations, corresponds to the first snapshot created by [#createSnapshot()]
+	protected void onRootCommit(T originalState) {
 
-    }
+	}
 
-    public void updateSnapshots(final TransactionContext transaction) {
-        int depth = transaction.depth();
-        snapshots.ensureCapacity(depth);
-        for (int i = snapshots.size(); i < depth; i++) {
-            snapshots.add((T) NO_SNAPSHOT);
-        }
+	public void updateSnapshots(final TransactionContext transaction) {
+		int depth = transaction.depth();
+		snapshots.ensureCapacity(depth);
+		for (int i = snapshots.size(); i < depth; i++) {
+			snapshots.add((T) NO_SNAPSHOT);
+		}
 
-        if (snapshots.get(depth) == NO_SNAPSHOT) {
-            snapshots.set(depth, createSnapshot());
+		if (snapshots.get(depth) == NO_SNAPSHOT) {
+			snapshots.set(depth, createSnapshot());
 
-            TransactionImpl impl = TransactionManager.get().validateTransaction(transaction);
-            TransactionManager.get().validateOpen(impl);
-        }
-    }
+			TransactionImpl impl = TransactionManager.get().validateTransaction(transaction);
+			TransactionManager.get().validateOpen(impl);
+		}
+	}
 
-    @Override
-    public void onTransactionClose(TransactionContext transaction, boolean wasAborted) {
-        int depth = transaction.depth();
-        T snapshot = this.snapshots.remove(depth);
+	@Override
+	public void onTransactionClose(TransactionContext transaction, boolean wasAborted) {
+		int depth = transaction.depth();
+		T snapshot = this.snapshots.remove(depth);
 
-        if (wasAborted){
-            readSnapshot(snapshot);
-            releaseSnapshot(snapshot);
-        } else if (depth <= 0) {
-            if (originalState == null) {
-                originalState = snapshot;
-                transaction.addRootCloseCallback(this);
-            } else {
-                readSnapshot(snapshot);
-            }
-        } else if (snapshots.get(depth - 1) == NO_SNAPSHOT) {
-            snapshots.set(depth - 1, snapshot);
-            transaction.getOpenTransaction(depth - 1).addCloseCallback(this);
-        } else {
-            releaseSnapshot(snapshot);
-        }
-    }
+		if (wasAborted){
+			readSnapshot(snapshot);
+			releaseSnapshot(snapshot);
+		} else if (depth <= 0) {
+			if (originalState == null) {
+				originalState = snapshot;
+				transaction.addRootCloseCallback(this);
+			} else {
+				readSnapshot(snapshot);
+			}
+		} else if (snapshots.get(depth - 1) == NO_SNAPSHOT) {
+			snapshots.set(depth - 1, snapshot);
+			transaction.getOpenTransaction(depth - 1).addCloseCallback(this);
+		} else {
+			releaseSnapshot(snapshot);
+		}
+	}
 
-    @Override
-    public void onRootClose(boolean wasAborted) {
-        T originalState = this.originalState;
-        this.originalState = null;
+	@Override
+	public void onRootClose(boolean wasAborted) {
+		T originalState = this.originalState;
+		this.originalState = null;
 
-        onRootCommit(originalState);
-        releaseSnapshot(originalState);
-    }
+		onRootCommit(originalState);
+		releaseSnapshot(originalState);
+	}
 }

@@ -11,11 +11,11 @@ import net.minecraft.world.inventory.MenuType;
 import java.util.function.Supplier;
 
 public enum FabricMenuScreenRegistrar implements MenuScreenRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public <T extends AbstractContainerMenu, S extends Screen & MenuAccess<T>> void register(Supplier<MenuType<T>> menuType, MenuScreenFactory<T, S> factory) {
-        MenuScreens.register(menuType.get(), factory::create);
-    }
+	@Override
+	public <T extends AbstractContainerMenu, S extends Screen & MenuAccess<T>> void register(Supplier<MenuType<T>> menuType, MenuScreenFactory<T, S> factory) {
+		MenuScreens.register(menuType.get(), factory::create);
+	}
 }

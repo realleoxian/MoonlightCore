@@ -9,12 +9,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 
 public enum NeoforgeArgumentTypeRegistrar implements ArgumentTypeRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void register(Identifier id, Class<A> argumentType, ArgumentTypeInfo<A, T> info) {
-        ModDeferredRegisters.get(Registries.COMMAND_ARGUMENT_TYPE, id.getNamespace()).register(id.getPath(), () -> info);
-        ArgumentTypeInfos.registerByClass(argumentType, info);
-    }
+	@Override
+	public <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void register(Identifier id, Class<A> argumentType, ArgumentTypeInfo<A, T> info) {
+		ModDeferredRegisters.get(Registries.COMMAND_ARGUMENT_TYPE, id.getNamespace()).register(id.getPath(), () -> info);
+		ArgumentTypeInfos.registerByClass(argumentType, info);
+	}
 }

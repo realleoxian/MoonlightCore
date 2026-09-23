@@ -13,23 +13,23 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public record SyncConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, Set<Identifier> syncables) implements ConfigurationTask {
-    public static final Type TYPE = new Type("moonlightcore:sync_config");
+	public static final Type TYPE = new Type("moonlightcore:sync_config");
 
-    @Override
-    public void start(Consumer<Packet<?>> consumer) {
-        for (final var syncable : syncables){
-            var config = ConfigRegistry.getConfig(syncable);
-            if (config == null) {
-                continue;
-            }
-            consumer.accept(new ClientboundCustomPayloadPacket(new S2CSyncLoadedConfigPacket(syncable, config.loadedConfig())));
-        }
+	@Override
+	public void start(Consumer<Packet<?>> consumer) {
+		for (final var syncable : syncables){
+			var config = ConfigRegistry.getConfig(syncable);
+			if (config == null) {
+				continue;
+			}
+			consumer.accept(new ClientboundCustomPayloadPacket(new S2CSyncLoadedConfigPacket(syncable, config.loadedConfig())));
+		}
 
-        ServerConfigurationNetworking.completeTask(packetListener, TYPE);
-    }
+		ServerConfigurationNetworking.completeTask(packetListener, TYPE);
+	}
 
-    @Override
-    public Type type() {
-        return TYPE;
-    }
+	@Override
+	public Type type() {
+		return TYPE;
+	}
 }

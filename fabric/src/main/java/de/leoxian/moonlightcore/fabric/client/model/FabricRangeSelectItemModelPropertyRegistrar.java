@@ -7,11 +7,11 @@ import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemMode
 import net.minecraft.resources.Identifier;
 
 public enum FabricRangeSelectItemModelPropertyRegistrar implements RangeSelectItemModelPropertyRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public void register(Identifier id, MapCodec<? extends RangeSelectItemModelProperty> source) {
-        RangeSelectItemModelProperties.ID_MAPPER.put(id, source);
-    }
+	@Override
+	public void register(Identifier id, MapCodec<? extends RangeSelectItemModelProperty> source) {
+		RangeSelectItemModelProperties.ID_MAPPER.put(id, source);
+	}
 }

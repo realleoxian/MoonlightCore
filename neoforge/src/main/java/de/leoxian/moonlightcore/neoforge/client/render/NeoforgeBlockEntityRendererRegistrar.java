@@ -10,8 +10,8 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import java.util.function.Supplier;
 
 public record NeoforgeBlockEntityRendererRegistrar(EntityRenderersEvent.RegisterRenderers event) implements BlockEntityRendererRegistrar {
-    @Override
-    public <T extends BlockEntity, S extends BlockEntityRenderState> void register(Supplier<BlockEntityType<T>> blockEntityType, BlockEntityRendererProvider<T, S> provider) {
-        event.registerBlockEntityRenderer(blockEntityType.get(), provider);
-    }
+	@Override
+	public <T extends BlockEntity, S extends BlockEntityRenderState> void register(Supplier<BlockEntityType<T>> blockEntityType, BlockEntityRendererProvider<T, S> provider) {
+		event.registerBlockEntityRenderer(blockEntityType.get(), provider);
+	}
 }

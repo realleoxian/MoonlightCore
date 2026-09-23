@@ -11,29 +11,29 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.Collection;
 
 public final class ModDeferredRegisters {
-    private static final Table<ResourceKey<?>, String, DeferredRegister<?>> DEFERRED_REGISTERS = Tables.synchronizedTable(HashBasedTable.create());
+	private static final Table<ResourceKey<?>, String, DeferredRegister<?>> DEFERRED_REGISTERS = Tables.synchronizedTable(HashBasedTable.create());
 
-    @SuppressWarnings("unchecked")
-    public static <T> DeferredRegister<T> get(ResourceKey<? extends Registry<T>> registry, String modId) {
-        DeferredRegister<?> register = DEFERRED_REGISTERS.row(registry).computeIfAbsent(modId, k -> DeferredRegister.create(registry, k));
-        return (DeferredRegister<T>) register;
-    }
+	@SuppressWarnings("unchecked")
+	public static <T> DeferredRegister<T> get(ResourceKey<? extends Registry<T>> registry, String modId) {
+		DeferredRegister<?> register = DEFERRED_REGISTERS.row(registry).computeIfAbsent(modId, k -> DeferredRegister.create(registry, k));
+		return (DeferredRegister<T>) register;
+	}
 
-    public static <T> DeferredRegister<T> get(Registry<T> registry, String modId) {
-        return get(registry.key(), modId);
-    }
+	public static <T> DeferredRegister<T> get(Registry<T> registry, String modId) {
+		return get(registry.key(), modId);
+	}
 
-    public static void register(String modId, IEventBus eventBus) {
-        synchronized (DEFERRED_REGISTERS) {
-            for (DeferredRegister<?> register : getByModId(modId)) {
-                register.register(eventBus);
-            }
-        }
-    }
+	public static void register(String modId, IEventBus eventBus) {
+		synchronized (DEFERRED_REGISTERS) {
+			for (DeferredRegister<?> register : getByModId(modId)) {
+				register.register(eventBus);
+			}
+		}
+	}
 
-    public static Collection<DeferredRegister<?>> getByModId(String modId) {
-        return DEFERRED_REGISTERS.column(modId).values();
-    }
+	public static Collection<DeferredRegister<?>> getByModId(String modId) {
+		return DEFERRED_REGISTERS.column(modId).values();
+	}
 
-    private ModDeferredRegisters() {}
+	private ModDeferredRegisters() {}
 }

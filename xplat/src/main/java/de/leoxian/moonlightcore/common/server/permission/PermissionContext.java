@@ -9,12 +9,12 @@ import java.util.UUID;
 
 @ApiStatus.NonExtendable
 public interface PermissionContext {
-    /// @return The player
-    Optional<ServerPlayer> serverPlayer();
+	/// @return The player
+	Optional<ServerPlayer> serverPlayer();
 
-    /// @return The player's UUID
-    Optional<UUID> playerId();
+	/// @return The player's UUID
+	Optional<UUID> playerId();
 
-    /// @return The command source stack
-    Optional<CommandSourceStack> commandSourceStack();
+	/// @return The command source stack
+	Optional<CommandSourceStack> commandSourceStack();
 }

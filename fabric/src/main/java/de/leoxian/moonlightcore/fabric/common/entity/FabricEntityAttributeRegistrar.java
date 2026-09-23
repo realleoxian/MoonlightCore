@@ -9,11 +9,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import java.util.function.Supplier;
 
 public enum FabricEntityAttributeRegistrar implements EntityAttributeRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public <E extends LivingEntity> void register(Supplier<EntityType<E>> entityType, AttributeSupplier attributes) {
-        FabricDefaultAttributeRegistry.register(entityType.get(), attributes);
-    }
+	@Override
+	public <E extends LivingEntity> void register(Supplier<EntityType<E>> entityType, AttributeSupplier attributes) {
+		FabricDefaultAttributeRegistry.register(entityType.get(), attributes);
+	}
 }

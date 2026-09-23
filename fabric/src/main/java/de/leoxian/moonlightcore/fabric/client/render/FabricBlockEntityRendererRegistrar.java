@@ -10,11 +10,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import java.util.function.Supplier;
 
 public enum FabricBlockEntityRendererRegistrar implements BlockEntityRendererRegistrar {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public <T extends BlockEntity, S extends BlockEntityRenderState> void register(Supplier<BlockEntityType<T>> blockEntityType, BlockEntityRendererProvider<T, S> provider) {
-        BlockEntityRenderers.register(blockEntityType.get(), provider);
-    }
+	@Override
+	public <T extends BlockEntity, S extends BlockEntityRenderState> void register(Supplier<BlockEntityType<T>> blockEntityType, BlockEntityRendererProvider<T, S> provider) {
+		BlockEntityRenderers.register(blockEntityType.get(), provider);
+	}
 }

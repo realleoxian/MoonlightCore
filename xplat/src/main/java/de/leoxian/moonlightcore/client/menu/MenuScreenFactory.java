@@ -8,5 +8,5 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 @FunctionalInterface
 public interface MenuScreenFactory<T extends AbstractContainerMenu, S extends Screen & MenuAccess<T>> {
-    S create(T menu, Inventory inventory, Component title);
+	S create(T menu, Inventory inventory, Component title);
 }

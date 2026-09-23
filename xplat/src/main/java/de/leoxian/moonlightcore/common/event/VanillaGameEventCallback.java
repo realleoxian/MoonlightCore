@@ -9,16 +9,16 @@ import net.minecraft.world.phys.Vec3;
 
 @FunctionalInterface
 public interface VanillaGameEventCallback {
-    Event<VanillaGameEventCallback> EVENT = Event.create(VanillaGameEventCallback.class, callbacks -> (level, event, context, position) -> {
-       var result = EventResult.TRUE;
-       for (final var callback : callbacks) {
-           result = callback.onVanillaGameEvent(level, event, context, position);
-           if (result.cancelFurtherEventProcessing()) {
-               break;
-           }
-       }
-       return result;
-    });
+	Event<VanillaGameEventCallback> EVENT = Event.create(VanillaGameEventCallback.class, callbacks -> (level, event, context, position) -> {
+	var result = EventResult.TRUE;
+	for (final var callback : callbacks) {
+		result = callback.onVanillaGameEvent(level, event, context, position);
+		if (result.cancelFurtherEventProcessing()) {
+			break;
+		}
+	}
+	return result;
+	});
 
-    EventResult onVanillaGameEvent(ServerLevel level, Holder<GameEvent> event, GameEvent.Context context, Vec3 position);
+	EventResult onVanillaGameEvent(ServerLevel level, Holder<GameEvent> event, GameEvent.Context context, Vec3 position);
 }

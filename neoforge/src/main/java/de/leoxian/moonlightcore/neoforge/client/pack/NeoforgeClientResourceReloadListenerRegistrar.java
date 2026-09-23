@@ -6,13 +6,13 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 
 public record NeoforgeClientResourceReloadListenerRegistrar(AddClientReloadListenersEvent event) implements ClientResourceReloadListenerRegistrar {
-    @Override
-    public void register(Identifier id, PreparableReloadListener listener) {
-        event.addListener(id, listener);
-    }
+	@Override
+	public void register(Identifier id, PreparableReloadListener listener) {
+		event.addListener(id, listener);
+	}
 
-    @Override
-    public void addDependency(Identifier first, Identifier second) {
-        event.addDependency(first, second);
-    }
+	@Override
+	public void addDependency(Identifier first, Identifier second) {
+		event.addDependency(first, second);
+	}
 }

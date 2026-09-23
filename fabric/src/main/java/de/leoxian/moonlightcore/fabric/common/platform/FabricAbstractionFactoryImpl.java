@@ -4,8 +4,8 @@ import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.common.platform.XplatAbstractionFactory;
 
 public class FabricAbstractionFactoryImpl implements XplatAbstractionFactory {
-    @Override
-    public XplatAbstraction create() {
-        return new FabricAbstractionImpl();
-    }
+	@Override
+	public XplatAbstraction create() {
+		return new FabricAbstractionImpl();
+	}
 }

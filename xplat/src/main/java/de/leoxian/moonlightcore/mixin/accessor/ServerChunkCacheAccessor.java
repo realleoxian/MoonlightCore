@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(ServerChunkCache.class)
 public interface ServerChunkCacheAccessor {
-    @Accessor
-    DistanceManager getDistanceManager();
+	@Accessor
+	DistanceManager getDistanceManager();
 }

@@ -6,6 +6,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(EquipmentSlot.class)
 public interface EquipmentSlotAccessor {
-    @Accessor
-    int getCountLimit();
+	@Accessor
+	int getCountLimit();
 }

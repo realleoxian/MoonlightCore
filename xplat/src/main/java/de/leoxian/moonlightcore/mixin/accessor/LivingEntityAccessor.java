@@ -6,12 +6,12 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(LivingEntity.class)
 public interface LivingEntityAccessor {
-    @Invoker
-    float callGetWaterSlowDown();
+	@Invoker
+	float callGetWaterSlowDown();
 
-    @Invoker
-    void callJumpOutOfFluid(double oldY);
+	@Invoker
+	void callJumpOutOfFluid(double oldY);
 
-    @Invoker
-    double callGetEffectiveGravity();
+	@Invoker
+	double callGetEffectiveGravity();
 }

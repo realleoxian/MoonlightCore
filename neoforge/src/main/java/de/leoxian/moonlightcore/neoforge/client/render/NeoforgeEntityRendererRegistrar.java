@@ -9,8 +9,8 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import java.util.function.Supplier;
 
 public record NeoforgeEntityRendererRegistrar(EntityRenderersEvent.RegisterRenderers event) implements EntityRendererRegistrar {
-    @Override
-    public <T extends Entity> void register(Supplier<EntityType<T>> entityType, EntityRendererProvider<T> provider) {
-        event.registerEntityRenderer(entityType.get(), provider);
-    }
+	@Override
+	public <T extends Entity> void register(Supplier<EntityType<T>> entityType, EntityRendererProvider<T> provider) {
+		event.registerEntityRenderer(entityType.get(), provider);
+	}
 }

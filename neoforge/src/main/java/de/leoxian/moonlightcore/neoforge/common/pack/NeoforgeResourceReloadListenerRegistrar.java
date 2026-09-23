@@ -13,28 +13,28 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 public record NeoforgeResourceReloadListenerRegistrar(AddServerReloadListenersEvent event) implements ResourceReloadListenerRegistrar {
-    @Override
-    public void register(Identifier id, Function<HolderLookup.Provider, PreparableReloadListener> func) {
-        event.addListener(id, new ContextAwareReloadListener() {
-            @Nullable
-            private PreparableReloadListener backingListener = null;
+	@Override
+	public void register(Identifier id, Function<HolderLookup.Provider, PreparableReloadListener> func) {
+		event.addListener(id, new ContextAwareReloadListener() {
+			@Nullable
+			private PreparableReloadListener backingListener = null;
 
-            @Override
-            public CompletableFuture<Void> reload(SharedState sharedState, Executor executor, PreparationBarrier preparationBarrier, Executor executor1) {
-                PreparableReloadListener listener = this.backingListener;
-                if (listener == null) {
-                    listener = backingListener = func.apply(getRegistryLookup());
-                    if (listener == null) {
-                        return CompletableFuture.failedFuture(new RuntimeException("Failed to create backing listener"));
-                    }
-                }
-                return listener.reload(sharedState, executor, preparationBarrier, executor1);
-            }
-        });
-    }
+			@Override
+			public CompletableFuture<Void> reload(SharedState sharedState, Executor executor, PreparationBarrier preparationBarrier, Executor executor1) {
+				PreparableReloadListener listener = this.backingListener;
+				if (listener == null) {
+					listener = backingListener = func.apply(getRegistryLookup());
+					if (listener == null) {
+						return CompletableFuture.failedFuture(new RuntimeException("Failed to create backing listener"));
+					}
+				}
+				return listener.reload(sharedState, executor, preparationBarrier, executor1);
+			}
+		});
+	}
 
-    @Override
-    public void addDependency(Identifier first, Identifier second) {
-        event.addDependency(first, second);
-    }
+	@Override
+	public void addDependency(Identifier first, Identifier second) {
+		event.addDependency(first, second);
+	}
 }

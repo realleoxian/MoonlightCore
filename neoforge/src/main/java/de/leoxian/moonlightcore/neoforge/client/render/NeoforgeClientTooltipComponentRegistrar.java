@@ -8,8 +8,8 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import java.util.function.Function;
 
 public record NeoforgeClientTooltipComponentRegistrar(RegisterClientTooltipComponentFactoriesEvent event) implements ClientTooltipComponentRegistrar {
-    @Override
-    public <T extends TooltipComponent> void register(Class<T> type, Function<? super T, ? extends ClientTooltipComponent> factory) {
-        event.register(type, factory);
-    }
+	@Override
+	public <T extends TooltipComponent> void register(Class<T> type, Function<? super T, ? extends ClientTooltipComponent> factory) {
+		event.register(type, factory);
+	}
 }

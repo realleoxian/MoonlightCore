@@ -6,8 +6,8 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.event.RegisterSelectItemModelPropertyEvent;
 
 public record NeoforgeSelectItemModelPropertyRegistrar(RegisterSelectItemModelPropertyEvent event) implements SelectItemModelPropertyRegistrar {
-    @Override
-    public void register(Identifier identifier, SelectItemModelProperty.Type<?, ?> type) {
-        event.register(identifier, type);
-    }
+	@Override
+	public void register(Identifier identifier, SelectItemModelProperty.Type<?, ?> type) {
+		event.register(identifier, type);
+	}
 }

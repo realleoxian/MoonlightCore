@@ -9,27 +9,27 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
 public interface ArmorHurtEvent {
-    Event<ArmorHurtEvent> EVENT = Event.create(ArmorHurtEvent.class, listeners -> (livingEntity, damageSource, context) -> {
-       var result = EventResult.TRUE;
-       for (final var listener : listeners) {
-           result = listener.onAmorHurt(livingEntity, damageSource, context);
-           if (result.cancelFurtherEventProcessing()) {
-               break;
-           }
-       }
-       return result;
-    });
+	Event<ArmorHurtEvent> EVENT = Event.create(ArmorHurtEvent.class, listeners -> (livingEntity, damageSource, context) -> {
+	var result = EventResult.TRUE;
+	for (final var listener : listeners) {
+		result = listener.onAmorHurt(livingEntity, damageSource, context);
+		if (result.cancelFurtherEventProcessing()) {
+			break;
+		}
+	}
+	return result;
+	});
 
-    EventResult onAmorHurt(LivingEntity livingEntity, DamageSource damageSource, Context context);
+	EventResult onAmorHurt(LivingEntity livingEntity, DamageSource damageSource, Context context);
 
-    @ApiStatus.NonExtendable
-    interface Context {
-        ItemStack getArmorItemStack(EquipmentSlot slot);
+	@ApiStatus.NonExtendable
+	interface Context {
+		ItemStack getArmorItemStack(EquipmentSlot slot);
 
-        float getOriginalDamage(EquipmentSlot slot);
+		float getOriginalDamage(EquipmentSlot slot);
 
-        float getDamage(EquipmentSlot slot);
+		float getDamage(EquipmentSlot slot);
 
-        void setDamage(EquipmentSlot slot, float damage);
-    }
+		void setDamage(EquipmentSlot slot, float damage);
+	}
 }

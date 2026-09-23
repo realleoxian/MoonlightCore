@@ -13,32 +13,32 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public class XplatPermissionHelper implements PermissionsHelper {
-    private final Map<Identifier, Function<PermissionContext, Boolean>> resolvers = new ConcurrentHashMap<>();
+	private final Map<Identifier, Function<PermissionContext, Boolean>> resolvers = new ConcurrentHashMap<>();
 
-    public XplatPermissionHelper() {
+	public XplatPermissionHelper() {
 
-    }
+	}
 
-    @Override
-    public void registerPermission(Identifier id, Function<PermissionContext, Boolean> permissionResolver) {
-        this.resolvers.put(id, permissionResolver);
-    }
+	@Override
+	public void registerPermission(Identifier id, Function<PermissionContext, Boolean> permissionResolver) {
+		this.resolvers.put(id, permissionResolver);
+	}
 
-    @Override
-    public boolean hasPermission(ServerPlayer player, Identifier id) {
-        final Function<PermissionContext, Boolean> resolver = this.resolvers.get(id);
-        if (resolver == null) {
-            return false;
-        }
-        return resolver.apply(new PlayerPermissionContext(player));
-    }
+	@Override
+	public boolean hasPermission(ServerPlayer player, Identifier id) {
+		final Function<PermissionContext, Boolean> resolver = this.resolvers.get(id);
+		if (resolver == null) {
+			return false;
+		}
+		return resolver.apply(new PlayerPermissionContext(player));
+	}
 
-    @Override
-    public boolean hasPermission(CommandSourceStack commandSourceStack, Identifier id) {
-        final Function<PermissionContext, Boolean> resolver = this.resolvers.get(id);
-        if (resolver == null) {
-            return false;
-        }
-        return resolver.apply(new CommandPermissionContext(commandSourceStack));
-    }
+	@Override
+	public boolean hasPermission(CommandSourceStack commandSourceStack, Identifier id) {
+		final Function<PermissionContext, Boolean> resolver = this.resolvers.get(id);
+		if (resolver == null) {
+			return false;
+		}
+		return resolver.apply(new CommandPermissionContext(commandSourceStack));
+	}
 }

@@ -6,8 +6,8 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public record FabricGuiLayer(GuiLayer layer) implements HudElement {
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
-        layer.extractRenderState(graphics, deltaTracker);
-    }
+	@Override
+	public void extractRenderState(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
+		layer.extractRenderState(graphics, deltaTracker);
+	}
 }

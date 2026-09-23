@@ -9,8 +9,8 @@ import net.neoforged.fml.common.Mod;
 
 @Mod(value = "moonlightcore", dist = Dist.CLIENT)
 public class MoonlightCoreClientNeoforgeMod {
-    public MoonlightCoreClientNeoforgeMod(IEventBus eventBus, ModContainer container) {
-        XplatClientAbstraction.INSTANCE.initialize();
-        MoonlightCoreClient.initializeClientMod();
-    }
+	public MoonlightCoreClientNeoforgeMod(IEventBus eventBus, ModContainer container) {
+		XplatClientAbstraction.INSTANCE.initialize();
+		MoonlightCoreClient.initializeClientMod();
+	}
 }

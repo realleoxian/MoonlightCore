@@ -26,50 +26,50 @@ import java.util.ServiceLoader;
 import java.util.function.Consumer;
 
 public interface XplatClientAbstraction {
-    XplatClientAbstraction INSTANCE = ServiceLoader.load(XplatClientAbstractionFactory.class).findFirst().orElseThrow().create();
+	XplatClientAbstraction INSTANCE = ServiceLoader.load(XplatClientAbstractionFactory.class).findFirst().orElseThrow().create();
 
-    // |-----| Registrars |-----|
-    void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer);
+	// |-----| Registrars |-----|
+	void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer);
 
-    void guiLayers(String namespace, Consumer<GuiLayerRegistrar> initializer);
+	void guiLayers(String namespace, Consumer<GuiLayerRegistrar> initializer);
 
-    void keyMappings(String namespace, Consumer<KeyMappingRegistrar> initializer);
+	void keyMappings(String namespace, Consumer<KeyMappingRegistrar> initializer);
 
-    void modelLayers(String namespace, Consumer<ModelLayerRegistrar> initializer);
+	void modelLayers(String namespace, Consumer<ModelLayerRegistrar> initializer);
 
-    void blockEntityRenderers(String namespace, Consumer<BlockEntityRendererRegistrar> initializer);
+	void blockEntityRenderers(String namespace, Consumer<BlockEntityRendererRegistrar> initializer);
 
-    void clientTooltips(String namespace, Consumer<ClientTooltipComponentRegistrar> initializer);
+	void clientTooltips(String namespace, Consumer<ClientTooltipComponentRegistrar> initializer);
 
-    void entityRenderers(String namespace, Consumer<EntityRendererRegistrar> initializer);
+	void entityRenderers(String namespace, Consumer<EntityRendererRegistrar> initializer);
 
-    void particles(String namespace, Consumer<ParticleProviderRegistrar> initializer);
+	void particles(String namespace, Consumer<ParticleProviderRegistrar> initializer);
 
-    void renderPipelines(String namespace, Consumer<RenderPipelineRegistrar> initializer);
+	void renderPipelines(String namespace, Consumer<RenderPipelineRegistrar> initializer);
 
-    void blockColor(String namespace, Consumer<BlockColorRegistrar> initializer);
+	void blockColor(String namespace, Consumer<BlockColorRegistrar> initializer);
 
-    void menuScreens(String namespace, Consumer<MenuScreenRegistrar> initializer);
+	void menuScreens(String namespace, Consumer<MenuScreenRegistrar> initializer);
 
-    void resourceReloadListeners(String namespace, Consumer<ClientResourceReloadListenerRegistrar> initializer);
+	void resourceReloadListeners(String namespace, Consumer<ClientResourceReloadListenerRegistrar> initializer);
 
-    void selectItemModelProperties(String namespace, Consumer<SelectItemModelPropertyRegistrar> initializer);
+	void selectItemModelProperties(String namespace, Consumer<SelectItemModelPropertyRegistrar> initializer);
 
-    void rangeSelectItemModelProperties(String namespace, Consumer<RangeSelectItemModelPropertyRegistrar> initializer);
+	void rangeSelectItemModelProperties(String namespace, Consumer<RangeSelectItemModelPropertyRegistrar> initializer);
 
-    void commands(Consumer<ClientCommandsContext> initializer);
+	void commands(Consumer<ClientCommandsContext> initializer);
 
-    // |-----| C2S Play Networking |-----|
+	// |-----| C2S Play Networking |-----|
 
-    <MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ClientPlayNetworking.Handler<MSG> handler);
+	<MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ClientPlayNetworking.Handler<MSG> handler);
 
-    boolean canSendPlayPayload(CustomPacketPayload.Type<?> type);
+	boolean canSendPlayPayload(CustomPacketPayload.Type<?> type);
 
-    // |-----| C2S Configuration Networking |-----|
+	// |-----| C2S Configuration Networking |-----|
 
-    <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler);
+	<T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler);
 
-    boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type);
+	boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type);
 
-    void initialize();
+	void initialize();
 }

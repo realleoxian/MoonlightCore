@@ -23,115 +23,115 @@ import java.util.List;
 import java.util.Map;
 
 public record S2CSyncLoadedConfigPacket(Identifier configId, LoadedConfig loadedConfig) implements CustomPacketPayload {
-    public static final Type<S2CSyncLoadedConfigPacket> TYPE = new Type<>(Identifier.parse("moonlightcore:sync_config"));
-    public static final StreamCodec<FriendlyByteBuf, S2CSyncLoadedConfigPacket> STREAM_CODEC = StreamCodec.of(S2CSyncLoadedConfigPacket::encode, S2CSyncLoadedConfigPacket::decode);
+	public static final Type<S2CSyncLoadedConfigPacket> TYPE = new Type<>(Identifier.parse("moonlightcore:sync_config"));
+	public static final StreamCodec<FriendlyByteBuf, S2CSyncLoadedConfigPacket> STREAM_CODEC = StreamCodec.of(S2CSyncLoadedConfigPacket::encode, S2CSyncLoadedConfigPacket::decode);
 
-    public S2CSyncLoadedConfigPacket(Config<?> config) {
-        this (config.id(), config.loadedConfig());
-    }
+	public S2CSyncLoadedConfigPacket(Config<?> config) {
+		this (config.id(), config.loadedConfig());
+	}
 
-    public static void handleConfiguration(S2CSyncLoadedConfigPacket packet, ClientConfigurationNetworking.Context context) {
-        context.enqueueWork(() -> {
-            var config = ConfigRegistry.getConfig(packet.configId());
-            var loadedConfig = packet.loadedConfig();
+	public static void handleConfiguration(S2CSyncLoadedConfigPacket packet, ClientConfigurationNetworking.Context context) {
+		context.enqueueWork(() -> {
+			var config = ConfigRegistry.getConfig(packet.configId());
+			var loadedConfig = packet.loadedConfig();
 
-            if (config != null) {
-                config.loadedConfig().applyFrom(config.schema(), loadedConfig);
-            }
-        });
-    }
+			if (config != null) {
+				config.loadedConfig().applyFrom(config.schema(), loadedConfig);
+			}
+		});
+	}
 
-    public static void handlePlay(S2CSyncLoadedConfigPacket packet, ClientPlayNetworking.Context context) {
-        context.enqueueWork(() -> {
-            var config = ConfigRegistry.getConfig(packet.configId());
-            var loadedConfig = packet.loadedConfig();
+	public static void handlePlay(S2CSyncLoadedConfigPacket packet, ClientPlayNetworking.Context context) {
+		context.enqueueWork(() -> {
+			var config = ConfigRegistry.getConfig(packet.configId());
+			var loadedConfig = packet.loadedConfig();
 
-            if (config != null) {
-                config.loadedConfig().applyFrom(config.schema(), loadedConfig);
-            }
-        });
-    }
+			if (config != null) {
+				config.loadedConfig().applyFrom(config.schema(), loadedConfig);
+			}
+		});
+	}
 
-    private static void encode(FriendlyByteBuf byteBuf, S2CSyncLoadedConfigPacket packet) {
-        var loadedConfig = packet.loadedConfig();
-        byteBuf.writeIdentifier(packet.configId());
+	private static void encode(FriendlyByteBuf byteBuf, S2CSyncLoadedConfigPacket packet) {
+		var loadedConfig = packet.loadedConfig();
+		byteBuf.writeIdentifier(packet.configId());
 
-        var config = ConfigRegistry.getConfig(packet.configId());
-        if (config == null) {
-            throw new EncoderException("Unknown config: " + packet.configId());
-        }
+		var config = ConfigRegistry.getConfig(packet.configId());
+		if (config == null) {
+			throw new EncoderException("Unknown config: " + packet.configId());
+		}
 
-        FriendlyByteBuf subBuf = new FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
-        try {
-            List<ConfigValue<?>> allConfigValues = gatherConfigValues(new ArrayList<>(), config.schema());
-            subBuf.writeVarInt(allConfigValues.size());
+		FriendlyByteBuf subBuf = new FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+		try {
+			List<ConfigValue<?>> allConfigValues = gatherConfigValues(new ArrayList<>(), config.schema());
+			subBuf.writeVarInt(allConfigValues.size());
 
-            for (ConfigValue<?> value : allConfigValues) {
-                ConfigKey.STREAM_CODEC.encode(subBuf, value.key());
-                encodeConfigValue(subBuf, value, loadedConfig);
-            }
+			for (ConfigValue<?> value : allConfigValues) {
+				ConfigKey.STREAM_CODEC.encode(subBuf, value.key());
+				encodeConfigValue(subBuf, value, loadedConfig);
+			}
 
-            byteBuf.writeVarInt(subBuf.readableBytes());
-            byteBuf.writeBytes(subBuf);
-        } finally {
-            subBuf.release();
-        }
-    }
+			byteBuf.writeVarInt(subBuf.readableBytes());
+			byteBuf.writeBytes(subBuf);
+		} finally {
+			subBuf.release();
+		}
+	}
 
-    private static S2CSyncLoadedConfigPacket decode(FriendlyByteBuf byteBuf) {
-        var id = byteBuf.readIdentifier();
-        var config = ConfigRegistry.getConfig(id);
+	private static S2CSyncLoadedConfigPacket decode(FriendlyByteBuf byteBuf) {
+		var id = byteBuf.readIdentifier();
+		var config = ConfigRegistry.getConfig(id);
 
-        int dataLength = byteBuf.readVarInt();
-        if (config == null) {
-            LogUtils.getLogger().warn("Received configuration sync for unknown ID '{}'. Skipping data safely.", id);
-            byteBuf.skipBytes(dataLength);
-            return new S2CSyncLoadedConfigPacket(id, null);
-        }
+		int dataLength = byteBuf.readVarInt();
+		if (config == null) {
+			LogUtils.getLogger().warn("Received configuration sync for unknown ID '{}'. Skipping data safely.", id);
+			byteBuf.skipBytes(dataLength);
+			return new S2CSyncLoadedConfigPacket(id, null);
+		}
 
-        FriendlyByteBuf configBuf = new FriendlyByteBuf(byteBuf.readBytes(dataLength));
-        try {
-            int totalValues = configBuf.readVarInt();
-            Map<ConfigKey, Object> decodedMap = new HashMap<>();
+		FriendlyByteBuf configBuf = new FriendlyByteBuf(byteBuf.readBytes(dataLength));
+		try {
+			int totalValues = configBuf.readVarInt();
+			Map<ConfigKey, Object> decodedMap = new HashMap<>();
 
-            for (int i = 0; i < totalValues; i++) {
-                var key = ConfigKey.STREAM_CODEC.decode(configBuf);
-                var targetValue = findConfigValue(config.schema(), key);
-                if (targetValue == null) {
-                    throw new DecoderException("Failed to sync config '" + id + "': Unknown or mismatched key: " + key);
-                }
+			for (int i = 0; i < totalValues; i++) {
+				var key = ConfigKey.STREAM_CODEC.decode(configBuf);
+				var targetValue = findConfigValue(config.schema(), key);
+				if (targetValue == null) {
+					throw new DecoderException("Failed to sync config '" + id + "': Unknown or mismatched key: " + key);
+				}
 
-                decodedMap.put(key, targetValue.type().decodeFromBuf(configBuf));
-            }
+				decodedMap.put(key, targetValue.type().decodeFromBuf(configBuf));
+			}
 
-            var loadedConfig = new LoadedConfigImpl(decodedMap);
-            return new S2CSyncLoadedConfigPacket(id, loadedConfig);
-        } finally {
-            configBuf.release();
-        }
-    }
+			var loadedConfig = new LoadedConfigImpl(decodedMap);
+			return new S2CSyncLoadedConfigPacket(id, loadedConfig);
+		} finally {
+			configBuf.release();
+		}
+	}
 
-    private static List<ConfigValue<?>> gatherConfigValues(List<ConfigValue<?>> configValues, ConfigSchema schema) {
-        configValues.addAll(schema.getConfigValues());
-        for (final var child : schema.getSchemas()) gatherConfigValues(configValues, child);
-        return configValues;
-    }
+	private static List<ConfigValue<?>> gatherConfigValues(List<ConfigValue<?>> configValues, ConfigSchema schema) {
+		configValues.addAll(schema.getConfigValues());
+		for (final var child : schema.getSchemas()) gatherConfigValues(configValues, child);
+		return configValues;
+	}
 
-    private static <T> void encodeConfigValue(FriendlyByteBuf byteBuf, ConfigValue<T> configValue, LoadedConfig loadedConfig) {
-        configValue.type().encodeToBuf(byteBuf, loadedConfig.getRaw(configValue));
-    }
+	private static <T> void encodeConfigValue(FriendlyByteBuf byteBuf, ConfigValue<T> configValue, LoadedConfig loadedConfig) {
+		configValue.type().encodeToBuf(byteBuf, loadedConfig.getRaw(configValue));
+	}
 
-    private static ConfigValue<?> findConfigValue(ConfigSchema root, ConfigKey key) {
-        var current = root;
-        for (int i = 0; i < key.getComponentsCount() - 1; i++) {
-            current = current.getSection(key.get(i));
-            if (current == null) return null;
-        }
-        return current.getValue(key.lastComponent());
-    }
+	private static ConfigValue<?> findConfigValue(ConfigSchema root, ConfigKey key) {
+		var current = root;
+		for (int i = 0; i < key.getComponentsCount() - 1; i++) {
+			current = current.getSection(key.get(i));
+			if (current == null) return null;
+		}
+		return current.getValue(key.lastComponent());
+	}
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

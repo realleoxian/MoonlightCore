@@ -9,9 +9,9 @@ import java.util.concurrent.Executor;
 
 @Mixin(MinecraftServer.class)
 public interface MinecraftServerAccessor {
-    @Accessor
-    Executor getExecutor();
+	@Accessor
+	Executor getExecutor();
 
-    @Accessor
-    LevelStorageSource.LevelStorageAccess getStorageSource();
+	@Accessor
+	LevelStorageSource.LevelStorageAccess getStorageSource();
 }

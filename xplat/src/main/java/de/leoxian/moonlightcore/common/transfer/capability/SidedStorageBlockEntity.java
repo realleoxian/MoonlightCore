@@ -8,17 +8,17 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
 public interface SidedStorageBlockEntity {
-    /// Return an item storage if available on the required side, or `null` otherwise
-    /// @param direction The direction the storage to query
-    @ApiStatus.OverrideOnly
-    default @Nullable Storage<ItemResource> getItemStorage(Direction direction) {
-        return null;
-    }
+	/// Return an item storage if available on the required side, or `null` otherwise
+	/// @param direction The direction the storage to query
+	@ApiStatus.OverrideOnly
+	default @Nullable Storage<ItemResource> getItemStorage(Direction direction) {
+		return null;
+	}
 
-    /// Return a fluid storage if available on the required side, or `null` otherwise
-    /// @param direction The direction the storage to query
-    @ApiStatus.OverrideOnly
-    default @Nullable Storage<FluidResource> getFluidStorage(Direction direction) {
-        return null;
-    }
+	/// Return a fluid storage if available on the required side, or `null` otherwise
+	/// @param direction The direction the storage to query
+	@ApiStatus.OverrideOnly
+	default @Nullable Storage<FluidResource> getFluidStorage(Direction direction) {
+		return null;
+	}
 }

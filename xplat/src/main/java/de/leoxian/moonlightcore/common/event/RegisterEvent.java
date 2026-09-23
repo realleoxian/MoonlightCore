@@ -7,16 +7,16 @@ import net.minecraft.resources.ResourceKey;
 
 @FunctionalInterface
 public interface RegisterEvent {
-    Event<RegisterEvent> EVENT = Event.create(RegisterEvent.class, listeners -> (registryKey, output) -> {
-        for (RegisterEvent listener : listeners) {
-            listener.onRegister(registryKey, output);
-        }
-    });
+	Event<RegisterEvent> EVENT = Event.create(RegisterEvent.class, listeners -> (registryKey, output) -> {
+		for (RegisterEvent listener : listeners) {
+			listener.onRegister(registryKey, output);
+		}
+	});
 
-    void onRegister(ResourceKey<? extends Registry<?>> registryKey, Output output);
+	void onRegister(ResourceKey<? extends Registry<?>> registryKey, Output output);
 
-    @FunctionalInterface
-    interface Output {
-        <T> T register(Identifier id, T value);
-    }
+	@FunctionalInterface
+	interface Output {
+		<T> T register(Identifier id, T value);
+	}
 }

@@ -17,122 +17,122 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
-    public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<R> key) {
-        return new DeferredHolder<>(key);
-    }
+	public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<R> key) {
+		return new DeferredHolder<>(key);
+	}
 
-    public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<? extends Registry<R>> registryKey, Identifier id) {
-        return create(ResourceKey.create(registryKey, id));
-    }
+	public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<? extends Registry<R>> registryKey, Identifier id) {
+		return create(ResourceKey.create(registryKey, id));
+	}
 
-    public static <R, T extends R> DeferredHolder<R, T> create(Registry<R> registry, Identifier id) {
-        return create(registry.key(), id);
-    }
+	public static <R, T extends R> DeferredHolder<R, T> create(Registry<R> registry, Identifier id) {
+		return create(registry.key(), id);
+	}
 
-    private final ResourceKey<R> key;
-    private Holder<R> holder = null;
+	private final ResourceKey<R> key;
+	private Holder<R> holder = null;
 
-    private DeferredHolder(ResourceKey<R> key) {
-        this.key = key;
-    }
+	private DeferredHolder(ResourceKey<R> key) {
+		this.key = key;
+	}
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public T get() {
-        return (T) value();
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public T get() {
+		return (T) value();
+	}
 
-    @Override
-    public R value() {
-        tryBind(true);
-        return Objects.requireNonNull(this.holder, "Unable to get registry holder '" + this.key + "'").value();
-    }
+	@Override
+	public R value() {
+		tryBind(true);
+		return Objects.requireNonNull(this.holder, "Unable to get registry holder '" + this.key + "'").value();
+	}
 
-    @Override
-    public boolean isBound() {
-        tryBind(false);
-        return this.holder != null && this.holder.isBound();
-    }
+	@Override
+	public boolean isBound() {
+		tryBind(false);
+		return this.holder != null && this.holder.isBound();
+	}
 
-    @Override
-    public boolean areComponentsBound() {
-        tryBind(false);
-        return this.holder != null && this.holder.areComponentsBound();
-    }
+	@Override
+	public boolean areComponentsBound() {
+		tryBind(false);
+		return this.holder != null && this.holder.areComponentsBound();
+	}
 
-    @Override
-    public boolean is(Identifier key) {
-        return this.key.identifier().equals(key);
-    }
+	@Override
+	public boolean is(Identifier key) {
+		return this.key.identifier().equals(key);
+	}
 
-    @Override
-    public boolean is(ResourceKey<R> key) {
-        return this.key.equals(key);
-    }
+	@Override
+	public boolean is(ResourceKey<R> key) {
+		return this.key.equals(key);
+	}
 
-    @Override
-    public boolean is(Predicate<ResourceKey<R>> predicate) {
-        return predicate.test(this.key);
-    }
+	@Override
+	public boolean is(Predicate<ResourceKey<R>> predicate) {
+		return predicate.test(this.key);
+	}
 
-    @Override
-    public boolean is(TagKey<R> tag) {
-        tryBind(false);
-        return this.holder != null && this.holder.is(tag);
-    }
+	@Override
+	public boolean is(TagKey<R> tag) {
+		tryBind(false);
+		return this.holder != null && this.holder.is(tag);
+	}
 
-    @Override
-    public boolean is(Holder<R> holder) {
-        tryBind(false);
-        return this.holder != null && this.holder.is(holder);
-    }
+	@Override
+	public boolean is(Holder<R> holder) {
+		tryBind(false);
+		return this.holder != null && this.holder.is(holder);
+	}
 
-    @Override
-    public Stream<TagKey<R>> tags() {
-        tryBind(false);
-        return this.holder != null ? this.holder.tags() : Stream.empty();
-    }
+	@Override
+	public Stream<TagKey<R>> tags() {
+		tryBind(false);
+		return this.holder != null ? this.holder.tags() : Stream.empty();
+	}
 
-    @Override
-    public DataComponentMap components() {
-        tryBind(false);
-        return this.holder == null ? DataComponentMap.EMPTY : this.holder.components();
-    }
+	@Override
+	public DataComponentMap components() {
+		tryBind(false);
+		return this.holder == null ? DataComponentMap.EMPTY : this.holder.components();
+	}
 
-    @Override
-    public Either<ResourceKey<R>, R> unwrap() {
-        return Either.left(this.key);
-    }
+	@Override
+	public Either<ResourceKey<R>, R> unwrap() {
+		return Either.left(this.key);
+	}
 
-    @Override
-    public Optional<ResourceKey<R>> unwrapKey() {
-        return Optional.of(this.key);
-    }
+	@Override
+	public Optional<ResourceKey<R>> unwrapKey() {
+		return Optional.of(this.key);
+	}
 
-    @Override
-    public Kind kind() {
-        return Kind.REFERENCE;
-    }
+	@Override
+	public Kind kind() {
+		return Kind.REFERENCE;
+	}
 
-    @Override
-    public boolean canSerializeIn(HolderOwner<R> registry) {
-        tryBind(false);
-        return this.holder != null && this.holder.canSerializeIn(registry);
-    }
+	@Override
+	public boolean canSerializeIn(HolderOwner<R> registry) {
+		tryBind(false);
+		return this.holder != null && this.holder.canSerializeIn(registry);
+	}
 
-    public ResourceKey<R> getKey() {
-        return key;
-    }
+	public ResourceKey<R> getKey() {
+		return key;
+	}
 
-    @SuppressWarnings("unchecked")
-    public final void tryBind(boolean throwOnMissingRegistry) {
-        if (this.holder != null) return;
+	@SuppressWarnings("unchecked")
+	public final void tryBind(boolean throwOnMissingRegistry) {
+		if (this.holder != null) return;
 
-        final Registry<R> registry = (Registry<R>) BuiltInRegistries.REGISTRY.getValue(this.key.registry());
-        if (registry != null) {
-            this.holder = registry.get(this.key).orElse(null);
-        } else if (throwOnMissingRegistry) {
-            throw new IllegalArgumentException("Unknown or uninitialized registry '" + this.key.registry() + "'");
-        }
-    }
+		final Registry<R> registry = (Registry<R>) BuiltInRegistries.REGISTRY.getValue(this.key.registry());
+		if (registry != null) {
+			this.holder = registry.get(this.key).orElse(null);
+		} else if (throwOnMissingRegistry) {
+			throw new IllegalArgumentException("Unknown or uninitialized registry '" + this.key.registry() + "'");
+		}
+	}
 }

@@ -8,15 +8,15 @@ import net.minecraft.server.network.ConfigurationTask;
 import java.util.function.Consumer;
 
 public record RequestValidConfigsTask() implements ConfigurationTask {
-    public static final Type TYPE = new Type("moonlightcore:request_valid_configs");
+	public static final Type TYPE = new Type("moonlightcore:request_valid_configs");
 
-    @Override
-    public void start(Consumer<Packet<?>> connection) {
-        connection.accept(new ClientboundCustomPayloadPacket(S2CRequestValidConfigsPacket.INSTANCE));
-    }
+	@Override
+	public void start(Consumer<Packet<?>> connection) {
+		connection.accept(new ClientboundCustomPayloadPacket(S2CRequestValidConfigsPacket.INSTANCE));
+	}
 
-    @Override
-    public Type type() {
-        return TYPE;
-    }
+	@Override
+	public Type type() {
+		return TYPE;
+	}
 }

@@ -11,13 +11,13 @@ import java.nio.charset.StandardCharsets;
 
 @ApiStatus.NonExtendable
 public interface ModResource {
-    InputStream open() throws IOException;
+	InputStream open() throws IOException;
 
-    default BufferedReader bufferedReader(Charset charset) throws IOException {
-        return new BufferedReader(new InputStreamReader(open(), charset));
-    }
+	default BufferedReader bufferedReader(Charset charset) throws IOException {
+		return new BufferedReader(new InputStreamReader(open(), charset));
+	}
 
-    default BufferedReader bufferedReader() throws IOException {
-        return bufferedReader(StandardCharsets.UTF_8);
-    }
+	default BufferedReader bufferedReader() throws IOException {
+		return bufferedReader(StandardCharsets.UTF_8);
+	}
 }

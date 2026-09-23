@@ -12,20 +12,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ReloadableServerResources.class)
 public class ReloadableServerResourcesMixin {
-    @Shadow
-    @Final
-    private ReloadableServerRegistries.Holder fullRegistryHolder;
+	@Shadow
+	@Final
+	private ReloadableServerRegistries.Holder fullRegistryHolder;
 
-    @Inject(
-            method = "updateComponentsAndStaticRegistryTags",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
-                    ordinal = 0,
-                    shift = At.Shift.AFTER
-            )
-    )
-    private void moonlightcore$dispatchServerDataLoadEvent(CallbackInfo ci) {
-        TagsUpdatedEvents.SERVER_DATA_LOAD.doFire().onServerDataLoad(this.fullRegistryHolder.lookup(), (ReloadableServerResources) (Object) this);
-    }
+	@Inject(
+			method = "updateComponentsAndStaticRegistryTags",
+			at = @At(
+					value = "INVOKE",
+					target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
+					ordinal = 0,
+					shift = At.Shift.AFTER
+			)
+	)
+	private void moonlightcore$dispatchServerDataLoadEvent(CallbackInfo ci) {
+		TagsUpdatedEvents.SERVER_DATA_LOAD.doFire().onServerDataLoad(this.fullRegistryHolder.lookup(), (ReloadableServerResources) (Object) this);
+	}
 }

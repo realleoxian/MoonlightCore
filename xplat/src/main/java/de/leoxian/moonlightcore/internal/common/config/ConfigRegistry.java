@@ -18,46 +18,46 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public final class ConfigRegistry {
-    private static final Map<Identifier, ConfigImpl<?>> REGISTRY = new ConcurrentHashMap<>();
-    private static final Set<Identifier> SYNCED_CONFIGS = ConcurrentHashMap.newKeySet();
+	private static final Map<Identifier, ConfigImpl<?>> REGISTRY = new ConcurrentHashMap<>();
+	private static final Set<Identifier> SYNCED_CONFIGS = ConcurrentHashMap.newKeySet();
 
-    @SuppressWarnings("unchecked")
-    public static <O> Config<O> register(Identifier id, Function<ConfigSchema.Builder, O> factory, boolean synced) {
-        return (Config<O>) REGISTRY.computeIfAbsent(id, k -> {
-            var lock = ModLockHelper.getOrCreate(id.getNamespace());
-            var config = new ConfigImpl<>(id, factory, lock);
-            config.load();
-            if (synced) {
-                SYNCED_CONFIGS.add(id);
+	@SuppressWarnings("unchecked")
+	public static <O> Config<O> register(Identifier id, Function<ConfigSchema.Builder, O> factory, boolean synced) {
+		return (Config<O>) REGISTRY.computeIfAbsent(id, k -> {
+			var lock = ModLockHelper.getOrCreate(id.getNamespace());
+			var config = new ConfigImpl<>(id, factory, lock);
+			config.load();
+			if (synced) {
+				SYNCED_CONFIGS.add(id);
 
-                ConfigFileWatcher.register(config, () -> {
-                    var currentServer = XplatAbstraction.INSTANCE.getCurrentServer();
-                    if (XplatAbstraction.INSTANCE.getEnvironmentSide() == EnvironmentSide.CLIENT && (currentServer != null && currentServer.isDedicatedServer())) return;
+				ConfigFileWatcher.register(config, () -> {
+					var currentServer = XplatAbstraction.INSTANCE.getCurrentServer();
+					if (XplatAbstraction.INSTANCE.getEnvironmentSide() == EnvironmentSide.CLIENT && (currentServer != null && currentServer.isDedicatedServer())) return;
 
-                    if (currentServer != null) {
-                        currentServer.execute(() -> {
-                            config.load();
-                            PacketDistributor.sendToAllPlayers(new S2CSyncLoadedConfigPacket(config));
-                        });
-                    }
-                });
-            } else {
-                ConfigFileWatcher.register(config, config::load);
-            }
+					if (currentServer != null) {
+						currentServer.execute(() -> {
+							config.load();
+							PacketDistributor.sendToAllPlayers(new S2CSyncLoadedConfigPacket(config));
+						});
+					}
+				});
+			} else {
+				ConfigFileWatcher.register(config, config::load);
+			}
 
-            return config;
-        });
-    }
+			return config;
+		});
+	}
 
-    @Nullable
-    public static Config<?> getConfig(Identifier id) {
-        return REGISTRY.get(id);
-    }
+	@Nullable
+	public static Config<?> getConfig(Identifier id) {
+		return REGISTRY.get(id);
+	}
 
-    @UnmodifiableView
-    public static Set<Identifier> getSyncableConfigs() {
-        return Set.copyOf(SYNCED_CONFIGS);
-    }
+	@UnmodifiableView
+	public static Set<Identifier> getSyncableConfigs() {
+		return Set.copyOf(SYNCED_CONFIGS);
+	}
 
-    private ConfigRegistry() {}
+	private ConfigRegistry() {}
 }

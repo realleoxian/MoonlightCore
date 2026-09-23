@@ -7,11 +7,11 @@ import java.util.function.Consumer;
 
 @FunctionalInterface
 public interface NewRegistryEvent {
-    Event<NewRegistryEvent> EVENT = Event.create(NewRegistryEvent.class, listeners -> output -> {
-        for (NewRegistryEvent listener : listeners) {
-            listener.onNewRegistries(output);
-        }
-    });
+	Event<NewRegistryEvent> EVENT = Event.create(NewRegistryEvent.class, listeners -> output -> {
+		for (NewRegistryEvent listener : listeners) {
+			listener.onNewRegistries(output);
+		}
+	});
 
-    void onNewRegistries(Consumer<Registry<?>> output);
+	void onNewRegistries(Consumer<Registry<?>> output);
 }

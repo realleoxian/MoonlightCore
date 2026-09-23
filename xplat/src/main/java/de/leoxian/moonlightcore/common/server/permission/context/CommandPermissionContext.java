@@ -8,18 +8,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 public record CommandPermissionContext(CommandSourceStack sourceStack) implements PermissionContext {
-    @Override
-    public Optional<ServerPlayer> serverPlayer() {
-        return Optional.ofNullable(sourceStack.getPlayer());
-    }
+	@Override
+	public Optional<ServerPlayer> serverPlayer() {
+		return Optional.ofNullable(sourceStack.getPlayer());
+	}
 
-    @Override
-    public Optional<UUID> playerId() {
-        return Optional.ofNullable(sourceStack.getPlayer()).map(ServerPlayer::getUUID);
-    }
+	@Override
+	public Optional<UUID> playerId() {
+		return Optional.ofNullable(sourceStack.getPlayer()).map(ServerPlayer::getUUID);
+	}
 
-    @Override
-    public Optional<CommandSourceStack> commandSourceStack() {
-        return Optional.of(sourceStack);
-    }
+	@Override
+	public Optional<CommandSourceStack> commandSourceStack() {
+		return Optional.of(sourceStack);
+	}
 }

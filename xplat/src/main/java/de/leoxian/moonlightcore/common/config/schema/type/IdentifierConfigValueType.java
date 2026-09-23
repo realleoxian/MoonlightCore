@@ -7,31 +7,31 @@ import net.minecraft.resources.Identifier;
 import java.util.List;
 
 public enum IdentifierConfigValueType implements ConfigValueType<Identifier> {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public String writeToString(Identifier value) {
-        return value.toString();
-    }
+	@Override
+	public String writeToString(Identifier value) {
+		return value.toString();
+	}
 
-    @Override
-    public DeserializationResult<Identifier> readFromString(String string) {
-        try {
-            string = string.trim();
-            return new DeserializationResult.Success<>(Identifier.parse(string));
-        } catch (IdentifierException e) {
-            return new DeserializationResult.Error<>(List.of(e.getMessage()));
-        }
-    }
+	@Override
+	public DeserializationResult<Identifier> readFromString(String string) {
+		try {
+			string = string.trim();
+			return new DeserializationResult.Success<>(Identifier.parse(string));
+		} catch (IdentifierException e) {
+			return new DeserializationResult.Error<>(List.of(e.getMessage()));
+		}
+	}
 
-    @Override
-    public void encodeToBuf(FriendlyByteBuf byteBuf, Identifier value) {
-        byteBuf.writeIdentifier(value);
-    }
+	@Override
+	public void encodeToBuf(FriendlyByteBuf byteBuf, Identifier value) {
+		byteBuf.writeIdentifier(value);
+	}
 
-    @Override
-    public Identifier decodeFromBuf(FriendlyByteBuf byteBuf) {
-        return byteBuf.readIdentifier();
-    }
+	@Override
+	public Identifier decodeFromBuf(FriendlyByteBuf byteBuf) {
+		return byteBuf.readIdentifier();
+	}
 }

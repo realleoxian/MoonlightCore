@@ -13,21 +13,21 @@ import java.util.OptionalInt;
 
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin {
-    @Inject(
-            method = "openMenu(Lnet/minecraft/world/MenuProvider;)Ljava/util/OptionalInt;",
-            at = @At(value = "RETURN")
-    )
-    private void moonlightcore$dispatchOpenMenuEvent(MenuProvider provider, CallbackInfoReturnable<OptionalInt> cir) {
-        ServerPlayer player = ((ServerPlayer) (Object) this);
-        ServerPlayerEvents.OPEN_MENU.doFire().onOpenMenu(player, player.containerMenu);
-    }
+	@Inject(
+			method = "openMenu(Lnet/minecraft/world/MenuProvider;)Ljava/util/OptionalInt;",
+			at = @At(value = "RETURN")
+	)
+	private void moonlightcore$dispatchOpenMenuEvent(MenuProvider provider, CallbackInfoReturnable<OptionalInt> cir) {
+		ServerPlayer player = ((ServerPlayer) (Object) this);
+		ServerPlayerEvents.OPEN_MENU.doFire().onOpenMenu(player, player.containerMenu);
+	}
 
-    @Inject(
-            method = "closeContainer",
-            at = @At(value = "HEAD")
-    )
-    private void moonlightcore$dispatchCloseMenuEvent(CallbackInfo ci) {
-        ServerPlayer player = ((ServerPlayer) (Object) this);
-        ServerPlayerEvents.CLOSE_MENU.doFire().onCloseMenu(player, player.containerMenu);
-    }
+	@Inject(
+			method = "closeContainer",
+			at = @At(value = "HEAD")
+	)
+	private void moonlightcore$dispatchCloseMenuEvent(CallbackInfo ci) {
+		ServerPlayer player = ((ServerPlayer) (Object) this);
+		ServerPlayerEvents.CLOSE_MENU.doFire().onCloseMenu(player, player.containerMenu);
+	}
 }

@@ -4,5 +4,5 @@ import net.neoforged.bus.api.IEventBus;
 
 @FunctionalInterface
 public interface ModEventBusRegistrable {
-    void register(IEventBus modEventBus);
+	void register(IEventBus modEventBus);
 }

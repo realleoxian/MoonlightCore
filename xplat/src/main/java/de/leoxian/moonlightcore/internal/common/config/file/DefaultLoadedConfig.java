@@ -4,16 +4,16 @@ import de.leoxian.moonlightcore.common.config.ConfigValue;
 import de.leoxian.moonlightcore.common.config.file.LoadedConfig;
 
 public enum DefaultLoadedConfig implements LoadedConfig {
-    INSTANCE
-    ;
+	INSTANCE
+	;
 
-    @Override
-    public <T> T getRaw(ConfigValue<T> configValue) {
-        return configValue.defaultValue();
-    }
+	@Override
+	public <T> T getRaw(ConfigValue<T> configValue) {
+		return configValue.defaultValue();
+	}
 
-    @Override
-    public <T> void setRaw(ConfigValue<T> configValue, T newValue) {
-        // no-op
-    }
+	@Override
+	public <T> void setRaw(ConfigValue<T> configValue, T newValue) {
+		// no-op
+	}
 }

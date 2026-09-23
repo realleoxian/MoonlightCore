@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public record NeoforgeBlockColorRegistrar(RegisterColorHandlersEvent.BlockTintSources event) implements BlockColorRegistrar {
-    @Override
-    public void register(List<BlockTintSource> tintSources, Supplier<Block> blocks) {
-        event.register(tintSources, blocks.get());
-    }
+	@Override
+	public void register(List<BlockTintSource> tintSources, Supplier<Block> blocks) {
+		event.register(tintSources, blocks.get());
+	}
 }

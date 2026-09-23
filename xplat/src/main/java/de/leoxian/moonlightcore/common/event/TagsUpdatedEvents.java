@@ -2,30 +2,29 @@ package de.leoxian.moonlightcore.common.event;
 
 import de.leoxian.moonlightcore.common.event.base.Event;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
 
 public final class TagsUpdatedEvents {
-    public static final Event<ServerDataLoad> SERVER_DATA_LOAD = Event.create(ServerDataLoad.class, listeners -> (registryAccess, resourceManager) -> {
-       for (final var listener : listeners) {
-           listener.onServerDataLoad(registryAccess, resourceManager);
-       }
-    });
-    public static final Event<ClientPacketReceived> CLIENT_PACKET_RECEIVED = Event.create(ClientPacketReceived.class, listeners -> (registryAccess, isIntegratedServerConnection) -> {
-        for (final var listener : listeners) {
-            listener.onClientPacketReceived(registryAccess, isIntegratedServerConnection);
-        }
-    });
+	public static final Event<ServerDataLoad> SERVER_DATA_LOAD = Event.create(ServerDataLoad.class, listeners -> (registryAccess, resourceManager) -> {
+	for (final var listener : listeners) {
+		listener.onServerDataLoad(registryAccess, resourceManager);
+	}
+	});
+	public static final Event<ClientPacketReceived> CLIENT_PACKET_RECEIVED = Event.create(ClientPacketReceived.class, listeners -> (registryAccess, isIntegratedServerConnection) -> {
+		for (final var listener : listeners) {
+			listener.onClientPacketReceived(registryAccess, isIntegratedServerConnection);
+		}
+	});
 
-    private TagsUpdatedEvents() {}
+	private TagsUpdatedEvents() {}
 
-    @FunctionalInterface
-    public interface ServerDataLoad {
-        void onServerDataLoad(HolderLookup.Provider registryLookup, ReloadableServerResources resourceManager);
-    }
+	@FunctionalInterface
+	public interface ServerDataLoad {
+		void onServerDataLoad(HolderLookup.Provider registryLookup, ReloadableServerResources resourceManager);
+	}
 
-    @FunctionalInterface
-    public interface ClientPacketReceived {
-        void onClientPacketReceived(HolderLookup.Provider registryLookup, boolean isIntegratedServerConnection);
-    }
+	@FunctionalInterface
+	public interface ClientPacketReceived {
+		void onClientPacketReceived(HolderLookup.Provider registryLookup, boolean isIntegratedServerConnection);
+	}
 }

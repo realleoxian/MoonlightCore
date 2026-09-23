@@ -9,29 +9,29 @@ import org.jspecify.annotations.Nullable;
 
 @ApiStatus.NonExtendable
 public interface ConfigValue<T> {
-    /// @return The current value associated with this config entry
-    T get();
+	/// @return The current value associated with this config entry
+	T get();
 
-    /// @return The default value of this config
-    T defaultValue();
+	/// @return The default value of this config
+	T defaultValue();
 
-    /// @return The serializer of this config value type
-    ConfigValueType<T> type();
+	/// @return The serializer of this config value type
+	ConfigValueType<T> type();
 
-    /// @return The validator of this config entry
-    ConfigValueValidator<T> validator();
+	/// @return The validator of this config entry
+	ConfigValueValidator<T> validator();
 
-    /// @return the required restart type
-    RestartType requiredRestartType();
+	/// @return the required restart type
+	RestartType requiredRestartType();
 
-    /// @return The config key of this entry
-    ConfigKey key();
+	/// @return The config key of this entry
+	ConfigKey key();
 
-    /// @return The comments of this config entry
-    @Nullable
-    Iterable<String> comments();
+	/// @return The comments of this config entry
+	@Nullable
+	Iterable<String> comments();
 
-    /// @return The translation key of this config entry
-    @Nullable
-    String translationKey();
+	/// @return The translation key of this config entry
+	@Nullable
+	String translationKey();
 }
