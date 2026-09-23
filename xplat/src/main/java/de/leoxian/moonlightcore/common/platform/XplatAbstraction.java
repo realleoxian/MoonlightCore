@@ -1,7 +1,6 @@
 package de.leoxian.moonlightcore.common.platform;
 
 import de.leoxian.moonlightcore.common.EnvironmentSide;
-import de.leoxian.moonlightcore.common.ModEntrypoint;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapabilityCache;
 import de.leoxian.moonlightcore.common.capability.entity.EntityCapability;
@@ -45,8 +44,6 @@ import java.util.function.Supplier;
 public interface XplatAbstraction {
     XplatAbstraction INSTANCE = ServiceLoader.load(XplatAbstractionFactory.class).findFirst().orElseThrow().create();
 
-    void initializeMod(final String modId, final ModEntrypoint entrypoint);
-
     // |-----| Registrars |-----|
     void fluids(String namespace, Consumer<FluidRegistrar> initializer);
 
@@ -61,8 +58,6 @@ public interface XplatAbstraction {
     SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound);
 
     <T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey);
-
-    <R, T extends R> DeferredHolder<R, T> register(Registry<R> registry, Identifier id, Supplier<T> value);
 
     void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer);
 

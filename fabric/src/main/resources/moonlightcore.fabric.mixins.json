@@ -4,6 +4,8 @@
   "package": "de.leoxian.moonlightcore.fabric.common.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "accessor.BuiltInRegistriesAccessor",
+    "accessor.MappedRegistryAccessor",
     "event.ChunkMapMixin",
     "event.ItemEntityMixin",
     "event.LivingEntityMixin",

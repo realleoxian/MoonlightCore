@@ -5,6 +5,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
+import java.util.function.Supplier;
+
 public interface RegistryBuilder<R> {
     /// Create a new builder for a registry that will get registered automatically
     /// @param key The key of the registry
@@ -21,5 +23,5 @@ public interface RegistryBuilder<R> {
     RegistryBuilder<R> defaultId(Identifier id);
 
     /// @return A new static registry that will be automatically registered
-    Registry<R> build();
+    Supplier<Registry<R>> build();
 }

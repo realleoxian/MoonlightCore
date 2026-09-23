@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public record SyncConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, Set<Identifier> syncables) implements ConfigurationTask {
-    public static final Type TYPE = new Type("moonlightcoer:sync_config");
+    public static final Type TYPE = new Type("moonlightcore:sync_config");
 
     @Override
     public void start(Consumer<Packet<?>> consumer) {
@@ -24,6 +24,7 @@ public record SyncConfigurationTask(ServerConfigurationPacketListenerImpl packet
             }
             consumer.accept(new ClientboundCustomPayloadPacket(new S2CSyncLoadedConfigPacket(syncable, config.loadedConfig())));
         }
+
         ServerConfigurationNetworking.completeTask(packetListener, TYPE);
     }
 

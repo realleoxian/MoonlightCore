@@ -32,6 +32,11 @@ public record C2SAcceptedValidConfigs(Set<Identifier> validConfigs) implements C
         context.enqueueWork(() -> {
             var packetListener = context.packetListener();
             var decoded = decodeSyncableConfigs(packet);
+
+            if (ServerConfigurationNetworking.canSend(context.packetListener(), S2CSyncLoadedConfigPacket.TYPE)) {
+                ServerConfigurationNetworking.addTask("moonlightcore", context.packetListener(), new SyncConfigurationTask(context.packetListener(), decoded));
+            }
+
             if (ServerConfigurationNetworking.canSend(packetListener, S2CSyncLoadedConfigPacket.TYPE)) {
                 ServerConfigurationNetworking.addTask("moonlightcore", packetListener, new SyncConfigurationTask(packetListener, decoded));
             }
@@ -57,8 +62,8 @@ public record C2SAcceptedValidConfigs(Set<Identifier> validConfigs) implements C
     }
 
     private static Set<Identifier> decodeSyncableConfigs(C2SAcceptedValidConfigs packet) {
-        var clientValidConfigs = packet.validConfigs();
-        var serverValidConfigs = ConfigRegistry.getSyncableConfigs();
+        Set<Identifier> clientValidConfigs = new HashSet<>(packet.validConfigs());
+        Set<Identifier> serverValidConfigs = ConfigRegistry.getSyncableConfigs();
         clientValidConfigs.retainAll(serverValidConfigs);
 
         if (clientValidConfigs.size() < serverValidConfigs.size()) {
@@ -66,7 +71,10 @@ public record C2SAcceptedValidConfigs(Set<Identifier> validConfigs) implements C
             LOGGER.warn("   - Client: {}", clientValidConfigs.size());
             LOGGER.warn("   - Server: {}", serverValidConfigs.size());
             LOGGER.warn("Missing server configurations on the client:");
-            LOGGER.warn(serverValidConfigs.stream().filter(id -> !clientValidConfigs.contains(id)).map(Identifier::toString).collect(Collectors.joining(", ")));
+            LOGGER.warn(serverValidConfigs.stream()
+                    .filter(id -> !clientValidConfigs.contains(id))
+                    .map(Identifier::toString)
+                    .collect(Collectors.joining(", ")));
         }
         return clientValidConfigs;
     }

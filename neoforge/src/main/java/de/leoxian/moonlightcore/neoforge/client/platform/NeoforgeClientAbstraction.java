@@ -18,7 +18,6 @@ import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.ClientTooltipComponentRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
-import de.leoxian.moonlightcore.common.ClientModEntrypoint;
 import de.leoxian.moonlightcore.neoforge.client.color.NeoforgeBlockColorRegistrar;
 import de.leoxian.moonlightcore.neoforge.client.command.NeoforgeClientCommandsContext;
 import de.leoxian.moonlightcore.neoforge.client.fluid.NeoforgeFluidRendererRegistrar;
@@ -38,33 +37,16 @@ import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeRenderPipelineReg
 import de.leoxian.moonlightcore.neoforge.common.ModEventBuses;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class NeoforgeClientAbstraction implements XplatClientAbstraction {
-    @Override
-    public void initializeClientMod(String modId, ClientModEntrypoint entrypoint) {
-        try {
-            entrypoint.initializeClientMod();
-        } catch (Throwable e) {
-            throw new RuntimeException("Failed to initialize client mod '" + modId + "'", e);
-        }
-    }
-
     @Override
     public void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer) {
         initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeFluidRendererRegistrar.class));

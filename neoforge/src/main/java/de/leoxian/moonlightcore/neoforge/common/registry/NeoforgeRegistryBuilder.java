@@ -1,5 +1,6 @@
 package de.leoxian.moonlightcore.neoforge.common.registry;
 
+import com.google.common.base.Suppliers;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -8,45 +9,37 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-@EventBusSubscriber
 public class NeoforgeRegistryBuilder<R> implements RegistryBuilder<R> {
-    private static final Queue<Registry<?>> PENDING_REGISTRIES = new ConcurrentLinkedQueue<>();
-
-    @SubscribeEvent
-    public static void onNewRegistries(NewRegistryEvent event) {
-        Registry<?> registry;
-        while ((registry = PENDING_REGISTRIES.poll()) != null) {
-            event.register(registry);
-        }
-    }
-
-    private final net.neoforged.neoforge.registries.RegistryBuilder<R> builder;
+    private final ResourceKey<Registry<R>> registryKey;
+    private boolean sync = false;
+    private Identifier defaultId = null;
 
     public NeoforgeRegistryBuilder(ResourceKey<Registry<R>> registryKey) {
-        this.builder = new net.neoforged.neoforge.registries.RegistryBuilder<>(registryKey);
+        this.registryKey = registryKey;
     }
 
     @Override
     public RegistryBuilder<R> sync(boolean sync) {
-        this.builder.sync(sync);
+        this.sync = sync;
         return this;
     }
 
     @Override
     public RegistryBuilder<R> defaultId(Identifier id) {
-        this.builder.defaultKey(id);
+        this.defaultId = id;
         return this;
     }
 
     @Override
-    public Registry<R> build() {
-        Registry<R> registry = this.builder.create();
-        PENDING_REGISTRIES.add(registry);
-        return registry;
+    public Supplier<Registry<R>> build() {
+        net.neoforged.neoforge.registries.RegistryBuilder<R> neoBuilder = new net.neoforged.neoforge.registries.RegistryBuilder<>(this.registryKey);
+        neoBuilder.sync(this.sync);
+        neoBuilder.defaultKey(this.defaultId);
+        return Suppliers.memoize(neoBuilder::create);
     }
 }

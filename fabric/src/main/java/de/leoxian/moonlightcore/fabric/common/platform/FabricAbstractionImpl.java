@@ -1,10 +1,6 @@
 package de.leoxian.moonlightcore.fabric.common.platform;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.serialization.Codec;
 import de.leoxian.moonlightcore.common.EnvironmentSide;
-import de.leoxian.moonlightcore.common.ModEntrypoint;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapabilityCache;
 import de.leoxian.moonlightcore.common.capability.entity.EntityCapability;
@@ -18,7 +14,6 @@ import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
-import de.leoxian.moonlightcore.common.registry.DeferredHolder;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
@@ -40,20 +35,11 @@ import de.leoxian.moonlightcore.fabric.common.registry.FabricRegistryBuilderImpl
 import de.leoxian.moonlightcore.fabric.common.resource.FabricModResources;
 import de.leoxian.moonlightcore.internal.common.internal.XplatPermissionHelper;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.resource.v1.DataResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -66,18 +52,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.level.block.SoundType;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class FabricAbstractionImpl implements XplatAbstraction {
@@ -86,15 +67,6 @@ public class FabricAbstractionImpl implements XplatAbstraction {
     private final Supplier<PermissionsHelper> permissionsHelper = new ModProxy<>(PermissionsHelper.class, XplatPermissionHelper::new)
             .put("fabric-permission-api-v1", "de.leoxian.moonlightcore.fabric.common.server.permission.FabricPermissionsHelperV1")
             .put("fabric-permissions-api-v0", "de.leoxian.moonlightcore.fabric.common.server.permission.FabricPermissionsHelperV0");
-
-    @Override
-    public void initializeMod(String modId, final ModEntrypoint entrypoint) {
-        try {
-            entrypoint.initialize();
-        } catch (Throwable throwable) {
-            throw new RuntimeException("Failed to initialize mod '" + modId + "'", throwable);
-        }
-    }
 
     @Override
     public void fluids(String namespace, Consumer<FluidRegistrar> initializer) {
@@ -131,13 +103,6 @@ public class FabricAbstractionImpl implements XplatAbstraction {
     @Override
     public <T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey) {
         return new FabricRegistryBuilderImpl<>(registryKey);
-    }
-
-    @Override
-    public <R, T extends R> DeferredHolder<R, T> register(Registry<R> registry, Identifier id, Supplier<T> value) {
-        ResourceKey<R> key = ResourceKey.create(registry.key(), id);
-        Registry.register(registry, id, value.get());
-        return DeferredHolder.create(key);
     }
 
     @Override

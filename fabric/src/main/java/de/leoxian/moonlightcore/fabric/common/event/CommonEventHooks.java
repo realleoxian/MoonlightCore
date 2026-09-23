@@ -1,7 +1,6 @@
 package de.leoxian.moonlightcore.fabric.common.event;
 
 import de.leoxian.moonlightcore.common.event.ArmorHurtEvent;
-import de.leoxian.moonlightcore.common.event.RegisterConfigurationTasksEvent;
 import de.leoxian.moonlightcore.common.event.ServerLevelTickEvents;
 import de.leoxian.moonlightcore.common.network.PacketSender;
 import io.netty.channel.ChannelFutureListener;
@@ -13,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,9 +22,11 @@ import java.util.EnumMap;
 
 public final class CommonEventHooks {
     public static void bindFabricApiEvents() {
+        ServerConfigurationConnectionEvents.BEFORE_CONFIGURE.register((listener, server) -> {
+            de.leoxian.moonlightcore.common.event.ServerConfigurationConnectionEvents.BEFORE_CONFIGURE.doFire().onSendConfiguration(listener, server, listener::addTask, listener::completeTask);
+        });
         ServerConfigurationConnectionEvents.CONFIGURE.register((listener, server) -> {
-            RegisterConfigurationTasksEvent.Context context = listener::addTask;
-            RegisterConfigurationTasksEvent.EVENT.doFire().onConfigure(listener, context);
+            de.leoxian.moonlightcore.common.event.ServerConfigurationConnectionEvents.CONFIGURE.doFire().onSendConfiguration(listener, server, listener::addTask, listener::completeTask);
         });
 
         ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) ->

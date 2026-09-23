@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.internal.common.mod.client;
+package de.leoxian.moonlightcore.internal.common.core.client;
 
 import de.leoxian.moonlightcore.client.network.ClientConfigurationNetworking;
 import de.leoxian.moonlightcore.client.network.ClientPlayNetworking;
@@ -7,7 +7,7 @@ import de.leoxian.moonlightcore.internal.common.network.s2c.S2CRemoveDimensionPa
 import de.leoxian.moonlightcore.internal.common.network.s2c.S2CRequestValidConfigsPacket;
 import de.leoxian.moonlightcore.internal.common.network.s2c.S2CSyncLoadedConfigPacket;
 
-public final class InternalClientMod {
+public final class MoonlightCoreClient {
     public static void initializeClientMod() {
         ClientConfigurationNetworking.register(S2CRequestValidConfigsPacket.TYPE, S2CRequestValidConfigsPacket.STREAM_CODEC, S2CRequestValidConfigsPacket::handleConfiguration);
         ClientPlayNetworking.register(S2CRequestValidConfigsPacket.TYPE, S2CRequestValidConfigsPacket.STREAM_CODEC, S2CRequestValidConfigsPacket::handlePlay);
@@ -19,5 +19,5 @@ public final class InternalClientMod {
         ClientPlayNetworking.register(S2CCreateDimension.TYPE, S2CCreateDimension.STREAM_CODEC, S2CCreateDimension::handle);
     }
 
-    private InternalClientMod() {}
+    private MoonlightCoreClient() {}
 }

@@ -1,7 +1,6 @@
 package de.leoxian.moonlightcore.neoforge.common.platform;
 
 import de.leoxian.moonlightcore.common.EnvironmentSide;
-import de.leoxian.moonlightcore.common.ModEntrypoint;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapabilityCache;
 import de.leoxian.moonlightcore.common.capability.entity.EntityCapability;
@@ -80,15 +79,6 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     }
 
     @Override
-    public void initializeMod(String modId, final ModEntrypoint entrypoint) {
-        try {
-            entrypoint.initialize();
-        } catch (Throwable throwable) {
-            throw new RuntimeException("Failed to initialize mod '" + modId + "'", throwable);
-        }
-    }
-
-    @Override
     public void fluids(String namespace, Consumer<FluidRegistrar> initializer) {
         initializer.accept(new NeoforgeFluidRegistrar(namespace));
     }
@@ -122,12 +112,6 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
     @Override
     public <T> RegistryBuilder<T> registryBuilder(ResourceKey<Registry<T>> registryKey) {
         return new NeoforgeRegistryBuilder<>(registryKey);
-    }
-
-    @Override
-    public <R, T extends R> DeferredHolder<R, T> register(Registry<R> registry, Identifier id, Supplier<T> value) {
-        net.neoforged.neoforge.registries.DeferredHolder<R, T> holder = ModDeferredRegisters.get(registry, id.getNamespace()).register(id.getPath(), value);
-        return DeferredHolder.create(holder.getKey());
     }
 
     @Override

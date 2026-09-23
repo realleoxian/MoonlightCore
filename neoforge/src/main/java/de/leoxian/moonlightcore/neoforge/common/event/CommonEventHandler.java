@@ -40,12 +40,31 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
 @EventBusSubscriber
 public final class CommonEventHandler {
+    @SubscribeEvent
+    public static void onNewRegistries(NewRegistryEvent event) {
+        de.leoxian.moonlightcore.common.event.NewRegistryEvent.EVENT.doFire().onNewRegistries(event::register);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterEvent(RegisterEvent event) {
+        ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
+        de.leoxian.moonlightcore.common.event.RegisterEvent.EVENT.doFire().onRegister(registryKey, new de.leoxian.moonlightcore.common.event.RegisterEvent.Output() {
+            @Override
+            public <T> T register(Identifier id, T value) {
+                event.register((ResourceKey<? extends Registry<T>>) registryKey, id, () -> value);
+                return value;
+            }
+        });
+    }
+
     @SubscribeEvent
     public static void onArmorHurtEvent(net.neoforged.neoforge.event.entity.living.ArmorHurtEvent event) {
         ArmorHurtEvent.Context context = new ArmorHurtEvent.Context() {
@@ -367,7 +386,7 @@ public final class CommonEventHandler {
 
     @SubscribeEvent
     public static void onRegisterConfigurationTasks(net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent event) {
-        RegisterConfigurationTasksEvent.EVENT.doFire().onConfigure((ServerConfigurationPacketListenerImpl) event.getListener(), event::register);
+
     }
 
     private CommonEventHandler() {}

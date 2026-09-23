@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
-    public static  <R, T extends R> DeferredHolder<R, T> create(ResourceKey<R> key) {
+    public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<R> key) {
         return new DeferredHolder<>(key);
     }
 
@@ -30,7 +30,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     }
 
     private final ResourceKey<R> key;
-    private Holder<T> holder = null;
+    private Holder<R> holder = null;
 
     private DeferredHolder(ResourceKey<R> key) {
         this.key = key;
@@ -67,7 +67,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 
     @Override
     public boolean is(ResourceKey<R> key) {
-        return this.key == key;
+        return this.key.equals(key);
     }
 
     @Override
@@ -78,19 +78,19 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     @Override
     public boolean is(TagKey<R> tag) {
         tryBind(false);
-        return this.holder != null && ((Holder<R>) this.holder).is(tag);
+        return this.holder != null && this.holder.is(tag);
     }
 
     @Override
     public boolean is(Holder<R> holder) {
         tryBind(false);
-        return this.holder != null && ((Holder<R>) this.holder).is(holder);
+        return this.holder != null && this.holder.is(holder);
     }
 
     @Override
     public Stream<TagKey<R>> tags() {
         tryBind(false);
-        return this.holder != null ? ((Holder<R>) this.holder).tags() : Stream.empty();
+        return this.holder != null ? this.holder.tags() : Stream.empty();
     }
 
     @Override
@@ -117,7 +117,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     @Override
     public boolean canSerializeIn(HolderOwner<R> registry) {
         tryBind(false);
-        return this.holder != null && ((Holder<R>) this.holder).canSerializeIn(registry);
+        return this.holder != null && this.holder.canSerializeIn(registry);
     }
 
     public ResourceKey<R> getKey() {
@@ -128,11 +128,11 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     public final void tryBind(boolean throwOnMissingRegistry) {
         if (this.holder != null) return;
 
-        final var registry = (Registry<R>) BuiltInRegistries.REGISTRY.getValue(this.key.registry());
+        final Registry<R> registry = (Registry<R>) BuiltInRegistries.REGISTRY.getValue(this.key.registry());
         if (registry != null) {
-            this.holder = (Holder<T>) registry.get(this.key).orElse(null);
+            this.holder = registry.get(this.key).orElse(null);
         } else if (throwOnMissingRegistry) {
-            throw new IllegalArgumentException("Unknown registry '" + this.key.registry() + "'");
+            throw new IllegalArgumentException("Unknown or uninitialized registry '" + this.key.registry() + "'");
         }
     }
 }

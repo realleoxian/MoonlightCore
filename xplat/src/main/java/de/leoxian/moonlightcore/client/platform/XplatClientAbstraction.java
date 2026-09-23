@@ -17,7 +17,6 @@ import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.ClientTooltipComponentRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
-import de.leoxian.moonlightcore.common.ClientModEntrypoint;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -28,8 +27,6 @@ import java.util.function.Consumer;
 
 public interface XplatClientAbstraction {
     XplatClientAbstraction INSTANCE = ServiceLoader.load(XplatClientAbstractionFactory.class).findFirst().orElseThrow().create();
-
-    void initializeClientMod(final String modId, final ClientModEntrypoint entrypoint);
 
     // |-----| Registrars |-----|
     void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer);

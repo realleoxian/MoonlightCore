@@ -1,14 +1,11 @@
 package de.leoxian.moonlightcore.fabric.client.platform;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.brigadier.CommandDispatcher;
 import de.leoxian.moonlightcore.client.color.BlockColorRegistrar;
 import de.leoxian.moonlightcore.client.command.ClientCommandsContext;
 import de.leoxian.moonlightcore.client.fluid.FluidRendererRegistrar;
-import de.leoxian.moonlightcore.client.gui.GuiLayer;
 import de.leoxian.moonlightcore.client.gui.GuiLayerRegistrar;
 import de.leoxian.moonlightcore.client.keymapping.KeyMappingRegistrar;
-import de.leoxian.moonlightcore.client.menu.MenuScreenFactory;
 import de.leoxian.moonlightcore.client.menu.MenuScreenRegistrar;
 import de.leoxian.moonlightcore.client.model.ModelLayerRegistrar;
 import de.leoxian.moonlightcore.client.model.RangeSelectItemModelPropertyRegistrar;
@@ -22,12 +19,10 @@ import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.ClientTooltipComponentRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
-import de.leoxian.moonlightcore.common.ClientModEntrypoint;
 import de.leoxian.moonlightcore.fabric.client.color.FabricBlockColorRegistrar;
 import de.leoxian.moonlightcore.fabric.client.command.FabricClientCommandsContext;
 import de.leoxian.moonlightcore.fabric.client.event.ClientEventHooks;
 import de.leoxian.moonlightcore.fabric.client.fluid.FabricFluidRendererRegistrar;
-import de.leoxian.moonlightcore.fabric.client.gui.FabricGuiLayer;
 import de.leoxian.moonlightcore.fabric.client.gui.FabricGuiLayerRegistrar;
 import de.leoxian.moonlightcore.fabric.client.keymapping.FabricKeyMappingRegistrar;
 import de.leoxian.moonlightcore.fabric.client.menu.FabricMenuScreenRegistrar;
@@ -43,56 +38,16 @@ import de.leoxian.moonlightcore.fabric.client.render.FabricClientTooltipComponen
 import de.leoxian.moonlightcore.fabric.client.render.FabricEntityRendererRegistrar;
 import de.leoxian.moonlightcore.fabric.client.render.FabricRenderPipelineRegistrar;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.color.block.BlockTintSource;
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperties;
-import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperty;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.level.block.Block;
 
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class FabricClientAbstractionImpl implements XplatClientAbstraction {
-    @Override
-    public void initializeClientMod(String modId, ClientModEntrypoint entrypoint) {
-        try {
-            entrypoint.initializeClientMod();
-        } catch (Throwable e) {
-            throw new RuntimeException("Failed to initialize client mod '" + modId + "'", e);
-        }
-    }
-
     @Override
     public void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer) {
         initializer.accept(FabricFluidRendererRegistrar.INSTANCE);
