@@ -1,5 +1,6 @@
 package de.leoxian.moonlightcore.common.network;
 
+import de.leoxian.moonlightcore.common.config.Config;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -55,6 +56,14 @@ public final class ServerConfigurationNetworking {
 		/// Enqueues a task that returns a value to be executed on the main thread
 		/// @param task The task
 		<T> CompletableFuture<T> enqueueWork(Supplier<T> task);
+
+		/// Add a new configuration task to the configuration phase
+		/// @param task The task being added
+		void addTask(final ConfigurationTask task);
+
+		/// Complete the current configuration task if it's the given type
+		/// @param type The task's type
+		void completeTask(final ConfigurationTask.Type type);
 
 		/// @return The player's connection
 		ServerConfigurationPacketListenerImpl packetListener();

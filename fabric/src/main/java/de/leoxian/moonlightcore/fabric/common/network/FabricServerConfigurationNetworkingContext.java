@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +23,16 @@ public record FabricServerConfigurationNetworkingContext(net.fabricmc.fabric.api
 	@Override
 	public <T> CompletableFuture<T> enqueueWork(Supplier<T> task) {
 		return context.server().submit(task);
+	}
+
+	@Override
+	public void addTask(ConfigurationTask task) {
+		packetListener().addTask(task);
+	}
+
+	@Override
+	public void completeTask(ConfigurationTask.Type type) {
+		packetListener().completeTask(type);
 	}
 
 	@Override
