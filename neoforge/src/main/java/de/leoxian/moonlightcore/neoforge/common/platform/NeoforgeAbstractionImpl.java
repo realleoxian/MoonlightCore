@@ -1,6 +1,8 @@
 package de.leoxian.moonlightcore.neoforge.common.platform;
 
 import de.leoxian.moonlightcore.common.EnvironmentSide;
+import de.leoxian.moonlightcore.common.attachment.DataAttachmentHolder;
+import de.leoxian.moonlightcore.common.attachment.DataAttachmentType;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapabilityCache;
 import de.leoxian.moonlightcore.common.capability.entity.EntityCapability;
@@ -18,6 +20,8 @@ import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
 import de.leoxian.moonlightcore.neoforge.common.ModEventBuses;
+import de.leoxian.moonlightcore.neoforge.common.attachment.NeoAttachmentHolderWrapper;
+import de.leoxian.moonlightcore.neoforge.common.attachment.NeoDataAttachmentTypeBuilderImpl;
 import de.leoxian.moonlightcore.neoforge.common.capability.NeoforgeBlockCapabilityCache;
 import de.leoxian.moonlightcore.neoforge.common.capability.NeoforgeCapabilityRegistry;
 import de.leoxian.moonlightcore.neoforge.common.command.NeoforgeArgumentTypeRegistrar;
@@ -44,7 +48,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
@@ -118,6 +126,31 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
+	public DataAttachmentHolder getDataAttachmentsFromLevel(Level level) {
+		return new NeoAttachmentHolderWrapper(level);
+	}
+
+	@Override
+	public DataAttachmentHolder getDataAttachmentsFromChunk(ChunkAccess chunkAccess) {
+		return new NeoAttachmentHolderWrapper(chunkAccess);
+	}
+
+	@Override
+	public DataAttachmentHolder getDataAttachmentsFromBlockEntity(BlockEntity blockEntity) {
+		return new NeoAttachmentHolderWrapper(blockEntity);
+	}
+
+	@Override
+	public DataAttachmentHolder getDataAttachmentsFromEntity(Entity entity) {
+		return new NeoAttachmentHolderWrapper(entity);
+	}
+
+	@Override
+	public <T> DataAttachmentType.Builder<T> createAttachmentTypeBuilder(Supplier<T> initializer) {
+		return new NeoDataAttachmentTypeBuilderImpl<>(initializer);
+	}
+
+	@Override
 	public <A, C> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
 		return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
 				.getItemCapability(id, apiClass, contextClass);
@@ -160,17 +193,6 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 	@Override
 	public boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type) {
 		return packetListener.hasChannel(type);
-	}
-
-	@Override
-	public void addConfigurationTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task) {
-		ModEventBuses.registerListener(modId, NeoforgeServerNetworkHandler.class)
-				.addTask(task);
-	}
-
-	@Override
-	public void completeCurrentConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type) {
-		packetListener.finishCurrentTask(type);
 	}
 
 	@Override

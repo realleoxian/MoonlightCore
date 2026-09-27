@@ -1,6 +1,8 @@
 package de.leoxian.moonlightcore.common.platform;
 
 import de.leoxian.moonlightcore.common.EnvironmentSide;
+import de.leoxian.moonlightcore.common.attachment.DataAttachmentHolder;
+import de.leoxian.moonlightcore.common.attachment.DataAttachmentType;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapability;
 import de.leoxian.moonlightcore.common.capability.block.BlockCapabilityCache;
 import de.leoxian.moonlightcore.common.capability.entity.EntityCapability;
@@ -30,7 +32,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
@@ -60,6 +66,18 @@ public interface XplatAbstraction {
 
 	void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer);
 
+	// |-----| Data Attachments |-----|
+
+	DataAttachmentHolder getDataAttachmentsFromLevel(Level level);
+
+	DataAttachmentHolder getDataAttachmentsFromChunk(ChunkAccess chunkAccess);
+
+	DataAttachmentHolder getDataAttachmentsFromBlockEntity(BlockEntity blockEntity);
+
+	DataAttachmentHolder getDataAttachmentsFromEntity(Entity entity);
+
+	<T> DataAttachmentType.Builder<T> createAttachmentTypeBuilder(Supplier<T> initializer);
+
 	// |-----| Capabilities |-----|
 	<A, C extends @Nullable Object> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
@@ -78,10 +96,6 @@ public interface XplatAbstraction {
 	<T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler);
 
 	boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type);
-
-	void addConfigurationTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task);
-
-	void completeCurrentConfigurationTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type);
 
 	// |-----| Platform |-----|
 	@Nullable

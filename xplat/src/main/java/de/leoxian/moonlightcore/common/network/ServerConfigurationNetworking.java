@@ -36,21 +36,6 @@ public final class ServerConfigurationNetworking {
 		return canSend(packetListener, payload.type());
 	}
 
-	/// Adds a configuration task that can be executed at configuration phase when a player is joining
-	/// @param modId The mod that it's adding the task
-	/// @param packetListener The connection
-	/// @param task The configuration task
-	public static void addTask(String modId, ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask task) {
-		XplatAbstraction.INSTANCE.addConfigurationTask(modId, packetListener, task);
-	}
-
-	/// Completes a task that was being executed when a player was joining. Call this method everytime you add a new task.
-	/// @param packetListener The connection
-	/// @param type  The configuration task's type
-	public static void completeTask(ServerConfigurationPacketListenerImpl packetListener, ConfigurationTask.Type type) {
-		XplatAbstraction.INSTANCE.completeCurrentConfigurationTask(packetListener, type);
-	}
-
 	private ServerConfigurationNetworking() {}
 
 	@FunctionalInterface

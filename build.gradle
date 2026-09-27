@@ -36,7 +36,7 @@ publishMods {
     }
 
     def cfOptions = curseforgeOptions {
-        accessToken = System.getenv().get("CURSEFORGE_API_KEY")
+        accessToken = providers.environmentVariable("curseforge_api_key")
         projectId = curseforgeId
         minecraftVersionRange {
             start = mcRangeStart
@@ -49,7 +49,7 @@ publishMods {
     }
 
     def mrOptions = modrinthOptions {
-        accessToken = System.getenv().get("MODRINTH_TOKEN")
+        accessToken = providers.environmentVariable("modrinth_token")
         projectId = modrinthId
         minecraftVersionRange {
             start = mcRangeStart
