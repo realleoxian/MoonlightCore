@@ -30,16 +30,9 @@ public record C2SAcceptedValidConfigs(Set<Identifier> validConfigs) implements C
 
 	public static void handleConfiguration(C2SAcceptedValidConfigs packet, ServerConfigurationNetworking.Context context) {
 		context.enqueueWork(() -> {
-			var packetListener = context.packetListener();
 			var decoded = decodeSyncableConfigs(packet);
 
-			if (ServerConfigurationNetworking.canSend(context.packetListener(), S2CSyncLoadedConfigPacket.TYPE)) {
-				context.addTask(new SyncConfigurationTask(context.packetListener(), decoded));
-			}
-
-			if (ServerConfigurationNetworking.canSend(packetListener, S2CSyncLoadedConfigPacket.TYPE)) {
-				context.addTask(new SyncConfigurationTask(packetListener, decoded));
-			}
+			context.addTask(new SyncConfigurationTask(decoded));
 			context.completeTask(RequestValidConfigsTask.TYPE);
 		});
 	}
@@ -55,7 +48,7 @@ public record C2SAcceptedValidConfigs(Set<Identifier> validConfigs) implements C
 				}
 
 				if (ServerPlayNetworking.canSendToPlayer(player, S2CSyncLoadedConfigPacket.TYPE)) {
-					PacketDistributor.sendToPlayer(context.player(), new S2CSyncLoadedConfigPacket(config));
+					context.responseSender().sendPacket(new S2CSyncLoadedConfigPacket(config));
 				}
 			}
 		});

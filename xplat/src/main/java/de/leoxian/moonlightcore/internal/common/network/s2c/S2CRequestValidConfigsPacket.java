@@ -17,18 +17,14 @@ public enum S2CRequestValidConfigsPacket implements CustomPacketPayload {
 	public static final StreamCodec<ByteBuf, S2CRequestValidConfigsPacket> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
 	public static void handleConfiguration(S2CRequestValidConfigsPacket packet, ClientConfigurationNetworking.Context context) {
-		context.minecraft().execute(() -> {
-			if (ClientPlayNetworking.canSend(S2CRequestValidConfigsPacket.TYPE)) {
-				ClientPacketDistributor.sendToServer(new C2SAcceptedValidConfigs(ConfigRegistry.getSyncableConfigs()));
-			}
+		context.enqueueWork(() -> {
+			context.responseSender().sendPacket(new C2SAcceptedValidConfigs(ConfigRegistry.getSyncableConfigs()));
 		});
 	}
 
 	public static void handlePlay(S2CRequestValidConfigsPacket packet, ClientPlayNetworking.Context context) {
-		context.minecraft().execute(() -> {
-			if (ClientPlayNetworking.canSend(S2CRequestValidConfigsPacket.TYPE)) {
-				ClientPacketDistributor.sendToServer(new C2SAcceptedValidConfigs(ConfigRegistry.getSyncableConfigs()));
-			}
+		context.enqueueWork(() -> {
+			context.responseSender().sendPacket(new C2SAcceptedValidConfigs(ConfigRegistry.getSyncableConfigs()));
 		});
 	}
 

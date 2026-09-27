@@ -166,6 +166,8 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 	@Override
 	public <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler) {
 		PayloadTypeRegistry.serverboundPlay().register(type, codec);
+		PayloadTypeRegistry.clientboundPlay().register(type, codec);
+
 		net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
 			handler.handle(payload, new FabricServerPlayNetworkingContext(context));
 		});
@@ -179,6 +181,8 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 	@Override
 	public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler) {
 		PayloadTypeRegistry.serverboundConfiguration().register(type, codec);
+		PayloadTypeRegistry.clientboundConfiguration().register(type, codec);
+
 		net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> {
 			handler.handle(payload, new FabricServerConfigurationNetworkingContext(context));
 		});
