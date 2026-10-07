@@ -11,6 +11,7 @@
     "accessor.MappedRegistryAccessor",
     "accessor.MinecraftServerAccessor",
     "accessor.ServerChunkCacheAccessor",
+    "accessor.ServerCommonPacketListenerImplAccessor",
     "dimension.MinecraftServerMixin",
     "transfer.FluidMixin",
     "transfer.ItemMixin"

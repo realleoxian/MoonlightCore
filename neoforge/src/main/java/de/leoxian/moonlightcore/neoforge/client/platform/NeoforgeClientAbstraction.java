@@ -34,12 +34,9 @@ import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeBlockEntityRender
 import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeClientTooltipComponentRegistrar;
 import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeEntityRendererRegistrar;
 import de.leoxian.moonlightcore.neoforge.client.render.NeoforgeRenderPipelineRegistrar;
-import de.leoxian.moonlightcore.neoforge.common.ModEventBuses;
+import de.leoxian.moonlightcore.neoforge.common.hooks.EventBusesHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
@@ -49,96 +46,96 @@ import java.util.function.Consumer;
 public class NeoforgeClientAbstraction implements XplatClientAbstraction {
 	@Override
 	public void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer) {
-		initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeFluidRendererRegistrar.class));
+		EventBusesHooks.atListener(namespace, NeoforgeFluidRendererRegistrar.class, initializer);
 	}
 
 	@Override
 	public void guiLayers(String namespace, Consumer<GuiLayerRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((RegisterGuiLayersEvent event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((RegisterGuiLayersEvent event) -> {
 			initializer.accept(new NeoforgeGuiLayerRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void keyMappings(String namespace, Consumer<KeyMappingRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((RegisterKeyMappingsEvent event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((RegisterKeyMappingsEvent event) -> {
 			initializer.accept(new NeoforgeKeyMappingRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void modelLayers(String namespace, Consumer<ModelLayerRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((EntityRenderersEvent.RegisterLayerDefinitions event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((EntityRenderersEvent.RegisterLayerDefinitions event) -> {
 			initializer.accept(new NeoforgeModelLayerRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void blockEntityRenderers(String namespace, Consumer<BlockEntityRendererRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((EntityRenderersEvent.RegisterRenderers event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((EntityRenderersEvent.RegisterRenderers event) -> {
 			initializer.accept(new NeoforgeBlockEntityRendererRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void clientTooltips(String namespace, Consumer<ClientTooltipComponentRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus ->  eventBus.addListener((RegisterClientTooltipComponentFactoriesEvent event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus ->  eventBus.addListener((RegisterClientTooltipComponentFactoriesEvent event) -> {
 			initializer.accept(new NeoforgeClientTooltipComponentRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void entityRenderers(String namespace, Consumer<EntityRendererRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((EntityRenderersEvent.RegisterRenderers event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((EntityRenderersEvent.RegisterRenderers event) -> {
 			initializer.accept(new NeoforgeEntityRendererRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void particles(String namespace, Consumer<ParticleProviderRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((RegisterParticleProvidersEvent event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((RegisterParticleProvidersEvent event) -> {
 			initializer.accept(new NeoforgeParticleProviderRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void renderPipelines(String namespace, Consumer<RenderPipelineRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((RegisterRenderPipelinesEvent event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((RegisterRenderPipelinesEvent event) -> {
 			initializer.accept(new NeoforgeRenderPipelineRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void blockColor(String namespace, Consumer<BlockColorRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((RegisterColorHandlersEvent.BlockTintSources event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((RegisterColorHandlersEvent.BlockTintSources event) -> {
 			initializer.accept(new NeoforgeBlockColorRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void menuScreens(String namespace, Consumer<MenuScreenRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((RegisterMenuScreensEvent event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((RegisterMenuScreensEvent event) -> {
 			initializer.accept(new NeoforgeMenuScreenRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void resourceReloadListeners(String namespace, Consumer<ClientResourceReloadListenerRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((AddClientReloadListenersEvent event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((AddClientReloadListenersEvent event) -> {
 			initializer.accept(new NeoforgeClientResourceReloadListenerRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void selectItemModelProperties(String namespace, Consumer<SelectItemModelPropertyRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((RegisterSelectItemModelPropertyEvent event) -> {
-		initializer.accept(new NeoforgeSelectItemModelPropertyRegistrar(event));
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((RegisterSelectItemModelPropertyEvent event) -> {
+			initializer.accept(new NeoforgeSelectItemModelPropertyRegistrar(event));
 		}));
 	}
 
 	@Override
 	public void rangeSelectItemModelProperties(String namespace, Consumer<RangeSelectItemModelPropertyRegistrar> initializer) {
-		ModEventBuses.getBus(namespace).ifPresent(eventBus -> eventBus.addListener((RegisterRangeSelectItemModelPropertyEvent event) -> {
+		EventBusesHooks.whenAvailable(namespace, eventBus -> eventBus.addListener((RegisterRangeSelectItemModelPropertyEvent event) -> {
 			initializer.accept(new NeoforgeRangeSelectItemModelPropertyRegistrar(event));
 		}));
 	}
@@ -151,9 +148,15 @@ public class NeoforgeClientAbstraction implements XplatClientAbstraction {
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ClientPlayNetworking.Handler<MSG> handler) {
-		ModEventBuses.registerListener(type.id().getNamespace(), NeoforgeClientNetworkHandler.class)
-				.registerPlay(type, streamCodec, handler);
+	public <MSG extends CustomPacketPayload> void registerPlayPacketPayloadHandler(CustomPacketPayload.Type<MSG> type, ClientPlayNetworking.Handler<MSG> handler) {
+		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeClientNetworkHandler.class)
+						.playHandler(type, handler);
+	}
+
+	@Override
+	public <MSG extends CustomPacketPayload> void registerConfigurationPacketPayloadHandler(CustomPacketPayload.Type<MSG> type, ClientConfigurationNetworking.Handler<MSG> handler) {
+		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeClientNetworkHandler.class)
+				.configurationHandler(type, handler);
 	}
 
 	@Override
@@ -163,12 +166,6 @@ public class NeoforgeClientAbstraction implements XplatClientAbstraction {
 			return false;
 		}
 		return packetListener.hasChannel(type);
-	}
-
-	@Override
-	public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler) {
-		ModEventBuses.registerListener(type.id().getNamespace(), NeoforgeClientNetworkHandler.class)
-				.registerConfiguration(type, streamCodec, handler);
 	}
 
 	@Override

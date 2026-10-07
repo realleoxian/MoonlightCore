@@ -13,7 +13,7 @@ public interface ParticleProviderRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void configure(String namespace, Consumer<ParticleProviderRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.particles(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().particles(namespace, initializer);
 	}
 
 	/// Register a [ParticleProvider] for the given particle type

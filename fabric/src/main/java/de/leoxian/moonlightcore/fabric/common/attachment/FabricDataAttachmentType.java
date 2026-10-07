@@ -11,5 +11,5 @@ import net.minecraft.resources.Identifier;
 import java.util.function.Supplier;
 
 public record FabricDataAttachmentType<T>(Identifier id, Codec<T> persistentCodec, StreamCodec<? super ByteBuf, T> streamCodec, DataAttachmentSyncPredicate syncPredicate, Supplier<T> initializer, boolean copyOnDeath,
-                                          AttachmentType<T> fabricAttachment) implements DataAttachmentType<T> {
+										AttachmentType<T> fabricAttachment) implements DataAttachmentType<T> {
 }

@@ -28,11 +28,6 @@ public record NeoforgeServerConfigurationContext(IPayloadContext context) implem
 	}
 
 	@Override
-	public void addTask(ConfigurationTask task) {
-		((ServerConfigurationPacketListenerImplAccessor) packetListener()).getConfigurationTasks().add(task);
-	}
-
-	@Override
 	public void completeTask(ConfigurationTask.Type type) {
 		context.finishCurrentTask(type);
 	}

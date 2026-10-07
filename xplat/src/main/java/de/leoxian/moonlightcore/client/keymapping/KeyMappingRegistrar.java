@@ -12,7 +12,7 @@ public interface KeyMappingRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void configure(String namespace, Consumer<KeyMappingRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.keyMappings(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().keyMappings(namespace, initializer);
 	}
 
 	/// Register a new key mapping

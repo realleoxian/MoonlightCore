@@ -11,7 +11,7 @@ public interface ClientCommandsContext {
 	/// Configure and register new modded client commands registrar
 	/// @param initializer The initializer of the registrar
 	static void configure(Consumer<ClientCommandsContext> initializer) {
-		XplatClientAbstraction.INSTANCE.commands(initializer);
+		XplatClientAbstraction.INSTANCE.get().commands(initializer);
 	}
 
 	/// @return The command dispatcher to register commands to

@@ -14,7 +14,7 @@ public interface BlockEntityRendererRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void configure(String namespace, Consumer<BlockEntityRendererRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.blockEntityRenderers(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().blockEntityRenderers(namespace, initializer);
 	}
 
 	/// Register a renderer to the given block entity type

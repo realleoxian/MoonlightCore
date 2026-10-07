@@ -13,7 +13,7 @@ public interface SelectItemModelPropertyRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void init(String namespace, Consumer<SelectItemModelPropertyRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.selectItemModelProperties(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().selectItemModelProperties(namespace, initializer);
 	}
 
 	/// Register a new item model property

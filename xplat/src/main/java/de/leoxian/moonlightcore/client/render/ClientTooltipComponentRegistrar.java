@@ -12,7 +12,7 @@ public interface ClientTooltipComponentRegistrar {
 	/// @param namespace The mod's id
 	/// @param initializer The initializer
 	static void configure(String namespace, Consumer<ClientTooltipComponentRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.clientTooltips(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().clientTooltips(namespace, initializer);
 	}
 
 	/// Register a client tooltip component to render for a tooltip component data

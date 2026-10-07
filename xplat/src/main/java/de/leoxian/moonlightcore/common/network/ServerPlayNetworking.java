@@ -1,8 +1,6 @@
 package de.leoxian.moonlightcore.common.network;
 
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,14 +11,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class ServerPlayNetworking {
-	/// Register a serverbound packet payload
-	/// @param type The packet payload type
-	/// @param codec The packet payload codec
-	/// @param handler The handler used when the packet its received
-	public static <T extends CustomPacketPayload> void register(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler) {
-		XplatAbstraction.INSTANCE.registerPlayPayload(type, codec, handler);
-	}
-
 	/// Checks if the given player can receive a packet payload type
 	/// @param player The player
 	/// @param type The packet payload type

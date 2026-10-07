@@ -26,11 +26,6 @@ public record FabricServerConfigurationNetworkingContext(net.fabricmc.fabric.api
 	}
 
 	@Override
-	public void addTask(ConfigurationTask task) {
-		packetListener().addTask(task);
-	}
-
-	@Override
 	public void completeTask(ConfigurationTask.Type type) {
 		packetListener().completeTask(type);
 	}

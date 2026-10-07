@@ -31,6 +31,12 @@ loom {
             setRunDirectory(file("runs/server"))
         }
     }
+
+    mods {
+        "moonlightcore" {
+            sourceSet sourceSets.main
+        }
+    }
 }
 
 // Implement mcgradleconventions loader attribute

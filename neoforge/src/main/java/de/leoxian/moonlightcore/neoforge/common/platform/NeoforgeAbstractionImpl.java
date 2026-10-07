@@ -1,5 +1,6 @@
 package de.leoxian.moonlightcore.neoforge.common.platform;
 
+import com.google.common.eventbus.EventBus;
 import de.leoxian.moonlightcore.common.EnvironmentSide;
 import de.leoxian.moonlightcore.common.attachment.DataAttachmentHolder;
 import de.leoxian.moonlightcore.common.attachment.DataAttachmentType;
@@ -19,7 +20,6 @@ import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
-import de.leoxian.moonlightcore.neoforge.common.ModEventBuses;
 import de.leoxian.moonlightcore.neoforge.common.attachment.NeoAttachmentHolderWrapper;
 import de.leoxian.moonlightcore.neoforge.common.attachment.NeoDataAttachmentTypeBuilderImpl;
 import de.leoxian.moonlightcore.neoforge.common.capability.NeoforgeBlockCapabilityCache;
@@ -28,7 +28,8 @@ import de.leoxian.moonlightcore.neoforge.common.command.NeoforgeArgumentTypeRegi
 import de.leoxian.moonlightcore.neoforge.common.command.NeoforgeCommandRegistrarContext;
 import de.leoxian.moonlightcore.neoforge.common.entity.NeoforgeEntityAttributeRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.fluid.NeoforgeFluidRegistrar;
-import de.leoxian.moonlightcore.neoforge.common.network.NeoforgeServerNetworkHandler;
+import de.leoxian.moonlightcore.neoforge.common.hooks.EventBusesHooks;
+import de.leoxian.moonlightcore.neoforge.common.network.NeoforgeNetworkHandler;
 import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeDataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.registry.NeoforgeRegistryBuilder;
@@ -45,7 +46,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -91,7 +91,7 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 
 	@Override
 	public void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer) {
-		initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeEntityAttributeRegistrar.class));
+		EventBusesHooks.atListener(namespace, NeoforgeEntityAttributeRegistrar.class, initializer);
 	}
 
 	@Override
@@ -106,8 +106,9 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 
 	@Override
 	public void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer) {
-		NeoForge.EVENT_BUS.addListener((AddServerReloadListenersEvent event) ->
-				initializer.accept(new NeoforgeResourceReloadListenerRegistrar(event)));
+		NeoForge.EVENT_BUS.addListener((AddServerReloadListenersEvent event) -> {
+			initializer.accept(new NeoforgeResourceReloadListenerRegistrar(event));
+		});
 	}
 
 	@Override
@@ -122,7 +123,7 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 
 	@Override
 	public void datapackRegistries(String namespace, Consumer<DataPackRegistryRegistrar> initializer) {
-		initializer.accept(ModEventBuses.registerListener(namespace, NeoforgeDataPackRegistryRegistrar.class));
+		EventBusesHooks.atListener(namespace, NeoforgeDataPackRegistryRegistrar.class, initializer);
 	}
 
 	@Override
@@ -152,14 +153,12 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 
 	@Override
 	public <A, C> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
-		return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
-				.getItemCapability(id, apiClass, contextClass);
+		return EventBusesHooks.getListener(id.getNamespace(), NeoforgeCapabilityRegistry.class).getItemCapability(id, apiClass, contextClass);
 	}
 
 	@Override
 	public <A, C> BlockCapability<A, C> createBlockCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
-		return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
-				.getBlockCapability(id, apiClass, contextClass);
+		return EventBusesHooks.getListener(id.getNamespace(), NeoforgeCapabilityRegistry.class).getBlockCapability(id, apiClass, contextClass);
 	}
 
 	@Override
@@ -169,25 +168,36 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 
 	@Override
 	public <A, C> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass) {
-		return ModEventBuses.registerListener(id.getNamespace(), NeoforgeCapabilityRegistry.class)
-				.getEntityCapability(id, apiClass, contextClass);
+		return EventBusesHooks.getListener(id.getNamespace(), NeoforgeCapabilityRegistry.class).getEntityCapability(id, apiClass, contextClass);
 	}
 
 	@Override
-	public <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler) {
-		ModEventBuses.registerListener(type.id().getNamespace(), NeoforgeServerNetworkHandler.class)
-				.registerPlayPayload(type, codec, handler);
+	public <MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec, ServerConfigurationNetworking.Handler<MSG> handler) {
+		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
+						.serverboundConfiguration(type, streamCodec, handler);
+	}
+
+	@Override
+	public <MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
+		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
+				.clientboundConfiguration(type, streamCodec);
+	}
+
+	@Override
+	public <MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ServerPlayNetworking.Handler<MSG> handler) {
+		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
+				.serverboundPlay(type, streamCodec, handler);
+	}
+
+	@Override
+	public <MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
+		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
+				.clientboundPlay(type, streamCodec);
 	}
 
 	@Override
 	public boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type) {
 		return player.connection.hasChannel(type);
-	}
-
-	@Override
-	public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler) {
-		ModEventBuses.registerListener(type.id().getNamespace(), NeoforgeServerNetworkHandler.class)
-				.registerConfigurationPayload(type, codec, handler);
 	}
 
 	@Override

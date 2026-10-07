@@ -13,7 +13,7 @@ public interface BlockColorRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void init(String namespace, Consumer<BlockColorRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.blockColor(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().blockColor(namespace, initializer);
 	}
 
 	/// Registers a new list of block tint sources to the given  block

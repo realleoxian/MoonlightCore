@@ -14,7 +14,7 @@ public interface RangeSelectItemModelPropertyRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void init(String namespace, Consumer<RangeSelectItemModelPropertyRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.rangeSelectItemModelProperties(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().rangeSelectItemModelProperties(namespace, initializer);
 	}
 
 	/// Register a new range select item model property

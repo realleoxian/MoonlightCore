@@ -38,11 +38,7 @@ import de.leoxian.moonlightcore.fabric.client.render.FabricClientTooltipComponen
 import de.leoxian.moonlightcore.fabric.client.render.FabricEntityRendererRegistrar;
 import de.leoxian.moonlightcore.fabric.client.render.FabricRenderPipelineRegistrar;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import java.util.function.Consumer;
@@ -126,10 +122,14 @@ public class FabricClientAbstractionImpl implements XplatClientAbstraction {
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ClientPlayNetworking.Handler<MSG> handler) {
-		PayloadTypeRegistry.clientboundPlay().register(type, streamCodec);
-		PayloadTypeRegistry.serverboundPlay().register(type, streamCodec);
+	public <MSG extends CustomPacketPayload> void registerConfigurationPacketPayloadHandler(CustomPacketPayload.Type<MSG> type, ClientConfigurationNetworking.Handler<MSG> handler) {
+		net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> {
+			handler.handle(payload, new FabricClientConfigurationNetworkingContext(context));
+		});
+	}
 
+	@Override
+	public <MSG extends CustomPacketPayload> void registerPlayPacketPayloadHandler(CustomPacketPayload.Type<MSG> type, ClientPlayNetworking.Handler<MSG> handler) {
 		net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
 			handler.handle(payload, new FabricClientPlayNetworkingContext(context));
 		});
@@ -138,16 +138,6 @@ public class FabricClientAbstractionImpl implements XplatClientAbstraction {
 	@Override
 	public boolean canSendPlayPayload(CustomPacketPayload.Type<?> type) {
 		return net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.canSend(type);
-	}
-
-	@Override
-	public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler) {
-		PayloadTypeRegistry.clientboundConfiguration().register(type, streamCodec);
-		PayloadTypeRegistry.serverboundConfiguration().register(type, streamCodec);
-
-		net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> {
-			handler.handle(payload, new FabricClientConfigurationNetworkingContext(context));
-		});
 	}
 
 	@Override

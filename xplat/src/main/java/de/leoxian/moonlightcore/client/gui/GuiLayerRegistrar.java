@@ -12,7 +12,7 @@ public interface GuiLayerRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void configure(String namespace, Consumer<GuiLayerRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.guiLayers(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().guiLayers(namespace, initializer);
 	}
 
 	/// Adds a GUI layer that renders below all others

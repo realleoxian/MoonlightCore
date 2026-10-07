@@ -10,7 +10,7 @@ public interface RenderPipelineRegistrar {
 	/// @param namespace The mod's id
 	/// @param initializer The initializer
 	static void configure(String namespace, Consumer<RenderPipelineRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.renderPipelines(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().renderPipelines(namespace, initializer);
 	}
 
 	/// Register a new render pipeline

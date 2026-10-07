@@ -4,7 +4,7 @@ import de.leoxian.moonlightcore.common.fluid.FluidBehavior;
 import de.leoxian.moonlightcore.common.fluid.FluidAttributesHandler;
 import de.leoxian.moonlightcore.common.fluid.FluidProperties;
 import de.leoxian.moonlightcore.common.fluid.FluidRegistrar;
-import de.leoxian.moonlightcore.neoforge.common.ModDeferredRegisters;
+import de.leoxian.moonlightcore.neoforge.common.hooks.EventBusesHooks;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 public record NeoforgeFluidRegistrar(String namespace) implements FluidRegistrar {
 	@Override
 	public void register(String id, TagKey<Fluid> fluidType, FluidProperties properties, FluidAttributesHandler propertiesHandler, FluidBehavior entityInteraction) {
-		Supplier<FluidType> fluidTypeValue = ModDeferredRegisters.get(NeoForgeRegistries.FLUID_TYPES, namespace())
+		Supplier<FluidType> fluidTypeValue = EventBusesHooks.getDeferredRegister(NeoForgeRegistries.Keys.FLUID_TYPES, namespace())
 				.register(id, () -> new NeoforgeFluidTypeImpl(fluidType, propertiesHandler, entityInteraction));
 
 		Identifier identifier = Identifier.fromNamespaceAndPath(namespace, id);
@@ -43,13 +43,13 @@ public record NeoforgeFluidRegistrar(String namespace) implements FluidRegistrar
 				.tickRate(properties.tickRate())
 				.explosionResistance(properties.explosionResistance());
 
-		ModDeferredRegisters.get(Registries.FLUID, namespace).register(id, () -> new BaseFlowingFluid.Source(neoProperties));
-		ModDeferredRegisters.get(Registries.FLUID, namespace).register(id + "_flowing", () -> new BaseFlowingFluid.Flowing(neoProperties));
-		ModDeferredRegisters.get(Registries.ITEM, namespace).register(id + "_bucket", k -> new BucketItem(sourceGetter.get(), new Item.Properties()
+		EventBusesHooks.getDeferredRegister(Registries.FLUID, namespace).register(id, () -> new BaseFlowingFluid.Source(neoProperties));
+		EventBusesHooks.getDeferredRegister(Registries.FLUID, namespace).register(id + "_flowing", () -> new BaseFlowingFluid.Flowing(neoProperties));
+		EventBusesHooks.getDeferredRegister(Registries.ITEM, namespace).register(id + "_bucket", k -> new BucketItem(sourceGetter.get(), new Item.Properties()
 				.craftRemainder(Items.BUCKET)
 				.stacksTo(1)
 				.setId(ResourceKey.create(Registries.ITEM, k))));
-		ModDeferredRegisters.get(Registries.BLOCK, namespace).register(id, k -> new LiquidBlock(flowingGetter.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
+		EventBusesHooks.getDeferredRegister(Registries.BLOCK, namespace).register(id, k -> new LiquidBlock(flowingGetter.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
 				.setId(ResourceKey.create(Registries.BLOCK, k))));
 	}
 }

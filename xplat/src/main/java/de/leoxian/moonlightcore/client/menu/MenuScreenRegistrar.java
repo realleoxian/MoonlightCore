@@ -14,7 +14,7 @@ public interface MenuScreenRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void configure(String namespace, Consumer<MenuScreenRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.menuScreens(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().menuScreens(namespace, initializer);
 	}
 
 	/// Register a screen to the given menu

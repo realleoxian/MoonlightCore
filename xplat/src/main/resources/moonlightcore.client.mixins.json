@@ -1,5 +1,5 @@
 {
-  "required": true,
+  "required": false,
   "package": "de.leoxian.moonlightcore.mixin.client",
   "compatibilityLevel": "JAVA_25",
   "client": [

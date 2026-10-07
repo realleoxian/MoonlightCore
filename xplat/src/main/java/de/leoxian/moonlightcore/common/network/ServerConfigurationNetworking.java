@@ -1,9 +1,6 @@
 package de.leoxian.moonlightcore.common.network;
 
-import de.leoxian.moonlightcore.common.config.Config;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
@@ -13,14 +10,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class ServerConfigurationNetworking {
-	/// Registers a serverbound packet payload
-	/// @param type The packet payload type
-	/// @param codec The packet payload codec
-	/// @param handler The handler used when the packet its received
-	public static  <T extends CustomPacketPayload> void register(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler) {
-		XplatAbstraction.INSTANCE.registerConfigurationPayload(type, codec, handler);
-	}
-
 	/// Checks if the given packet listener connection supports a payload
 	/// @param packetListener The connection
 	/// @param type The packet payload type
@@ -56,10 +45,6 @@ public final class ServerConfigurationNetworking {
 		/// Enqueues a task that returns a value to be executed on the main thread
 		/// @param task The task
 		<T> CompletableFuture<T> enqueueWork(Supplier<T> task);
-
-		/// Add a new configuration task to the configuration phase
-		/// @param task The task being added
-		void addTask(final ConfigurationTask task);
 
 		/// Complete the current configuration task if it's the given type
 		/// @param type The task's type

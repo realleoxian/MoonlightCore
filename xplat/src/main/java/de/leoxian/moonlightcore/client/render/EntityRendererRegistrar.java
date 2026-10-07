@@ -13,7 +13,7 @@ public interface EntityRendererRegistrar {
 	/// @param namespace The mod's id
 	/// @param initializer The initializer
 	static void configure(String namespace, Consumer<EntityRendererRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.entityRenderers(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().entityRenderers(namespace, initializer);
 	}
 
 	/// Register the entity renderer provider to the given entity type

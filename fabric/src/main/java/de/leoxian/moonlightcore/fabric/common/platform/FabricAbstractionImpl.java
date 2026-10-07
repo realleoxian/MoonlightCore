@@ -54,7 +54,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -164,9 +163,17 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
-	public <T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler) {
-		PayloadTypeRegistry.serverboundPlay().register(type, codec);
-		PayloadTypeRegistry.clientboundPlay().register(type, codec);
+	public <MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec, ServerConfigurationNetworking.Handler<MSG> handler) {
+		PayloadTypeRegistry.serverboundConfiguration().register(type, streamCodec);
+
+		net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> {
+			handler.handle(payload, new FabricServerConfigurationNetworkingContext(context));
+		});
+	}
+
+	@Override
+	public <MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ServerPlayNetworking.Handler<MSG> handler) {
+		PayloadTypeRegistry.serverboundPlay().register(type, streamCodec);
 
 		net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
 			handler.handle(payload, new FabricServerPlayNetworkingContext(context));
@@ -174,18 +181,18 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
-	public boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type) {
-		return net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.canSend(player, type);
+	public <MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
+		PayloadTypeRegistry.clientboundConfiguration().register(type, streamCodec);
 	}
 
 	@Override
-	public <T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler) {
-		PayloadTypeRegistry.serverboundConfiguration().register(type, codec);
-		PayloadTypeRegistry.clientboundConfiguration().register(type, codec);
+	public <MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
+		PayloadTypeRegistry.clientboundPlay().register(type, streamCodec);
+	}
 
-		net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> {
-			handler.handle(payload, new FabricServerConfigurationNetworkingContext(context));
-		});
+	@Override
+	public boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type) {
+		return net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.canSend(player, type);
 	}
 
 	@Override

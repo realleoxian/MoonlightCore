@@ -5,8 +5,6 @@ import de.leoxian.moonlightcore.common.network.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -14,19 +12,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class ClientPlayNetworking {
-	/// Register a clientbound packet payload
-	/// @param type The packet payload type
-	/// @param streamCodec The packet payload codec
-	/// @param handler The handler used when the packet its received
-	public static <MSG extends CustomPacketPayload> void register(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, Handler<MSG> handler) {
-		XplatClientAbstraction.INSTANCE.registerPlayPayload(type, streamCodec, handler);
+	/// Register the handler for the payload type
+	/// @param type The payload type
+	/// @param handler The handler
+	public static <MSG extends CustomPacketPayload> void registerHandler(CustomPacketPayload.Type<MSG> type, Handler<MSG> handler) {
+		XplatClientAbstraction.INSTANCE.get().registerPlayPacketPayloadHandler(type, handler);
 	}
 
 	/// Return if the packet payload can be sent to the server
 	/// @param type The packet type
 	/// @return Whether the packet can be sent to the server
 	public static boolean canSend(CustomPacketPayload.Type<?> type) {
-		return XplatClientAbstraction.INSTANCE.canSendPlayPayload(type);
+		return XplatClientAbstraction.INSTANCE.get().canSendPlayPayload(type);
 	}
 
 	/// Return if the packet payload can be sent to the server

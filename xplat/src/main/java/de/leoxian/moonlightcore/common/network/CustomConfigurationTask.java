@@ -9,12 +9,12 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.function.Consumer;
 
 public interface CustomConfigurationTask extends ConfigurationTask {
-    void run(Consumer<CustomPacketPayload> output);
+	void run(Consumer<CustomPacketPayload> output);
 
-    @Override
-    @ApiStatus.Internal
-    @ApiStatus.NonExtendable
-    default void start(Consumer<Packet<?>> output) {
-        run((payload) -> output.accept(new ClientboundCustomPayloadPacket(payload)));
-    }
+	@Override
+	@ApiStatus.Internal
+	@ApiStatus.NonExtendable
+	default void start(Consumer<Packet<?>> output) {
+		run((payload) -> output.accept(new ClientboundCustomPayloadPacket(payload)));
+	}
 }

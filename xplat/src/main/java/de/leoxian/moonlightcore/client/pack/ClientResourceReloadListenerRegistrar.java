@@ -11,7 +11,7 @@ public interface ClientResourceReloadListenerRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void configure(String namespace, Consumer<ClientResourceReloadListenerRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.resourceReloadListeners(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().resourceReloadListeners(namespace, initializer);
 	}
 
 	/// Register the given reload listener

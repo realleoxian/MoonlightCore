@@ -3,7 +3,7 @@ package de.leoxian.moonlightcore.neoforge.client.fluid;
 import de.leoxian.moonlightcore.client.fluid.FluidRenderHandler;
 import de.leoxian.moonlightcore.client.fluid.FluidRendererRegistrar;
 import de.leoxian.moonlightcore.common.transfer.fluid.FluidResource;
-import de.leoxian.moonlightcore.neoforge.common.ModEventBusRegistrable;
+import de.leoxian.moonlightcore.neoforge.common.hooks.ModEventBusRegistrable;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.core.BlockPos;
@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@EventBusSubscriber
+@EventBusSubscriber(value = Dist.CLIENT)
 public class NeoforgeFluidRendererRegistrar implements FluidRendererRegistrar, ModEventBusRegistrable {
 	private final Map<Holder<Fluid>, FluidModel.Unbaked> models = new HashMap<>();
 	private static final Map<Holder<Fluid>, FluidRenderHandler> renderHandlers = new HashMap<>();
@@ -86,8 +87,8 @@ public class NeoforgeFluidRendererRegistrar implements FluidRendererRegistrar, M
 			throw new IllegalArgumentException("May not register a fluid model to a vanilla fluid");
 		}
 
-		if (this.models.putIfAbsent(holder, model) != null) {
-			throw new IllegalArgumentException("May not register duplicated fluid model");
+		if (models.putIfAbsent(holder, model) != null) {
+			throw new IllegalArgumentException("May not register duplicated fluid model for fluid: " + holder.getKey());
 		}
 	}
 
@@ -97,8 +98,8 @@ public class NeoforgeFluidRendererRegistrar implements FluidRendererRegistrar, M
 			throw new IllegalArgumentException("May not register a fluid render handler to a vanilla fluid");
 		}
 
-		if (this.renderHandlers.putIfAbsent(holder, renderHandler) != null) {
-			throw new IllegalArgumentException("May not register duplicated fluid render handler");
+		if (renderHandlers.putIfAbsent(holder, renderHandler) != null) {
+			throw new IllegalArgumentException("May not register duplicated fluid render handler for fluid: " + holder.getKey());
 		}
 	}
 }

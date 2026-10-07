@@ -5,7 +5,7 @@ import de.leoxian.moonlightcore.common.event.RegisterEvent;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.fabric.api.MoonlightCoreInitializer;
 import de.leoxian.moonlightcore.fabric.common.mixin.accessor.MappedRegistryAccessor;
-import de.leoxian.moonlightcore.internal.common.core.MoonlightCore;
+import de.leoxian.moonlightcore.internal.core.MoonlightCore;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.RegistrationInfo;
@@ -24,7 +24,7 @@ public class MoonlightCoreFabricMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		XplatAbstraction.INSTANCE.initialize();
-		MoonlightCore.initialize();
+		MoonlightCore.init();
 
 		FabricLoader.getInstance().getEntrypointContainers("moonlightcore", MoonlightCoreInitializer.class).forEach(entrypoint -> {
 			MoonlightCoreInitializer initializer = entrypoint.getEntrypoint();

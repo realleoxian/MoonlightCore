@@ -40,7 +40,6 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.Nullable;
 
-
 @EventBusSubscriber
 public final class CommonEventHandler {
 	@SubscribeEvent

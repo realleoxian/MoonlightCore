@@ -6,8 +6,8 @@ import de.leoxian.moonlightcore.common.config.ConfigSchema;
 import de.leoxian.moonlightcore.common.network.PacketDistributor;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.internal.common.config.file.ConfigFileWatcher;
-import de.leoxian.moonlightcore.internal.common.network.s2c.S2CSyncLoadedConfigPacket;
 import de.leoxian.moonlightcore.internal.common.util.ModLockHelper;
+import de.leoxian.moonlightcore.internal.core.network.clientbound.ClientboundSyncLoadedConfigPacketPayload;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
@@ -37,7 +37,7 @@ public final class ConfigRegistry {
 					if (currentServer != null) {
 						currentServer.execute(() -> {
 							config.load();
-							PacketDistributor.sendToAllPlayers(new S2CSyncLoadedConfigPacket(config));
+							PacketDistributor.sendToAllPlayers(new ClientboundSyncLoadedConfigPacketPayload(config.id(), config.loadedConfig()));
 						});
 					}
 				});

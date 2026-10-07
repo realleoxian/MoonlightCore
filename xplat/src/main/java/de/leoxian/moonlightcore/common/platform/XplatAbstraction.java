@@ -29,7 +29,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -87,13 +86,17 @@ public interface XplatAbstraction {
 
 	<A, C extends @Nullable Object> EntityCapability<A, C> createEntityCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);
 
-	// |-----| S2C Play Networking |-----|
-	<T extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, ServerPlayNetworking.Handler<T> handler);
+	// |-----|Networking |------|
+
+	<MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ServerPlayNetworking.Handler<MSG> handler);
+
+	<MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec, ServerConfigurationNetworking.Handler<MSG> handler);
+
+	<MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec);
+
+	<MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec);
 
 	boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type);
-
-	// |-----| S2C Configuration Networking |-----|
-	<T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec, ServerConfigurationNetworking.Handler<T> handler);
 
 	boolean canSendConfigurationPayload(ServerConfigurationPacketListenerImpl packetListener, CustomPacketPayload.Type<?> type);
 

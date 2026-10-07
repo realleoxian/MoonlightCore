@@ -11,5 +11,5 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import java.util.function.Supplier;
 
 public record NeoDataAttachmentType<T>(Identifier id, Codec<T> persistentCodec, StreamCodec<? super ByteBuf, T> streamCodec, DataAttachmentSyncPredicate syncPredicate, Supplier<T> initializer, boolean copyOnDeath,
-                                       Supplier<AttachmentType<T>> neoAttachment) implements DataAttachmentType<T> {
+									Supplier<AttachmentType<T>> neoAttachment) implements DataAttachmentType<T> {
 }

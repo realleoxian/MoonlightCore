@@ -9,6 +9,6 @@ import java.util.Queue;
 
 @Mixin(ServerConfigurationPacketListenerImpl.class)
 public interface ServerConfigurationPacketListenerImplAccessor {
-    @Accessor
-    Queue<ConfigurationTask> getConfigurationTasks();
+	@Accessor
+	Queue<ConfigurationTask> getConfigurationTasks();
 }

@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.neoforge.common;
+package de.leoxian.moonlightcore.neoforge.common.hooks;
 
 import net.neoforged.bus.api.IEventBus;
 

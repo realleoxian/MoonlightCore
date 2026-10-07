@@ -1,5 +1,6 @@
 package de.leoxian.moonlightcore.client.platform;
 
+import com.google.common.base.Suppliers;
 import de.leoxian.moonlightcore.client.color.BlockColorRegistrar;
 import de.leoxian.moonlightcore.client.command.ClientCommandsContext;
 import de.leoxian.moonlightcore.client.fluid.FluidRendererRegistrar;
@@ -17,16 +18,16 @@ import de.leoxian.moonlightcore.client.render.BlockEntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.ClientTooltipComponentRegistrar;
 import de.leoxian.moonlightcore.client.render.EntityRendererRegistrar;
 import de.leoxian.moonlightcore.client.render.RenderPipelineRegistrar;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public interface XplatClientAbstraction {
-	XplatClientAbstraction INSTANCE = ServiceLoader.load(XplatClientAbstractionFactory.class).findFirst().orElseThrow().create();
+	Supplier<XplatClientAbstraction> INSTANCE = Suppliers.memoize(() -> {
+		return ServiceLoader.load(XplatClientAbstractionFactory.class).findFirst().orElseThrow().create();
+	});
 
 	// |-----| Registrars |-----|
 	void fluidRenderer(String namespace, Consumer<FluidRendererRegistrar> initializer);
@@ -59,15 +60,13 @@ public interface XplatClientAbstraction {
 
 	void commands(Consumer<ClientCommandsContext> initializer);
 
-	// |-----| C2S Play Networking |-----|
+	// |-----| Networking |-----|
 
-	<MSG extends CustomPacketPayload> void registerPlayPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ClientPlayNetworking.Handler<MSG> handler);
+	<MSG extends CustomPacketPayload> void registerConfigurationPacketPayloadHandler(CustomPacketPayload.Type<MSG> type, ClientConfigurationNetworking.Handler<MSG> handler);
+
+	<MSG extends CustomPacketPayload> void registerPlayPacketPayloadHandler(CustomPacketPayload.Type<MSG> type, ClientPlayNetworking.Handler<MSG> handler);
 
 	boolean canSendPlayPayload(CustomPacketPayload.Type<?> type);
-
-	// |-----| C2S Configuration Networking |-----|
-
-	<T extends CustomPacketPayload> void registerConfigurationPayload(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler);
 
 	boolean canSendConfigurationPayload(CustomPacketPayload.Type<?> type);
 

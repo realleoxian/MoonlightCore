@@ -2,53 +2,50 @@ package de.leoxian.moonlightcore.neoforge.client.network;
 
 import de.leoxian.moonlightcore.client.network.ClientConfigurationNetworking;
 import de.leoxian.moonlightcore.client.network.ClientPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import de.leoxian.moonlightcore.neoforge.common.hooks.ModEventBusRegistrable;
+import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 
-public final class NeoforgeClientNetworkHandler {
-	private final Map<CustomPacketPayload.Type<?>, PayloadPlayRegistration<?>> playPayloads = new ConcurrentHashMap<>();
-	private final Map<CustomPacketPayload.Type<?>, PayloadConfigurationRegistration<?>> configurationPayloads = new ConcurrentHashMap<>();
+public class NeoforgeClientNetworkHandler implements ModEventBusRegistrable {
+	private final Map<CustomPacketPayload.Type<?>, EnumMap<ConnectionProtocol, IPayloadHandler<?>>> handlers = new HashMap<>();
 
-	@SubscribeEvent
-	public void onRegisterClientPayloadHandlers(RegisterPayloadHandlersEvent event) {
-		PayloadRegistrar registrar = event.registrar("1");
-
-		if (!this.playPayloads.isEmpty())
-			this.playPayloads.values().forEach(r -> r.register(registrar));
-
-		if (!this.configurationPayloads.isEmpty())
-			this.configurationPayloads.values().forEach(r -> r.register(registrar));
+	@Override
+	public void register(IEventBus modEventBus) {
+		modEventBus.addListener((RegisterClientPayloadHandlersEvent event) -> {
+			this.handlers.forEach((type, handlerByProtocol) -> {
+				_registerClientPayload(event, type, handlerByProtocol);
+			});
+		});
 	}
 
-	public <T extends CustomPacketPayload> void registerPlay(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec, ClientPlayNetworking.Handler<T> handler) {
-		if (this.playPayloads.putIfAbsent(type, new PayloadPlayRegistration<>(type, streamCodec, handler)) != null) {
-			throw new IllegalArgumentException("Duplicated C2S play payload registration: " + type);
-		}
+	@SuppressWarnings("unchecked")
+	private <MSG extends CustomPacketPayload> void _registerClientPayload(RegisterClientPayloadHandlersEvent event, CustomPacketPayload.Type<MSG> type, EnumMap<ConnectionProtocol, IPayloadHandler<?>> map) {
+		event.register(type, (payload, context) -> {
+			ConnectionProtocol protocol = context.protocol();
+			IPayloadHandler<MSG> handler = (IPayloadHandler<MSG>) map.get(protocol);
+
+			if (handler != null) {
+				handler.handle(payload, context);
+			}
+		});
 	}
 
-	public <T extends CustomPacketPayload> void registerConfiguration(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler) {
-		if (this.configurationPayloads.putIfAbsent(type, new PayloadConfigurationRegistration<>(type, streamCodec, handler)) != null) {
-			throw new IllegalArgumentException("Duplicated C2S configuration payload registration: " + type);
-		}
+	public <MSG extends CustomPacketPayload> void playHandler(CustomPacketPayload.Type<MSG> type, ClientPlayNetworking.Handler<MSG> handler) {
+		this.handlers.computeIfAbsent(type, k -> new EnumMap<>(ConnectionProtocol.class))
+				.put(ConnectionProtocol.PLAY, (payload, context) -> {
+					handler.handle((MSG) payload, new NeoforgeClientPlayNetworkingContext(context));
+				});
 	}
 
-	private record PayloadPlayRegistration<T extends CustomPacketPayload>(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec, ClientPlayNetworking.Handler<T> handler) {
-		void register(PayloadRegistrar registrar) {
-			registrar.playToClient(type, streamCodec, (payload, context) -> handler.handle(payload, new NeoforgeClientPlayNetworkingContext(context)));
-		}
-	}
-
-	private record PayloadConfigurationRegistration<T extends CustomPacketPayload>(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> streamCodec, ClientConfigurationNetworking.Handler<T> handler) {
-		void register(PayloadRegistrar registrar) {
-			registrar.configurationToClient(type, streamCodec, (payload, context) -> handler.handle(payload, new NeoforgeClientConfigurationNetworkingContext(context)));
-		}
+	public <MSG extends CustomPacketPayload> void configurationHandler(CustomPacketPayload.Type<MSG> type, ClientConfigurationNetworking.Handler<MSG> handler) {
+		this.handlers.computeIfAbsent(type, k -> new EnumMap<>(ConnectionProtocol.class))
+				.put(ConnectionProtocol.CONFIGURATION, (payload, context) -> {
+					handler.handle((MSG) payload, new NeoforgeClientConfigurationNetworkingContext(context));
+				});
 	}
 }

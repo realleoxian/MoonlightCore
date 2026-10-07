@@ -12,7 +12,7 @@ public interface ModelLayerRegistrar {
 	/// @param namespace The mod's id to add this registrar to
 	/// @param initializer The initializer of the registrar
 	static void configure(String namespace, Consumer<ModelLayerRegistrar> initializer) {
-		XplatClientAbstraction.INSTANCE.modelLayers(namespace, initializer);
+		XplatClientAbstraction.INSTANCE.get().modelLayers(namespace, initializer);
 	}
 
 	/// Register a new model layer definition
