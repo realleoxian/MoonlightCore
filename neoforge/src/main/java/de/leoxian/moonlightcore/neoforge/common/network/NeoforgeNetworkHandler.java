@@ -34,19 +34,27 @@ public class NeoforgeNetworkHandler implements ModEventBusRegistrable {
 		});
 	}
 
-	public <MSG extends CustomPacketPayload> void serverboundPlay(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ServerPlayNetworking.Handler<MSG> handler) {
+	public <MSG extends CustomPacketPayload> void serverboundPlay(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
 		ServerboundEntry<MSG> entry = getOrCreateServerboundEntry(type);
 		entry.playCodec = streamCodec;
-		entry.playHandler = handler;
 	}
 
 	public <MSG extends CustomPacketPayload> void clientboundPlay(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
 		getOrCreateClientboundEntry(type).playCodec = streamCodec;
 	}
 
-	public <MSG extends CustomPacketPayload> void serverboundConfiguration(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec, ServerConfigurationNetworking.Handler<MSG> handler) {
+	public <MSG extends CustomPacketPayload> void serverboundPlayHandler(CustomPacketPayload.Type<MSG> type, ServerPlayNetworking.Handler<MSG> handler) {
+		ServerboundEntry<MSG> entry = getOrCreateServerboundEntry(type);
+		entry.playHandler = handler;
+	}
+
+	public <MSG extends CustomPacketPayload> void serverboundConfiguration(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
 		ServerboundEntry<MSG> entry = getOrCreateServerboundEntry(type);
 		entry.configCodec = streamCodec;
+	}
+
+	public <MSG extends CustomPacketPayload> void serverboundConfigurationHandler(CustomPacketPayload.Type<MSG> type, ServerConfigurationNetworking.Handler<MSG> handler) {
+		ServerboundEntry<MSG> entry = getOrCreateServerboundEntry(type);
 		entry.configHandler = handler;
 	}
 

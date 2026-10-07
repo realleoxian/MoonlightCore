@@ -27,16 +27,15 @@ public final class MoonlightCore {
 	}
 
 	private static void initializeNetwork() {
-		// Clientbound - Configuration
+		// Clientbound
 		PayloadTypeRegister.clientboundPlay(ClientboundSyncLoadedConfigPacketPayload.TYPE, ClientboundSyncLoadedConfigPacketPayload.STREAM_CODEC);
 		PayloadTypeRegister.clientboundPlay(ClientboundRequestValidConfigurationsPacketPayload.TYPE, ClientboundRequestValidConfigurationsPacketPayload.STREAM_CODEC);
-
-		// Serverbound - Configuration
-		PayloadTypeRegister.serverboundPlay(ServerboundAcceptedConfigurationsPacketPayload.TYPE, ServerboundAcceptedConfigurationsPacketPayload.STREAM_CODEC, MoonlightCore::handlePlay);
-
-		// Clientbound - Play
 		PayloadTypeRegister.clientboundPlay(ClientboundCreateDimensionPacketPayload.TYPE, ClientboundCreateDimensionPacketPayload.STREAM_CODEC);
 		PayloadTypeRegister.clientboundPlay(ClientboundRemoveDynamicDimensionPacketPayload.TYPE, ClientboundRemoveDynamicDimensionPacketPayload.STREAM_CODEC);
+
+		// Serverbound
+		PayloadTypeRegister.serverboundPlay(ServerboundAcceptedConfigurationsPacketPayload.TYPE, ServerboundAcceptedConfigurationsPacketPayload.STREAM_CODEC);
+		ServerPlayNetworking.registerHandler(ServerboundAcceptedConfigurationsPacketPayload.TYPE, MoonlightCore::handle);
 
 		ServerPlayConnectionEvents.JOIN.subscribe((packetListener, sender) -> {
 			if (!ServerPlayNetworking.canSendToPlayer(packetListener.player, ClientboundRequestValidConfigurationsPacketPayload.TYPE)) {
@@ -46,7 +45,7 @@ public final class MoonlightCore {
 		});
 	}
 
-	private static void handlePlay(ServerboundAcceptedConfigurationsPacketPayload packet, ServerPlayNetworking.Context context) {
+	private static void handle(ServerboundAcceptedConfigurationsPacketPayload packet, ServerPlayNetworking.Context context) {
 		context.enqueueWork(() -> {
 			Set<Identifier> decoded = decodeSyncableConfigs(packet);
 

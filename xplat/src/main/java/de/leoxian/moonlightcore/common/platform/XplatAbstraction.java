@@ -88,13 +88,17 @@ public interface XplatAbstraction {
 
 	// |-----|Networking |------|
 
-	<MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ServerPlayNetworking.Handler<MSG> handler);
+	<MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayloadType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec);
 
-	<MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec, ServerConfigurationNetworking.Handler<MSG> handler);
+	<MSG extends CustomPacketPayload> void registerServerboundPlayPayloadHandler(CustomPacketPayload.Type<MSG> type, ServerPlayNetworking.Handler<MSG> handler);
 
-	<MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec);
+	<MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayloadType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec);
 
-	<MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec);
+	<MSG extends CustomPacketPayload> void registerServerboundConfigurationPayloadHandler(CustomPacketPayload.Type<MSG> type, ServerConfigurationNetworking.Handler<MSG> handler);
+
+	<MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacketType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec);
+
+	<MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacketType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec);
 
 	boolean canSendPlayPayloadToPlayer(ServerPlayer player, CustomPacketPayload.Type<?> type);
 

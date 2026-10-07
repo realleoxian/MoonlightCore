@@ -1,6 +1,5 @@
 package de.leoxian.moonlightcore.neoforge.common.platform;
 
-import com.google.common.eventbus.EventBus;
 import de.leoxian.moonlightcore.common.EnvironmentSide;
 import de.leoxian.moonlightcore.common.attachment.DataAttachmentHolder;
 import de.leoxian.moonlightcore.common.attachment.DataAttachmentType;
@@ -172,25 +171,37 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec, ServerConfigurationNetworking.Handler<MSG> handler) {
+	public <MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayloadType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
 		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
-						.serverboundConfiguration(type, streamCodec, handler);
+						.serverboundConfiguration(type, streamCodec);
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
+	public <MSG extends CustomPacketPayload> void registerServerboundConfigurationPayloadHandler(CustomPacketPayload.Type<MSG> type, ServerConfigurationNetworking.Handler<MSG> handler) {
+		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
+				.serverboundConfigurationHandler(type, handler);
+	}
+
+	@Override
+	public <MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacketType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
 		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
 				.clientboundConfiguration(type, streamCodec);
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ServerPlayNetworking.Handler<MSG> handler) {
+	public <MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayloadType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
 		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
-				.serverboundPlay(type, streamCodec, handler);
+				.serverboundPlay(type, streamCodec);
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
+	public <MSG extends CustomPacketPayload> void registerServerboundPlayPayloadHandler(CustomPacketPayload.Type<MSG> type, ServerPlayNetworking.Handler<MSG> handler) {
+		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
+				.serverboundPlayHandler(type, handler);
+	}
+
+	@Override
+	public <MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacketType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
 		EventBusesHooks.getListener(type.id().getNamespace(), NeoforgeNetworkHandler.class)
 				.clientboundPlay(type, streamCodec);
 	}

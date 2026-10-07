@@ -11,6 +11,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class ServerPlayNetworking {
+	public static <MSG extends CustomPacketPayload> void registerHandler(CustomPacketPayload.Type<MSG> type, ServerPlayNetworking.Handler<MSG> handler) {
+		XplatAbstraction.INSTANCE.registerServerboundPlayPayloadHandler(type, handler);
+	}
+
 	/// Checks if the given player can receive a packet payload type
 	/// @param player The player
 	/// @param type The packet payload type
