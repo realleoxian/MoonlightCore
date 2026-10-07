@@ -1,6 +1,5 @@
 package de.leoxian.moonlightcore.internal.core.client;
 
-import de.leoxian.moonlightcore.client.network.ClientConfigurationNetworking;
 import de.leoxian.moonlightcore.client.network.ClientPlayNetworking;
 import de.leoxian.moonlightcore.common.config.Config;
 import de.leoxian.moonlightcore.common.config.file.LoadedConfig;

@@ -163,30 +163,36 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec, ServerConfigurationNetworking.Handler<MSG> handler) {
-		PayloadTypeRegistry.serverboundConfiguration().register(type, streamCodec);
-
+	public <MSG extends CustomPacketPayload> void registerServerboundConfigurationPayloadHandler(CustomPacketPayload.Type<MSG> type, ServerConfigurationNetworking.Handler<MSG> handler) {
 		net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> {
 			handler.handle(payload, new FabricServerConfigurationNetworkingContext(context));
 		});
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayload(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec, ServerPlayNetworking.Handler<MSG> handler) {
-		PayloadTypeRegistry.serverboundPlay().register(type, streamCodec);
+	public <MSG extends CustomPacketPayload> void registerServerboundConfigurationPacketPayloadType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
+		PayloadTypeRegistry.serverboundConfiguration().register(type, streamCodec);
+	}
 
+	@Override
+	public <MSG extends CustomPacketPayload> void registerServerboundPlayPayloadHandler(CustomPacketPayload.Type<MSG> type, ServerPlayNetworking.Handler<MSG> handler) {
 		net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
 			handler.handle(payload, new FabricServerPlayNetworkingContext(context));
 		});
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
+	public <MSG extends CustomPacketPayload> void registerServerboundPlayPacketPayloadType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
+		PayloadTypeRegistry.serverboundPlay().register(type, streamCodec);
+	}
+
+	@Override
+	public <MSG extends CustomPacketPayload> void registerClientboundConfigurationPayloadPacketType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
 		PayloadTypeRegistry.clientboundConfiguration().register(type, streamCodec);
 	}
 
 	@Override
-	public <MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
+	public <MSG extends CustomPacketPayload> void registerClientboundPlayPayloadPacketType(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
 		PayloadTypeRegistry.clientboundPlay().register(type, streamCodec);
 	}
 

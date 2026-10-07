@@ -18,36 +18,36 @@ import java.util.Queue;
 
 @Mixin(ServerConfigurationPacketListenerImpl.class)
 public abstract class ServerConfigurationPacketListenerImplMixin extends ServerCommonPacketListenerImpl {
-    @Shadow
-    @Final
-    private Queue<ConfigurationTask> configurationTasks;
+	@Shadow
+	@Final
+	private Queue<ConfigurationTask> configurationTasks;
 
-    @Shadow
-    protected abstract void finishCurrentTask(ConfigurationTask.Type taskTypeToFinish);
+	@Shadow
+	protected abstract void finishCurrentTask(ConfigurationTask.Type taskTypeToFinish);
 
-    public ServerConfigurationPacketListenerImplMixin(MinecraftServer server, Connection connection, CommonListenerCookie cookie) {
-        super(server, connection, cookie);
-    }
+	public ServerConfigurationPacketListenerImplMixin(MinecraftServer server, Connection connection, CommonListenerCookie cookie) {
+		super(server, connection, cookie);
+	}
 
-    @Inject(
-            method = "addOptionalTasks",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Ljava/util/Queue;addAll(Ljava/util/Collection;)Z",
-                    shift = At.Shift.AFTER
-            )
-    )
-    private void moonlightcore$beforeConfigure(CallbackInfo ci) {
-        ServerConfigurationPacketListenerImpl self = (ServerConfigurationPacketListenerImpl) (Object) this;
-        ServerConfigurationConnectionEvents.BEFORE_CONFIGURE.doFire().onSendConfiguration(self, this.server, this.configurationTasks::add, this::finishCurrentTask);
-    }
+	@Inject(
+			method = "addOptionalTasks",
+			at = @At(
+					value = "INVOKE",
+					target = "Ljava/util/Queue;addAll(Ljava/util/Collection;)Z",
+					shift = At.Shift.AFTER
+			)
+	)
+	private void moonlightcore$beforeConfigure(CallbackInfo ci) {
+		ServerConfigurationPacketListenerImpl self = (ServerConfigurationPacketListenerImpl) (Object) this;
+		ServerConfigurationConnectionEvents.BEFORE_CONFIGURE.doFire().onSendConfiguration(self, this.server, this.configurationTasks::add, this::finishCurrentTask);
+	}
 
-    @Inject(
-            method = "addOptionalTasks",
-            at = @At(value = "RETURN")
-    )
-    private void moonlightcore$atConfigure(CallbackInfo ci) {
-        ServerConfigurationPacketListenerImpl self = (ServerConfigurationPacketListenerImpl) (Object) this;
-        ServerConfigurationConnectionEvents.CONFIGURE.doFire().onSendConfiguration(self, this.server, this.configurationTasks::add, this::finishCurrentTask);
-    }
+	@Inject(
+			method = "addOptionalTasks",
+			at = @At(value = "RETURN")
+	)
+	private void moonlightcore$atConfigure(CallbackInfo ci) {
+		ServerConfigurationPacketListenerImpl self = (ServerConfigurationPacketListenerImpl) (Object) this;
+		ServerConfigurationConnectionEvents.CONFIGURE.doFire().onSendConfiguration(self, this.server, this.configurationTasks::add, this::finishCurrentTask);
+	}
 }

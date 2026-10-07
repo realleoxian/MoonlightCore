@@ -2,7 +2,6 @@ package de.leoxian.moonlightcore.neoforge.common.network;
 
 import de.leoxian.moonlightcore.common.network.PacketSender;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
-import de.leoxian.moonlightcore.neoforge.common.mixin.ServerConfigurationPacketListenerImplAccessor;
 import io.netty.channel.ChannelFutureListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
