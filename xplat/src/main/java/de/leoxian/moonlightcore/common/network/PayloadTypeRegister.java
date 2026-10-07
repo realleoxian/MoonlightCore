@@ -10,7 +10,6 @@ public final class PayloadTypeRegister {
 	/// Register a serverbound play packet payload type
 	/// @param type The type
 	/// @param streamCodec The codec
-	/// @param handler The handler used when the packet its received
 	public static <MSG extends CustomPacketPayload> void serverboundPlay(CustomPacketPayload.Type<MSG> type, StreamCodec<? super RegistryFriendlyByteBuf, MSG> streamCodec) {
 		XplatAbstraction.INSTANCE.registerServerboundPlayPacketPayloadType(type, streamCodec);
 	}
@@ -25,7 +24,6 @@ public final class PayloadTypeRegister {
 	/// Register a serverbound configuration packet payload type
 	/// @param type The type
 	/// @param streamCodec The codec
-	/// @param handler The handler used when the packet its received
 	public static <MSG extends CustomPacketPayload> void serverboundConfiguration(CustomPacketPayload.Type<MSG> type, StreamCodec<? super FriendlyByteBuf, MSG> streamCodec) {
 		XplatAbstraction.INSTANCE.registerServerboundConfigurationPacketPayloadType(type, streamCodec);
 	}

@@ -10,6 +10,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class ServerConfigurationNetworking {
+	/// Register a packet payload handler
+	/// @param type The packet payload the handler is for
+	/// @param handler The handler
 	public static <MSG extends CustomPacketPayload> void registerHandler(CustomPacketPayload.Type<MSG> type, ServerConfigurationNetworking.Handler<MSG> handler) {
 		XplatAbstraction.INSTANCE.registerServerboundConfigurationPayloadHandler(type, handler);
 	}
