@@ -2,7 +2,6 @@ package de.leoxian.moonlightcore.common.attachment;
 
 import com.mojang.serialization.Codec;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
@@ -27,7 +26,7 @@ public interface DataAttachmentType<T> {
 
 	@Nullable DataAttachmentSyncPredicate syncPredicate();
 
-	@Nullable StreamCodec<? super ByteBuf, T> streamCodec();
+	@Nullable StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec();
 
 	default boolean isSynced() {
 		return streamCodec() != null && syncPredicate() != null;

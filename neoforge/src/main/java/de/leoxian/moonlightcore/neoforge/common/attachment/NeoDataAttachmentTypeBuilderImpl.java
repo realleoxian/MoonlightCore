@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import de.leoxian.moonlightcore.common.attachment.DataAttachmentSyncPredicate;
 import de.leoxian.moonlightcore.common.attachment.DataAttachmentType;
 import de.leoxian.moonlightcore.neoforge.common.hooks.EventBusesHooks;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 public class NeoDataAttachmentTypeBuilderImpl<T> implements DataAttachmentType.Builder<T> {
 	private @Nullable Codec<T> persistentCodec = null;
-	private @Nullable StreamCodec<? super ByteBuf, T> streamCodec = null;
+	private @Nullable StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec = null;
 	private @Nullable DataAttachmentSyncPredicate syncPredicate = null;
 	private boolean copyOnDeath = false;
 	private final Supplier<T> initializer;
@@ -33,7 +33,7 @@ public class NeoDataAttachmentTypeBuilderImpl<T> implements DataAttachmentType.B
 	}
 
 	@Override
-	public DataAttachmentType.Builder<T> synced(StreamCodec<? super ByteBuf, T> streamCodec, DataAttachmentSyncPredicate syncPredicate) {
+	public DataAttachmentType.Builder<T> synced(StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec, DataAttachmentSyncPredicate syncPredicate) {
 		if (streamCodec != null && syncPredicate == null) {
 			throw new IllegalStateException("May not set a stream codec for sync but not a sync predicate");
 		} else if (streamCodec == null && syncPredicate != null) {
