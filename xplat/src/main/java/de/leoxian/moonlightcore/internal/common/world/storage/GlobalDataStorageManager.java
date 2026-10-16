@@ -45,7 +45,7 @@ public final class GlobalDataStorageManager extends SavedData {
 			GlobalDataStorageManager.loaded = true;
 		});
 
-		ServerLifecycleEvents.STOPPED.subscribe(server -> {
+		ServerLifecycleEvents.STOPPED.subscribe(_ -> {
 			GlobalDataStorageManager.resetStorages();
 		});
 	}
