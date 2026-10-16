@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class MoonlightCore {
+	public static final String MOD_ID = "moonlightcore";
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	public static Identifier id(String id) {

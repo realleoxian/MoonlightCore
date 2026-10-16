@@ -3,6 +3,7 @@
   "package": "de.leoxian.moonlightcore.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "ServerLevelMixin",
     "accessor.ChunkMapAccessor",
     "accessor.DistanceManagerAccessor",
     "accessor.EquipmentSlotAccessor",
