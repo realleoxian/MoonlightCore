@@ -27,6 +27,11 @@ public record NeoAttachmentHolderWrapper(IAttachmentHolder neoHolder) implements
 	}
 
 	@Override
+	public <T> void syncData(DataAttachmentType<T> type) {
+		neoHolder.syncData(((NeoDataAttachmentType<T>) type).neoAttachment());
+	}
+
+	@Override
 	public <T> T remove(DataAttachmentType<T> type) {
 		return neoHolder.removeData(((NeoDataAttachmentType<T>) type).neoAttachment());
 	}

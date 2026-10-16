@@ -27,6 +27,11 @@ public record FabricDataAttachmentHolder(AttachmentTarget fabricHolder) implemen
 	}
 
 	@Override
+	public <T> void syncData(DataAttachmentType<T> type) {
+		// no-op, fabric already syncs the data
+	}
+
+	@Override
 	public <T> T remove(DataAttachmentType<T> type) {
 		return fabricHolder.removeAttached(((FabricDataAttachmentType<T>) type).fabricAttachment());
 	}

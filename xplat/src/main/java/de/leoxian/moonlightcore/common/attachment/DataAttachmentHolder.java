@@ -35,6 +35,8 @@ public interface DataAttachmentHolder {
 
 	<T> void set(final DataAttachmentType<T> type, final T value);
 
+	<T> void syncData(final DataAttachmentType<T> type);
+
 	<T> T remove(final DataAttachmentType<T> type);
 
 	default <T> T getOrElse(final DataAttachmentType<T> type, Supplier<T> defValue) {
