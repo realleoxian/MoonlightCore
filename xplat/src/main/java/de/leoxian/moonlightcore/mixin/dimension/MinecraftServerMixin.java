@@ -21,7 +21,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.progress.LevelLoadListener;
 import net.minecraft.server.packs.repository.PackRepository;
-import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import org.apache.commons.io.FileUtils;
@@ -58,9 +57,6 @@ public abstract class MinecraftServerMixin implements DynamicDimensionProvider {
 	public abstract LayeredRegistryAccess<RegistryLayer> registries();
 
 	@Shadow
-	public abstract PlayerList getPlayerList();
-
-	@Shadow
 	@Final
 	private static Logger LOGGER;
 	@Unique
@@ -70,7 +66,7 @@ public abstract class MinecraftServerMixin implements DynamicDimensionProvider {
 	@Unique
 	private DynamicDimensionRegistry moonlightcore$dimensionRegistry;
 	@Unique
-	private boolean tickingLevels = false;
+	private boolean moonlightCore$tickingLevels = false;
 
 	@Inject(
 			method = "<init>",
@@ -86,13 +82,13 @@ public abstract class MinecraftServerMixin implements DynamicDimensionProvider {
 	)
 	private void moonlightcore$handlePendingCreationsAndDeletions(BooleanSupplier haveTime, CallbackInfo ci) {
 		if (!this.moonlightcore$pendingLevels.isEmpty()) {
-			this.moonlightcore$pendingLevels.forEach(this::registerLevel);
+			this.moonlightcore$pendingLevels.forEach(this::moonlightCore$registerLevel);
 			this.moonlightcore$pendingLevels.clear();
 		}
 
 		if (!this.moonlightcore$pendingRemovalTickets.isEmpty()) {
 			for (DynamicDimensionRemovalTicket ticket : this.moonlightcore$pendingRemovalTickets) {
-				this.unloadLevel(ticket.key(), ticket.playerRemover());
+				this.moonlightCore$unloadLevel(ticket.key(), ticket.playerRemover());
 				if (ticket.removeFiles()) {
 					this.moonlightcore$deleteLevelData(ticket.key());
 				}
@@ -106,7 +102,7 @@ public abstract class MinecraftServerMixin implements DynamicDimensionProvider {
 			at = @At(value = "HEAD")
 	)
 	private void moonlightcore$markTickingLevels(BooleanSupplier haveTime, CallbackInfo ci) {
-		this.tickingLevels = true;
+		this.moonlightCore$tickingLevels = true;
 	}
 
 	@Inject(
@@ -114,16 +110,16 @@ public abstract class MinecraftServerMixin implements DynamicDimensionProvider {
 			at = @At(value = "RETURN")
 	)
 	private void moonlightcore$unmarkTickingLevels(BooleanSupplier haveTime, CallbackInfo ci) {
-		this.tickingLevels = false;
+		this.moonlightCore$tickingLevels = false;
 	}
 
 	@Override
 	public void moonlightcore$removeLevel(ResourceKey<Level> key, @Nullable DimensionPlayerRemover playerRemover, boolean removeFiles) {
 		DimensionPlayerRemover remover = playerRemover == null ? DimensionPlayerRemover.DEFAULT : playerRemover;
-		if (this.tickingLevels) {
+		if (this.moonlightCore$tickingLevels) {
 			this.moonlightcore$pendingRemovalTickets.add(new DynamicDimensionRemovalTicket(key, remover, removeFiles));
 		} else {
-			this.unloadLevel(key, remover);
+			this.moonlightCore$unloadLevel(key, remover);
 			if (removeFiles) {
 				this.moonlightcore$deleteLevelData(key);
 			}
@@ -144,10 +140,10 @@ public abstract class MinecraftServerMixin implements DynamicDimensionProvider {
 
 	@Override
 	public void moonlightcore$registerLevel(ServerLevel level) {
-		if (this.tickingLevels) {
+		if (this.moonlightCore$tickingLevels) {
 			this.moonlightcore$pendingLevels.add(level);
 		} else {
-			this.registerLevel(level);
+			this.moonlightCore$registerLevel(level);
 		}
 	}
 
@@ -162,12 +158,13 @@ public abstract class MinecraftServerMixin implements DynamicDimensionProvider {
 	}
 
 	@Unique
-	private void registerLevel(ServerLevel level) {
+	private void moonlightCore$registerLevel(ServerLevel level) {
 		this.levels.put(level.dimension(), level);
 		level.tick(() -> true);
 	}
 
-	private void unloadLevel(ResourceKey<Level> key, DimensionPlayerRemover remover) {
+	@Unique
+    private void moonlightCore$unloadLevel(ResourceKey<Level> key, DimensionPlayerRemover remover) {
 		Identifier dimType = null;
 		try (ServerLevel level = this.levels.get(key)) {
 			if (level == null) {

@@ -1,18 +1,13 @@
 package de.leoxian.moonlightcore.neoforge.common.attachment;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import de.leoxian.moonlightcore.common.attachment.DataAttachmentSyncPredicate;
 import de.leoxian.moonlightcore.common.attachment.DataAttachmentType;
 import de.leoxian.moonlightcore.neoforge.common.hooks.EventBusesHooks;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
-import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
