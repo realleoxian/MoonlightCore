@@ -6,6 +6,7 @@ import de.leoxian.moonlightcore.common.event.ServerPlayConnectionEvents;
 import de.leoxian.moonlightcore.common.network.PayloadTypeRegister;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.internal.common.config.ConfigRegistry;
+import de.leoxian.moonlightcore.internal.common.world.storage.GlobalDataStorageManager;
 import de.leoxian.moonlightcore.internal.core.network.clientbound.*;
 import de.leoxian.moonlightcore.internal.core.network.serverbound.ServerboundAcceptedConfigurationsPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -28,6 +29,8 @@ public final class MoonlightCore {
 	}
 
 	private static void initializeNetwork() {
+		GlobalDataStorageManager.init();
+
 		// Clientbound
 		PayloadTypeRegister.clientboundPlay(ClientboundSyncLoadedConfigPacketPayload.TYPE, ClientboundSyncLoadedConfigPacketPayload.STREAM_CODEC);
 		PayloadTypeRegister.clientboundPlay(ClientboundRequestValidConfigurationsPacketPayload.TYPE, ClientboundRequestValidConfigurationsPacketPayload.STREAM_CODEC);
