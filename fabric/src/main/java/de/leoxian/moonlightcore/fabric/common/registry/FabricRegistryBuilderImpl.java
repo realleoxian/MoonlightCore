@@ -1,6 +1,5 @@
 package de.leoxian.moonlightcore.fabric.common.registry;
 
-import com.google.common.base.Suppliers;
 import com.mojang.serialization.Lifecycle;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
@@ -11,7 +10,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
-import java.util.function.Supplier;
 
 public class FabricRegistryBuilderImpl<R> implements RegistryBuilder<R> {
 	private final ResourceKey<Registry<R>> registryKey;
@@ -35,17 +33,15 @@ public class FabricRegistryBuilderImpl<R> implements RegistryBuilder<R> {
 	}
 
 	@Override
-	public Supplier<Registry<R>> build() {
-		return Suppliers.memoize(() -> {
-			Registry<R> registry = this.defaultId != null ?
-					new DefaultedMappedRegistry<>(this.defaultId.toString(), this.registryKey, Lifecycle.stable(), false) :
-					new MappedRegistry<>(this.registryKey, Lifecycle.stable(), false);
+	public Registry<R> build() {
+		Registry<R> registry = this.defaultId != null ?
+				new DefaultedMappedRegistry<>(this.defaultId.toString(), this.registryKey, Lifecycle.stable(), false) :
+				new MappedRegistry<>(this.registryKey, Lifecycle.stable(), false);
 
-			if (this.synced) {
-				RegistryAttributeHolder.get(this.registryKey).addAttribute(RegistryAttribute.SYNCED);
-			}
+		if (this.synced) {
+			RegistryAttributeHolder.get(this.registryKey).addAttribute(RegistryAttribute.SYNCED);
+		}
 
-			return registry;
-		});
+		return registry;
 	}
 }

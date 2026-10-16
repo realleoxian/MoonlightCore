@@ -1,13 +1,11 @@
 package de.leoxian.moonlightcore.neoforge.common.registry;
 
-import com.google.common.base.Suppliers;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public class NeoforgeRegistryBuilder<R> implements RegistryBuilder<R> {
 	private final ResourceKey<Registry<R>> registryKey;
@@ -23,7 +21,6 @@ public class NeoforgeRegistryBuilder<R> implements RegistryBuilder<R> {
 		this.sync = sync;
 		return this;
 	}
-
 	@Override
 	public RegistryBuilder<R> defaultId(Identifier id) {
 		this.defaultId = id;
@@ -31,10 +28,10 @@ public class NeoforgeRegistryBuilder<R> implements RegistryBuilder<R> {
 	}
 
 	@Override
-	public Supplier<Registry<R>> build() {
+	public Registry<R> build() {
 		net.neoforged.neoforge.registries.RegistryBuilder<R> neoBuilder = new net.neoforged.neoforge.registries.RegistryBuilder<>(this.registryKey);
 		neoBuilder.sync(this.sync);
 		neoBuilder.defaultKey(this.defaultId);
-		return Suppliers.memoize(neoBuilder::create);
+		return neoBuilder.create();
 	}
 }

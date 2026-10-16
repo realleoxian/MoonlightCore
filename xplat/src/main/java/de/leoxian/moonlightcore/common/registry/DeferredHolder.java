@@ -33,7 +33,9 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 	private Holder<R> holder = null;
 
 	private DeferredHolder(ResourceKey<R> key) {
+		Objects.requireNonNull(key);
 		this.key = key;
+		tryBind(false);
 	}
 
 	@Override
