@@ -8,10 +8,10 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public interface ResourceReloadListenerRegistrar {
+public interface ServerResourceReloadListenerRegistrar {
 	/// Configure and register modded resource reload listeners
 	/// @param initializer The initializer
-	static void configure(Consumer<ResourceReloadListenerRegistrar> initializer) {
+	static void configure(Consumer<ServerResourceReloadListenerRegistrar> initializer) {
 		XplatAbstraction.INSTANCE.serverReloadListeners(initializer);
 	}
 

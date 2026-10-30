@@ -12,17 +12,18 @@ import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public final class ConfigRegistry {
 	private static final Map<Identifier, ConfigImpl<?>> REGISTRY = new ConcurrentHashMap<>();
 	private static final Set<Identifier> SYNCED_CONFIGS = ConcurrentHashMap.newKeySet();
+	private static final Set<String> REGISTERED_NAMESPACES = new HashSet<>();
 
 	@SuppressWarnings("unchecked")
 	public static <O> Config<O> register(Identifier id, Function<ConfigSchema.Builder, O> factory, boolean synced) {
+		REGISTERED_NAMESPACES.add(id.getNamespace());
 		return (Config<O>) REGISTRY.computeIfAbsent(id, k -> {
 			var lock = ModLockHelper.getOrCreate(id.getNamespace());
 			var config = new ConfigImpl<>(id, factory, lock);
@@ -54,9 +55,22 @@ public final class ConfigRegistry {
 		return REGISTRY.get(id);
 	}
 
+	public static List<ConfigImpl<?>> getModConfigs(String namespace) {
+		return REGISTRY.values().stream().filter(c -> c.id().getNamespace().equals(namespace)).toList();
+	}
+
+	public static boolean isSyncedConfig(Config<?> config) {
+		return SYNCED_CONFIGS.contains(config.id());
+	}
+
 	@UnmodifiableView
 	public static Set<Identifier> getSyncableConfigs() {
 		return Set.copyOf(SYNCED_CONFIGS);
+	}
+
+	@UnmodifiableView
+	public static Set<String> getRegisteredNamespaces() {
+		return Collections.unmodifiableSet(REGISTERED_NAMESPACES);
 	}
 
 	private ConfigRegistry() {}

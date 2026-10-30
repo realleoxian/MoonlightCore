@@ -7,4 +7,9 @@ public enum RestartType {
 	GAME,
 	/// The world needs to be restarted to apply changes
 	WORLD
+	;
+
+	public RestartType with(RestartType other) {
+		return other == NONE ? this : (other == GAME || this == GAME) ? GAME : WORLD;
+	}
 }

@@ -5,11 +5,14 @@ import de.leoxian.moonlightcore.common.config.ConfigValue;
 import de.leoxian.moonlightcore.common.config.schema.ConfigKey;
 import de.leoxian.moonlightcore.common.config.schema.RestartType;
 import de.leoxian.moonlightcore.common.config.schema.type.ConfigValueType;
-import de.leoxian.moonlightcore.common.config.schema.validator.ConfigValueValidator;
+import de.leoxian.moonlightcore.common.config.schema.validator.*;
+import de.leoxian.moonlightcore.internal.common.config.schema.type.*;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 public final class ConfigSchemaImpl implements ConfigSchema {
@@ -70,11 +73,6 @@ public final class ConfigSchemaImpl implements ConfigSchema {
 	void setup(ConfigImpl<?> owner) {
 		for (final var configValue : this.configValues) configValue.setup(owner);
 		for (final var child : this.children.values()) child.setup(owner);
-	}
-
-	void invalidate() {
-		for (final var configValue : this.configValues) configValue.invalidate();
-		for (final var child : this.children.values()) child.invalidate();
 	}
 
 	public static final class BuilderImpl implements Builder {
@@ -153,7 +151,77 @@ public final class ConfigSchemaImpl implements ConfigSchema {
 		}
 
 		@Override
-		public <T> ConfigValue<T> define(String key, ConfigValueType<T> type, ConfigValueValidator<T> validator, Supplier<T> defValue) {
+		public <C extends Collection<Integer>> ConfigValue<C> defineIntCollection(String key, IntFunction<C> factory, int maxSize, int min, int max, C defValue) {
+			return define(key, new CollectionConfigValueType<>(factory, maxSize, IntConfigValueType.INSTANCE), new CollectionConfigValidator<>(new RangedConfigValidator<>(min, max)), defValue);
+		}
+
+		@Override
+		public ConfigValue<Integer> defineInt(String key, int min, int max, int defValue) {
+			return define(key, IntConfigValueType.INSTANCE, new RangedConfigValidator<>(min, max), defValue);
+		}
+
+		@Override
+		public <C extends Collection<Float>> ConfigValue<C> defineFloatCollection(String key, IntFunction<C> factory, int maxSize, float min, float max, C defValue) {
+			return define(key, new CollectionConfigValueType<>(factory, maxSize, FloatConfigValueType.INSTANCE), new CollectionConfigValidator<>(new RangedConfigValidator<>(min, max)), defValue);
+		}
+
+		@Override
+		public ConfigValue<Float> defineFloat(String key, float min, float max, float defValue) {
+			return define(key, FloatConfigValueType.INSTANCE, new RangedConfigValidator<>(min, max), defValue);
+		}
+
+		@Override
+		public <C extends Collection<Boolean>> ConfigValue<C> defineBooleanCollection(String key, IntFunction<C> factory, int maxSize, C defValue) {
+			return define(key, new CollectionConfigValueType<>(factory, maxSize, BooleanConfigValueType.INSTANCE), NoOpConfigValidator.INSTANCE.cast(), defValue);
+		}
+
+		@Override
+		public ConfigValue<Boolean> defineBoolean(String key, boolean defValue) {
+			return define(key, BooleanConfigValueType.INSTANCE, NoOpConfigValidator.INSTANCE.cast(), defValue);
+		}
+
+		@Override
+		public <E extends Enum<E>, C extends Collection<E>> ConfigValue<C> defineEnumCollection(String key, IntFunction<C> factory, int maxSize, Class<E> enumType, C defValue) {
+			return define(key, new CollectionConfigValueType<>(factory, maxSize, new EnumConfigValueType<>(enumType)), NoOpConfigValidator.INSTANCE.cast(), defValue);
+		}
+
+		@Override
+		public <E extends Enum<E>> ConfigValue<E> defineEnum(String key, Class<E> enumType, E defValue) {
+			return define(key, new EnumConfigValueType<>(enumType), NoOpConfigValidator.INSTANCE.cast(), defValue);
+		}
+
+		@Override
+		public <C extends Collection<UUID>> ConfigValue<C> defineUUIDCollection(String key, IntFunction<C> factory, int maxSize, C defValue) {
+			return define(key, new CollectionConfigValueType<>(factory, maxSize, UUIDConfigValueType.INSTANCE), NoOpConfigValidator.INSTANCE.cast(), defValue);
+		}
+
+		@Override
+		public ConfigValue<UUID> defineUUID(String key, UUID defValue) {
+			return define(key, UUIDConfigValueType.INSTANCE, NoOpConfigValidator.INSTANCE.cast(), defValue);
+		}
+
+		@Override
+		public <C extends Collection<Identifier>> ConfigValue<C> defineIdentifierCollection(String key, IntFunction<C> factory, int maxSize, String validNamespace, C defValue) {
+			return define(key, new CollectionConfigValueType<>(factory, maxSize, IdentifierConfigValueType.INSTANCE), new CollectionConfigValidator<>(new IdentifierConfigValidator(validNamespace)), defValue);
+		}
+
+		@Override
+		public ConfigValue<Identifier> defineIdentifier(String key, String validNamespace, Identifier defValue) {
+			return define(key, IdentifierConfigValueType.INSTANCE, new IdentifierConfigValidator(validNamespace), defValue);
+		}
+
+		@Override
+		public <C extends Collection<Identifier>> ConfigValue<C> defineIdentifierCollection(String key, IntFunction<C> factory, int maxSize, C defValue) {
+			return define(key, new CollectionConfigValueType<>(factory, maxSize, IdentifierConfigValueType.INSTANCE), new CollectionConfigValidator<>(new IdentifierConfigValidator(null)), defValue);
+		}
+
+		@Override
+		public ConfigValue<Identifier> defineIdentifier(String key, Identifier defValue) {
+			return define(key, IdentifierConfigValueType.INSTANCE, new IdentifierConfigValidator(null), defValue);
+		}
+
+
+		private  <T> ConfigValue<T> define(String key, ConfigValueType<T> type, ConfigValueValidator<T> validator, T defValue) {
 			if (key == null || key.isBlank()) {
 				throw new IllegalArgumentException("Config value property key cannot be null or empty");
 			}
@@ -168,8 +236,7 @@ public final class ConfigSchemaImpl implements ConfigSchema {
 					this.requiredRestartType,
 					defValue,
 					this.currentTranslationKey,
-					List.copyOf(this.currentComments)
-			);
+					List.copyOf(this.currentComments));
 			var activeSchema = schemaStack.getLast();
 			activeSchema.configValues.add(configValue);
 

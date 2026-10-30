@@ -2,6 +2,7 @@ package de.leoxian.moonlightcore.common.config;
 
 import de.leoxian.moonlightcore.common.config.file.LoadedConfig;
 import de.leoxian.moonlightcore.internal.common.config.ConfigRegistry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 

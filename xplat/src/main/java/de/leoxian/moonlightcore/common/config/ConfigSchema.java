@@ -3,6 +3,8 @@ package de.leoxian.moonlightcore.common.config;
 import de.leoxian.moonlightcore.common.config.schema.ConfigKey;
 import de.leoxian.moonlightcore.common.config.schema.type.*;
 import de.leoxian.moonlightcore.common.config.schema.validator.*;
+import de.leoxian.moonlightcore.internal.common.config.schema.type.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -66,46 +68,40 @@ public interface ConfigSchema {
 			return this;
 		}
 
-		<T> ConfigValue<T> define(String key, ConfigValueType<T> type, ConfigValueValidator<T> validator, Supplier<T> defValue);
+		<C extends Collection<Integer>> ConfigValue<C> defineIntCollection(String key, IntFunction<C> factory, int maxSize, int min, int max, C defValue);
 
-		default ConfigValue<Integer> defineInt(String key, int min, int max, Supplier<Integer> defValue) {
-			return define(key, IntConfigValueType.INSTANCE, new RangedConfigValidator<>(min, max), defValue);
-		}
+		ConfigValue<Integer> defineInt(String key, int min, int max, int defValue);
 
-		default ConfigValue<Integer> defineInt(String key, Supplier<Integer> defValue) {
+		default ConfigValue<Integer> defineInt(String key, int defValue) {
 			return defineInt(key, Integer.MIN_VALUE, Integer.MAX_VALUE, defValue);
 		}
 
-		default ConfigValue<Float> defineFloat(String key, float min, float max, Supplier<Float> defValue) {
-			return define(key, FloatConfigValueType.INSTANCE, new RangedConfigValidator<>(min, max), defValue);
-		}
+		<C extends Collection<Float>> ConfigValue<C> defineFloatCollection(String key, IntFunction<C> factory, int maxSize, float min, float max, C defValue);
 
-		default ConfigValue<Float> defineFloat(String key, Supplier<Float> defValue) {
+		ConfigValue<Float> defineFloat(String key, float min, float max, float defValue);
+
+		default ConfigValue<Float> defineFloat(String key, float defValue) {
 			return defineFloat(key, Float.MIN_VALUE, Float.MAX_VALUE, defValue);
 		}
 
-		default ConfigValue<Boolean> defineBool(String key, Supplier<Boolean> defValue) {
-			return define(key, BooleanConfigValueType.INSTANCE, NoOpConfigValidator.INSTANCE.cast(), defValue);
-		}
+		<C extends Collection<Boolean>> ConfigValue<C> defineBooleanCollection(String key, IntFunction<C> factory, int maxSize, C defValue);
 
-		default <E extends Enum<E>> ConfigValue<E> defineEnum(String key, Class<E> enumType, Supplier<E> defValue) {
-			return define(key, EnumConfigValueType.get(enumType), NoOpConfigValidator.INSTANCE.cast(), defValue);
-		}
+		ConfigValue<Boolean> defineBoolean(String key, boolean defValue);
 
-		default ConfigValue<UUID> defineUUID(String key, Supplier<UUID> defValue) {
-			return define(key, UUIDConfigValueType.INSTANCE, NoOpConfigValidator.INSTANCE.cast(), defValue);
-		}
+		<E extends Enum<E>, C extends Collection<E>> ConfigValue<C> defineEnumCollection(String key, IntFunction<C> factory, int maxSize, Class<E> enumType, C defValue);
 
-		default ConfigValue<Identifier> defineIdentifier(String key, String validNamespace, Supplier<Identifier> defValue) {
-			return define(key, IdentifierConfigValueType.INSTANCE, new IdentifierConfigValidator(validNamespace), defValue);
-		}
+		<E extends Enum<E>> ConfigValue<E> defineEnum(String key, Class<E> enumType, E defValue);
 
-		default ConfigValue<Identifier> defineIdentifier(String key, Supplier<Identifier> defValue) {
-			return define(key, IdentifierConfigValueType.INSTANCE, IdentifierConfigValidator.ANY, defValue);
-		}
+		<C extends Collection<UUID>> ConfigValue<C> defineUUIDCollection(String key, IntFunction<C> factory, int maxSize, C defValue);
 
-		default <E, C extends Collection<E>> ConfigValue<C> defineCollection(String key, IntFunction<C> factory, int maxSize, ConfigValueType<E> elementType, ConfigValueValidator<E> elementValidator, Supplier<C> defValue) {
-			return define(key, new CollectionConfigValueType<E, C>(factory, maxSize, elementType), new CollectionConfigValidator<E, C>(elementValidator), defValue);
-		}
+		ConfigValue<UUID> defineUUID(String key, UUID defValue);
+
+		<C extends Collection<Identifier>> ConfigValue<C> defineIdentifierCollection(String key, IntFunction<C> factory, int maxSize, String validNamespace, C defValue);
+
+		ConfigValue<Identifier> defineIdentifier(String key, String validNamespace, Identifier defValue);
+
+		<C extends Collection<Identifier>> ConfigValue<C> defineIdentifierCollection(String key, IntFunction<C> factory, int maxSize, C defValue);
+
+		ConfigValue<Identifier> defineIdentifier(String key, Identifier defValue);
 	}
 }

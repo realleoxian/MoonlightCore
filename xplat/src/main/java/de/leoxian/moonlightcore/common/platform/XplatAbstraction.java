@@ -14,7 +14,7 @@ import de.leoxian.moonlightcore.common.fluid.FluidRegistrar;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
-import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
+import de.leoxian.moonlightcore.common.pack.ServerResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;
@@ -57,7 +57,7 @@ public interface XplatAbstraction {
 
 	void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer);
 
-	void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer);
+	void serverReloadListeners(Consumer<ServerResourceReloadListenerRegistrar> initializer);
 
 	SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound);
 

@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.neoforge.common.pack;
 
-import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
+import de.leoxian.moonlightcore.common.pack.ServerResourceReloadListenerRegistrar;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public record NeoforgeResourceReloadListenerRegistrar(AddServerReloadListenersEvent event) implements ResourceReloadListenerRegistrar {
+public record NeoforgeServerResourceReloadListenerRegistrar(AddServerReloadListenersEvent event) implements ServerResourceReloadListenerRegistrar {
 	@Override
 	public void register(Identifier id, Function<HolderLookup.Provider, PreparableReloadListener> func) {
 		event.addListener(id, new ContextAwareReloadListener() {

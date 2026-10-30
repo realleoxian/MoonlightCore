@@ -14,7 +14,7 @@ import de.leoxian.moonlightcore.common.fluid.FluidRegistrar;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
-import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
+import de.leoxian.moonlightcore.common.pack.ServerResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
@@ -30,7 +30,7 @@ import de.leoxian.moonlightcore.neoforge.common.fluid.NeoforgeFluidRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.hooks.EventBusesHooks;
 import de.leoxian.moonlightcore.neoforge.common.network.NeoforgeNetworkHandler;
 import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeDataPackRegistryRegistrar;
-import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeResourceReloadListenerRegistrar;
+import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeServerResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.registry.NeoforgeRegistryBuilder;
 import de.leoxian.moonlightcore.neoforge.common.resource.NeoforgeModResources;
 import de.leoxian.moonlightcore.neoforge.common.server.permission.NeoforgePermissionsHelper;
@@ -104,9 +104,9 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
-	public void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer) {
+	public void serverReloadListeners(Consumer<ServerResourceReloadListenerRegistrar> initializer) {
 		NeoForge.EVENT_BUS.addListener((AddServerReloadListenersEvent event) -> {
-			initializer.accept(new NeoforgeResourceReloadListenerRegistrar(event));
+			initializer.accept(new NeoforgeServerResourceReloadListenerRegistrar(event));
 		});
 	}
 

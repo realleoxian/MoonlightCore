@@ -4,24 +4,27 @@ import de.leoxian.moonlightcore.common.config.Config;
 import de.leoxian.moonlightcore.common.config.ConfigSchema;
 import de.leoxian.moonlightcore.common.config.ConfigValue;
 import de.leoxian.moonlightcore.common.config.file.LoadedConfig;
+import de.leoxian.moonlightcore.common.config.schema.ConfigKey;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class ConfigFileWriter {
 	public static void writeFile(Config<?> config) {
-		var filePath = config.filePath();
+		Path filePath = config.filePath();
 
 		List<String> serializedContent = new ArrayList<>();
 		writeSchema(serializedContent, config.loadedConfig(), config.schema(), 0);
-
 		try {
-			if (filePath.getParent() != null) {
-				Files.createDirectories(filePath.getParent());
+			Path parentDir = filePath.getParent();
+			if (parentDir != null) {
+				Files.createDirectories(parentDir);
 			}
 
+			ConfigFileWatcher.markInternalUpdate(filePath);
 			Files.write(filePath, serializedContent);
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to write configuration file to: " + filePath + " (" + config.id() + ")", e);
@@ -29,12 +32,17 @@ public final class ConfigFileWriter {
 	}
 
 	private static void writeSchema(List<String> serializedContent, LoadedConfig loadedData, ConfigSchema schema, int currentDepth) {
-		if (schema.comments() != null) schema.comments().forEach(line -> serializedContent.add("# " + line));
+		if (schema.comments() != null) {
+			schema.comments().forEach(line -> serializedContent.add("# " + line));
+		}
 
 		int nextDepth = currentDepth;
 		if (schema.key() != null) {
+			if (!serializedContent.isEmpty() && !serializedContent.getLast().isEmpty()) {
+				serializedContent.add("");
+			}
+
 			serializedContent.add("[" + schema.key() + "]");
-			serializedContent.add("");
 			nextDepth = schema.key().getComponentsCount();
 		}
 
@@ -45,25 +53,29 @@ public final class ConfigFileWriter {
 		for (final var child : schema.getSchemas()) {
 			writeSchema(serializedContent, loadedData, child, nextDepth);
 		}
-		serializedContent.add("");
 	}
 
 	private static <T> void writeConfigValue(List<String> serializedContent, LoadedConfig loadedData, ConfigValue<T> configValue, int currentDepth) {
-		if (configValue.comments() != null) configValue.comments().forEach(line -> serializedContent.add("# " + line));
+		if (!serializedContent.isEmpty() && !serializedContent.getLast().isEmpty()) {
+			serializedContent.add("");
+		}
 
-		var fullKey = configValue.key();
+		if (configValue.comments() != null) {
+			configValue.comments().forEach(line -> serializedContent.add("# " + line));
+		}
+
+		ConfigKey fullKey = configValue.key();
 		List<String> relativeComponents = new ArrayList<>();
 		for (int i = currentDepth; i < fullKey.getComponentsCount(); i++) {
 			relativeComponents.add(fullKey.get(i));
 		}
-		var relativeKey = String.join(".", relativeComponents);
+		String relativeKey = String.join(".", relativeComponents);
+
 		T currentValue = loadedData.getRaw(configValue);
 		String serializedValue = configValue.type().writeToString(currentValue);
 
-
 		serializedContent.add("# Default Value: " + configValue.type().writeToString(configValue.defaultValue()));
 		serializedContent.add(relativeKey + " = " + serializedValue);
-		serializedContent.add("");
 	}
 
 	private ConfigFileWriter() {}

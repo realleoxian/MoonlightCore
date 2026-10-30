@@ -13,7 +13,7 @@ public interface LoadedConfig {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	default void applyFrom(ConfigSchema schema, LoadedConfig loadedConfig) {
-		for (final var configValue : schema.getSchemas())
+		for (final var configValue : schema.getConfigValues())
 			setRaw((ConfigValue) configValue, loadedConfig.getRaw((ConfigValue) configValue));
 		for (final var child : schema.getSchemas())
 			applyFrom(child, loadedConfig);

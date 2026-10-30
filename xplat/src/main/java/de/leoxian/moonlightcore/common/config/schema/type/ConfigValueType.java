@@ -1,10 +1,13 @@
 package de.leoxian.moonlightcore.common.config.schema.type;
 
 import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.function.Consumer;
 
+@ApiStatus.Internal
+@ApiStatus.NonExtendable
 public interface ConfigValueType<T> {
 	/// Transforms the given value into a string
 	/// @param value The value

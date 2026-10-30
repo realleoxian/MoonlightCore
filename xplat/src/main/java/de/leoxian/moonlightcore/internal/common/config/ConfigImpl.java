@@ -5,6 +5,7 @@ import de.leoxian.moonlightcore.common.config.ConfigSchema;
 import de.leoxian.moonlightcore.common.config.file.LoadedConfig;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.internal.common.config.file.ConfigFileWriter;
+import de.leoxian.moonlightcore.internal.common.config.file.ConfigParser;
 import de.leoxian.moonlightcore.internal.common.config.file.DefaultLoadedConfig;
 import de.leoxian.moonlightcore.internal.common.config.file.LoadedConfigImpl;
 import net.minecraft.resources.Identifier;
@@ -40,10 +41,9 @@ public final class ConfigImpl<T> implements Config<T> {
 	public void load() {
 		this.lock.lock();
 		try {
-			var dataOpt = LoadedConfigImpl.load(this);
+			var dataOpt = ConfigParser.parse(this);
 			if (dataOpt.isPresent()) {
 				this.loadedData.applyFrom(this.schema, dataOpt.get());
-				this.schema.invalidate();
 			} else {
 				ConfigFileWriter.writeFile(this);
 			}

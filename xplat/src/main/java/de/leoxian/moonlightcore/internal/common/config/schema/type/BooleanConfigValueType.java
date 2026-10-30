@@ -1,5 +1,6 @@
-package de.leoxian.moonlightcore.common.config.schema.type;
+package de.leoxian.moonlightcore.internal.common.config.schema.type;
 
+import de.leoxian.moonlightcore.common.config.schema.type.ConfigValueType;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.List;
