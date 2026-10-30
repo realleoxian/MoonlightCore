@@ -14,7 +14,7 @@ import de.leoxian.moonlightcore.common.fluid.FluidRegistrar;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
-import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
+import de.leoxian.moonlightcore.common.pack.ServerResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.common.registry.RegistryBuilder;
 import de.leoxian.moonlightcore.common.resource.ModResources;
@@ -34,7 +34,7 @@ import de.leoxian.moonlightcore.fabric.common.fluid.FabricFluidRegistrar;
 import de.leoxian.moonlightcore.fabric.common.network.FabricServerConfigurationNetworkingContext;
 import de.leoxian.moonlightcore.fabric.common.network.FabricServerPlayNetworkingContext;
 import de.leoxian.moonlightcore.fabric.common.pack.FabricDataPackRegistryRegistrar;
-import de.leoxian.moonlightcore.fabric.common.pack.FabricResourceReloadListenerRegistrar;
+import de.leoxian.moonlightcore.fabric.common.pack.FabricServerResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.fabric.common.registry.FabricRegistryBuilderImpl;
 import de.leoxian.moonlightcore.fabric.common.resource.FabricModResources;
 import de.leoxian.moonlightcore.internal.common.internal.XplatPermissionHelper;
@@ -98,8 +98,8 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
-	public void serverReloadListeners(Consumer<ResourceReloadListenerRegistrar> initializer) {
-		initializer.accept(FabricResourceReloadListenerRegistrar.INSTANCES);
+	public void serverReloadListeners(Consumer<ServerResourceReloadListenerRegistrar> initializer) {
+		initializer.accept(FabricServerResourceReloadListenerRegistrar.INSTANCES);
 	}
 
 	@Override

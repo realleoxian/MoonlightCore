@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.fabric.common.pack;
 
-import de.leoxian.moonlightcore.common.pack.ResourceReloadListenerRegistrar;
+import de.leoxian.moonlightcore.common.pack.ServerResourceReloadListenerRegistrar;
 import net.fabricmc.fabric.api.resource.v1.DataResourceLoader;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
@@ -8,7 +8,7 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 import java.util.function.Function;
 
-public enum FabricResourceReloadListenerRegistrar implements ResourceReloadListenerRegistrar {
+public enum FabricServerResourceReloadListenerRegistrar implements ServerResourceReloadListenerRegistrar {
 	INSTANCES
 	;
 
