@@ -13,6 +13,7 @@ import net.minecraft.resources.Identifier;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 public final class ConfigImpl<T> implements Config<T> {
@@ -20,15 +21,12 @@ public final class ConfigImpl<T> implements Config<T> {
 
 	private final ConfigSchemaImpl schema;
 	private final T instance;
-
-	final Lock lock;
-
+	final Lock lock = new ReentrantLock();
 	final LoadedConfig loadedData = new LoadedConfigImpl();
 	private Path filePath;
 
-	public ConfigImpl(Identifier id, Function<ConfigSchema.Builder, T> instanceFactory, Lock lock) {
+	public ConfigImpl(Identifier id, Function<ConfigSchema.Builder, T> instanceFactory) {
 		this.id = id;
-		this.lock = lock;
 
 		var rootSchema = new ConfigSchemaImpl(null);
 		var builder = new ConfigSchemaImpl.BuilderImpl(rootSchema);
@@ -79,11 +77,6 @@ public final class ConfigImpl<T> implements Config<T> {
 
 	@Override
 	public LoadedConfig loadedConfig() {
-		try {
-			this.lock.lock();
-			return this.loadedData;
-		} finally {
-			this.lock.unlock();
-		}
+		return this.loadedData;
 	}
 }

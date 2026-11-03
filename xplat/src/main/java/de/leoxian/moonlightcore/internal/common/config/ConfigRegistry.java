@@ -6,7 +6,6 @@ import de.leoxian.moonlightcore.common.config.ConfigSchema;
 import de.leoxian.moonlightcore.common.network.PacketDistributor;
 import de.leoxian.moonlightcore.common.platform.XplatAbstraction;
 import de.leoxian.moonlightcore.internal.common.config.file.ConfigFileWatcher;
-import de.leoxian.moonlightcore.internal.common.util.ModLockHelper;
 import de.leoxian.moonlightcore.internal.core.network.clientbound.ClientboundSyncLoadedConfigPacketPayload;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -24,9 +23,8 @@ public final class ConfigRegistry {
 	@SuppressWarnings("unchecked")
 	public static <O> Config<O> register(Identifier id, Function<ConfigSchema.Builder, O> factory, boolean synced) {
 		REGISTERED_NAMESPACES.add(id.getNamespace());
-		return (Config<O>) REGISTRY.computeIfAbsent(id, k -> {
-			var lock = ModLockHelper.getOrCreate(id.getNamespace());
-			var config = new ConfigImpl<>(id, factory, lock);
+		return (Config<O>) REGISTRY.computeIfAbsent(id, _ -> {
+			var config = new ConfigImpl<>(id, factory);
 			config.load();
 			if (synced) {
 				SYNCED_CONFIGS.add(id);

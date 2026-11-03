@@ -12,7 +12,6 @@ public final class Event<T> {
 		return new Event<>(eventType, invokerFactory);
 	}
 
-	private final ReentrantLock lock = new ReentrantLock();
 	private final EnumMap<EventPriority, List<T>> listeners = new EnumMap<>(EventPriority.class);
 	private final Class<T> eventType;
 	private final Function<T[], T> invokerFactory;
@@ -37,13 +36,8 @@ public final class Event<T> {
 	}
 
 	public void subscribe(EventPriority priority, T listener) {
-		this.lock.lock();
-		try {
-			this.listeners.get(priority).add(listener);
-			this.dirty = true;
-		} finally {
-			this.lock.unlock();
-		}
+		this.listeners.get(priority).add(listener);
+		this.dirty = true;
 	}
 
 	public void subscribe(T listener) {
@@ -51,37 +45,26 @@ public final class Event<T> {
 	}
 
 	public void unsubscribe(T listener) {
-		this.lock.lock();
-		try {
-			boolean wasRemoved = false;
-			for (final var priority : EventPriority.VALUES) {
-				wasRemoved |= this.listeners.get(priority).removeIf(t -> t == listener);
-			}
+		boolean wasRemoved = false;
+		for (final var priority : EventPriority.VALUES) {
+			wasRemoved |= this.listeners.get(priority).removeIf(t -> t == listener);
+		}
 
-			if (wasRemoved) {
-				this.dirty = true;
-			}
-		} finally {
-			this.lock.unlock();
+		if (wasRemoved) {
+			this.dirty = true;
 		}
 	}
 
 	private void buildInvoker() {
-		this.lock.lock();
-		try {
-			if (!this.dirty) return;
+		if (!this.dirty) return;
 
-			var allListeners = new ArrayList<T>();
-			for (final var priority : EventPriority.VALUES) {
-				allListeners.addAll(this.listeners.get(priority));
-			}
-
-			@SuppressWarnings("unchecked")
-			var listenersArray = allListeners.toArray((T[]) Array.newInstance(this.eventType, allListeners.size()));
-			this.invoker = this.invokerFactory.apply(listenersArray);
-			this.dirty = false;
-		} finally {
-			this.lock.unlock();
+		var allListeners = new ArrayList<T>();
+		for (final var priority : EventPriority.VALUES) {
+			allListeners.addAll(this.listeners.get(priority));
 		}
+		@SuppressWarnings("unchecked")
+		var listenersArray = allListeners.toArray((T[]) Array.newInstance(this.eventType, allListeners.size()));
+		this.invoker = this.invokerFactory.apply(listenersArray);
+		this.dirty = false;
 	}
 }
