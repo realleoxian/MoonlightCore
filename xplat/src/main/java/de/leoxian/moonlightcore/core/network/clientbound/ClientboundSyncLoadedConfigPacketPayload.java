@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.internal.core.network.clientbound;
+package de.leoxian.moonlightcore.core.network.clientbound;
 
 import com.mojang.logging.LogUtils;
 import de.leoxian.moonlightcore.common.config.Config;
@@ -8,7 +8,7 @@ import de.leoxian.moonlightcore.common.config.file.LoadedConfig;
 import de.leoxian.moonlightcore.common.config.schema.ConfigKey;
 import de.leoxian.moonlightcore.internal.common.config.ConfigRegistry;
 import de.leoxian.moonlightcore.internal.common.config.file.LoadedConfigImpl;
-import de.leoxian.moonlightcore.internal.core.MoonlightCore;
+import de.leoxian.moonlightcore.core.MoonlightCore;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.network.FriendlyByteBuf;

@@ -1,7 +1,7 @@
 package de.leoxian.moonlightcore.fabric.common.server.permission;
 
 import de.leoxian.moonlightcore.common.server.permission.PermissionContext;
-import de.leoxian.moonlightcore.internal.common.internal.XplatPermissionHelper;
+import de.leoxian.moonlightcore.internal.common.server.permission.XplatPermissionHelper;
 import net.fabricmc.fabric.api.permission.v1.PermissionNode;
 import net.fabricmc.fabric.api.permission.v1.PermissionPredicates;
 import net.minecraft.commands.CommandSourceStack;

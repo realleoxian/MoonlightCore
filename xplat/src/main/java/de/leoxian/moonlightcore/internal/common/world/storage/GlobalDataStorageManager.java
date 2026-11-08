@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import de.leoxian.moonlightcore.common.event.ServerLifecycleEvents;
 import de.leoxian.moonlightcore.common.world.storage.GlobalDataStorage;
-import de.leoxian.moonlightcore.internal.core.MoonlightCore;
+import de.leoxian.moonlightcore.core.MoonlightCore;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.Identifier;

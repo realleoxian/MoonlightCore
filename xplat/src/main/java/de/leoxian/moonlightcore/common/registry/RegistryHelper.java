@@ -11,18 +11,16 @@ import java.util.function.BiConsumer;
 
 public class RegistryHelper implements RegisterEvent {
 	public interface Registrar<R> {
-		void registerAll(BiConsumer<String, R> output);
+		void registerAll(BiConsumer<Identifier, R> output);
 	}
 
-	public static RegistryHelper create(final String modId) {
-		return new RegistryHelper(modId);
+	public static RegistryHelper create() {
+		return new RegistryHelper();
 	}
 
 	private final Multimap<ResourceKey<? extends Registry<?>>, Registrar<?>> registrars = ArrayListMultimap.create();
-	private final String modId;
 
-	private RegistryHelper(String modId) {
-		this.modId = modId;
+	private RegistryHelper() {
 		RegisterEvent.EVENT.subscribe(this);
 	}
 
@@ -33,7 +31,7 @@ public class RegistryHelper implements RegisterEvent {
 				return;
 			}
 
-			registrar.registerAll((name, value) -> output.register(Identifier.fromNamespaceAndPath(this.modId, name), value));
+			registrar.registerAll(output::register);
 		});
 	}
 

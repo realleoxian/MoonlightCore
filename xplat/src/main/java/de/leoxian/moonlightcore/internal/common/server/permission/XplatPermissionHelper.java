@@ -1,4 +1,4 @@
-package de.leoxian.moonlightcore.internal.common.internal;
+package de.leoxian.moonlightcore.internal.common.server.permission;
 
 import de.leoxian.moonlightcore.common.server.permission.PermissionContext;
 import de.leoxian.moonlightcore.common.server.permission.PermissionsHelper;

@@ -3,6 +3,9 @@
   "package": "de.leoxian.moonlightcore.mixin.client",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "AvatarRendererMixin",
+    "AvatarRenderStateMixin",
+    "AbstractClientPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,15 +1,25 @@
-package de.leoxian.moonlightcore.internal.core;
+package de.leoxian.moonlightcore.core;
 
 import com.mojang.logging.LogUtils;
 import de.leoxian.moonlightcore.common.config.Config;
+import de.leoxian.moonlightcore.common.event.ServerLifecycleEvents;
 import de.leoxian.moonlightcore.common.event.ServerPlayConnectionEvents;
 import de.leoxian.moonlightcore.common.network.PayloadTypeRegister;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundCreateDimensionPacketPayload;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundRemoveDynamicDimensionPacketPayload;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundRequestValidConfigurationsPacketPayload;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundSyncLoadedConfigPacketPayload;
 import de.leoxian.moonlightcore.internal.common.config.ConfigRegistry;
+import de.leoxian.moonlightcore.internal.common.level.NoiseGeneratorSettingsExtension;
 import de.leoxian.moonlightcore.internal.common.world.storage.GlobalDataStorageManager;
-import de.leoxian.moonlightcore.internal.core.network.clientbound.*;
-import de.leoxian.moonlightcore.internal.core.network.serverbound.ServerboundAcceptedConfigurationsPacketPayload;
+import de.leoxian.moonlightcore.core.data.MoonlightDataAttachments;
+import de.leoxian.moonlightcore.core.network.serverbound.ServerboundAcceptedConfigurationsPacketPayload;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import org.slf4j.Logger;
 
 import java.util.HashSet;
@@ -30,6 +40,7 @@ public final class MoonlightCore {
 
 	private static void initializeNetwork() {
 		GlobalDataStorageManager.init();
+		MoonlightDataAttachments.init();
 
 		// Clientbound
 		PayloadTypeRegister.clientboundPlay(ClientboundSyncLoadedConfigPacketPayload.TYPE, ClientboundSyncLoadedConfigPacketPayload.STREAM_CODEC);
@@ -46,6 +57,17 @@ public final class MoonlightCore {
 				return;
 			}
 			sender.sendPacket(ClientboundRequestValidConfigurationsPacketPayload.INSTANCE);
+		});
+
+		ServerLifecycleEvents.STARTING.subscribe(server -> {
+			RegistryAccess registryAccess = server.registryAccess();
+
+			for (final var entry : registryAccess.lookupOrThrow(Registries.LEVEL_STEM).entrySet()) {
+				LevelStem stem = entry.getValue();
+				if (stem.generator() instanceof NoiseBasedChunkGenerator chunkGenerator) {
+					((NoiseGeneratorSettingsExtension) (Object) chunkGenerator.generatorSettings().value()).moonlightcore$setDimensionKey(entry.getKey());
+				}
+			}
 		});
 	}
 

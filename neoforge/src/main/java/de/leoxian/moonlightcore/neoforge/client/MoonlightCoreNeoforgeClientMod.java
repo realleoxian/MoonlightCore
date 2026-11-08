@@ -1,7 +1,7 @@
 package de.leoxian.moonlightcore.neoforge.client;
 
 import de.leoxian.moonlightcore.client.platform.XplatClientAbstraction;
-import de.leoxian.moonlightcore.internal.core.client.MoonlightCoreClient;
+import de.leoxian.moonlightcore.core.client.MoonlightCoreClient;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.Mod;
 

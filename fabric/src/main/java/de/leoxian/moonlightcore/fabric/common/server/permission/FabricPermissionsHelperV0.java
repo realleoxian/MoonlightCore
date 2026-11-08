@@ -1,6 +1,6 @@
 package de.leoxian.moonlightcore.fabric.common.server.permission;
 
-import de.leoxian.moonlightcore.internal.common.internal.XplatPermissionHelper;
+import de.leoxian.moonlightcore.internal.common.server.permission.XplatPermissionHelper;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.Identifier;

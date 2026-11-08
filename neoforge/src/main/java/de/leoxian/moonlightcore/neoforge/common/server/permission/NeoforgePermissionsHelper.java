@@ -3,7 +3,7 @@ package de.leoxian.moonlightcore.neoforge.common.server.permission;
 import de.leoxian.moonlightcore.common.server.permission.PermissionContext;
 import de.leoxian.moonlightcore.common.server.permission.context.OfflinePermissionContext;
 import de.leoxian.moonlightcore.common.server.permission.context.PlayerPermissionContext;
-import de.leoxian.moonlightcore.internal.common.internal.XplatPermissionHelper;
+import de.leoxian.moonlightcore.internal.common.server.permission.XplatPermissionHelper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,6 +1,6 @@
-package de.leoxian.moonlightcore.internal.core.network.clientbound;
+package de.leoxian.moonlightcore.core.network.clientbound;
 
-import de.leoxian.moonlightcore.internal.core.MoonlightCore;
+import de.leoxian.moonlightcore.core.MoonlightCore;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

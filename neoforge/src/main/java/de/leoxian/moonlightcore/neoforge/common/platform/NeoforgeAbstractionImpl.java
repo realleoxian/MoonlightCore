@@ -11,6 +11,7 @@ import de.leoxian.moonlightcore.common.command.ArgumentTypeRegistrar;
 import de.leoxian.moonlightcore.common.command.CommandRegistrarContext;
 import de.leoxian.moonlightcore.common.entity.EntityAttributeRegistrar;
 import de.leoxian.moonlightcore.common.fluid.FluidRegistrar;
+import de.leoxian.moonlightcore.common.level.biome.modifier.BiomeModification;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
@@ -28,6 +29,7 @@ import de.leoxian.moonlightcore.neoforge.common.command.NeoforgeCommandRegistrar
 import de.leoxian.moonlightcore.neoforge.common.entity.NeoforgeEntityAttributeRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.fluid.NeoforgeFluidRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.hooks.EventBusesHooks;
+import de.leoxian.moonlightcore.neoforge.common.level.biome.modifier.NeoforgeBiomeModification;
 import de.leoxian.moonlightcore.neoforge.common.network.NeoforgeNetworkHandler;
 import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeDataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.neoforge.common.pack.NeoforgeServerResourceReloadListenerRegistrar;
@@ -48,6 +50,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -60,6 +63,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.neoforged.neoforgespi.language.IModFileInfo;
 import org.jspecify.annotations.Nullable;
@@ -111,6 +115,11 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
+	public void potionBrewing(Consumer<PotionBrewing.Builder> initializer) {
+		NeoForge.EVENT_BUS.addListener((RegisterBrewingRecipesEvent event) -> initializer.accept(event.getBuilder()));
+	}
+
+	@Override
 	public SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound) {
 		return new DeferredSoundType(volume, pitch, breakSound, stepSound, placeSound, hitSound, fallSound);
 	}
@@ -148,6 +157,11 @@ public class NeoforgeAbstractionImpl implements XplatAbstraction {
 	@Override
 	public <T> DataAttachmentType.Builder<T> createAttachmentTypeBuilder(Supplier<T> initializer) {
 		return new NeoDataAttachmentTypeBuilderImpl<>(initializer);
+	}
+
+	@Override
+	public BiomeModification biomeModification() {
+		return NeoforgeBiomeModification.INSTANCE;
 	}
 
 	@Override

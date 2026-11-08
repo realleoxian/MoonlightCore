@@ -8,7 +8,7 @@ import de.leoxian.moonlightcore.common.util.DynamicRegistryUtils;
 import de.leoxian.moonlightcore.internal.common.server.dimension.DynamicDimensionProvider;
 import de.leoxian.moonlightcore.internal.common.server.dimension.DynamicDimensionRegistryImpl;
 import de.leoxian.moonlightcore.internal.common.server.dimension.DynamicDimensionRemovalTicket;
-import de.leoxian.moonlightcore.internal.core.network.clientbound.ClientboundRemoveDynamicDimensionPacketPayload;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundRemoveDynamicDimensionPacketPayload;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;

@@ -13,6 +13,7 @@
     "accessor.ServerChunkCacheAccessor",
     "accessor.ServerCommonPacketListenerImplAccessor",
     "dimension.MinecraftServerMixin",
+    "level.NoiseGeneratorSettingsMixin",
     "transfer.FluidMixin",
     "transfer.ItemMixin"
   ],

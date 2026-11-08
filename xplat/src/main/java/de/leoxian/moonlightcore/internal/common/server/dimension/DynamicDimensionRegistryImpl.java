@@ -4,7 +4,7 @@ import de.leoxian.moonlightcore.common.network.PacketDistributor;
 import de.leoxian.moonlightcore.common.server.dimension.DynamicDimensionRegistry;
 import de.leoxian.moonlightcore.common.server.dimension.DimensionPlayerRemover;
 import de.leoxian.moonlightcore.common.util.DynamicRegistryUtils;
-import de.leoxian.moonlightcore.internal.core.network.clientbound.ClientboundCreateDimensionPacketPayload;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundCreateDimensionPacketPayload;
 import de.leoxian.moonlightcore.mixin.accessor.ChunkMapAccessor;
 import de.leoxian.moonlightcore.mixin.accessor.DistanceManagerAccessor;
 import de.leoxian.moonlightcore.mixin.accessor.MinecraftServerAccessor;

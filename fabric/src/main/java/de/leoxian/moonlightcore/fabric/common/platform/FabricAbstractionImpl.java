@@ -11,6 +11,7 @@ import de.leoxian.moonlightcore.common.command.ArgumentTypeRegistrar;
 import de.leoxian.moonlightcore.common.command.CommandRegistrarContext;
 import de.leoxian.moonlightcore.common.entity.EntityAttributeRegistrar;
 import de.leoxian.moonlightcore.common.fluid.FluidRegistrar;
+import de.leoxian.moonlightcore.common.level.biome.modifier.BiomeModification;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
@@ -31,17 +32,19 @@ import de.leoxian.moonlightcore.fabric.common.command.FabricCommandRegistrarCont
 import de.leoxian.moonlightcore.fabric.common.entity.FabricEntityAttributeRegistrar;
 import de.leoxian.moonlightcore.fabric.common.event.CommonEventHooks;
 import de.leoxian.moonlightcore.fabric.common.fluid.FabricFluidRegistrar;
+import de.leoxian.moonlightcore.fabric.common.level.biome.modifier.FabricBiomeModification;
 import de.leoxian.moonlightcore.fabric.common.network.FabricServerConfigurationNetworkingContext;
 import de.leoxian.moonlightcore.fabric.common.network.FabricServerPlayNetworkingContext;
 import de.leoxian.moonlightcore.fabric.common.pack.FabricDataPackRegistryRegistrar;
 import de.leoxian.moonlightcore.fabric.common.pack.FabricServerResourceReloadListenerRegistrar;
 import de.leoxian.moonlightcore.fabric.common.registry.FabricRegistryBuilderImpl;
 import de.leoxian.moonlightcore.fabric.common.resource.FabricModResources;
-import de.leoxian.moonlightcore.internal.common.internal.XplatPermissionHelper;
+import de.leoxian.moonlightcore.internal.common.server.permission.XplatPermissionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -57,6 +60,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -103,6 +107,11 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 	}
 
 	@Override
+	public void potionBrewing(Consumer<PotionBrewing.Builder> initializer) {
+		FabricPotionBrewingBuilder.BUILD.register(initializer::accept);
+	}
+
+	@Override
 	public SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound) {
 		return new SoundType(volume, pitch, breakSound.get(), stepSound.get(), placeSound.get(), hitSound.get(), fallSound.get());
 	}
@@ -140,6 +149,11 @@ public class FabricAbstractionImpl implements XplatAbstraction {
 	@Override
 	public <T> DataAttachmentType.Builder<T> createAttachmentTypeBuilder(Supplier<T> initializer) {
 		return new FabricDataAttachmentTypeBuilder<>(initializer);
+	}
+
+	@Override
+	public BiomeModification biomeModification() {
+		return FabricBiomeModification.INSTANCE;
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import de.leoxian.moonlightcore.common.command.ArgumentTypeRegistrar;
 import de.leoxian.moonlightcore.common.command.CommandRegistrarContext;
 import de.leoxian.moonlightcore.common.entity.EntityAttributeRegistrar;
 import de.leoxian.moonlightcore.common.fluid.FluidRegistrar;
+import de.leoxian.moonlightcore.common.level.biome.modifier.BiomeModification;
 import de.leoxian.moonlightcore.common.network.ServerConfigurationNetworking;
 import de.leoxian.moonlightcore.common.network.ServerPlayNetworking;
 import de.leoxian.moonlightcore.common.pack.DataPackRegistryRegistrar;
@@ -32,6 +33,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -48,7 +50,7 @@ import java.util.function.Supplier;
 public interface XplatAbstraction {
 	XplatAbstraction INSTANCE = ServiceLoader.load(XplatAbstractionFactory.class).findFirst().orElseThrow().create();
 
-	// |-----| Registrars |-----|
+    // |-----| Registrars |-----|
 	void fluids(String namespace, Consumer<FluidRegistrar> initializer);
 
 	void entityAttributes(String namespace, Consumer<EntityAttributeRegistrar> initializer);
@@ -58,6 +60,8 @@ public interface XplatAbstraction {
 	void argumentTypes(Consumer<ArgumentTypeRegistrar> initializer);
 
 	void serverReloadListeners(Consumer<ServerResourceReloadListenerRegistrar> initializer);
+
+	void potionBrewing(Consumer<PotionBrewing.Builder> initializer);
 
 	SoundType createSoundType(float volume, float pitch, Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound);
 
@@ -76,6 +80,8 @@ public interface XplatAbstraction {
 	DataAttachmentHolder getDataAttachmentsFromEntity(Entity entity);
 
 	<T> DataAttachmentType.Builder<T> createAttachmentTypeBuilder(Supplier<T> initializer);
+
+	BiomeModification biomeModification();
 
 	// |-----| Capabilities |-----|
 	<A, C extends @Nullable Object> ItemCapability<A, C> createItemCapability(Identifier id, Class<A> apiClass, Class<C> contextClass);

@@ -1,21 +1,33 @@
-package de.leoxian.moonlightcore.internal.core.client;
+package de.leoxian.moonlightcore.core.client;
 
+import de.leoxian.moonlightcore.client.event.ClientLevelTickEvents;
 import de.leoxian.moonlightcore.client.network.ClientPlayNetworking;
 import de.leoxian.moonlightcore.common.config.Config;
 import de.leoxian.moonlightcore.common.config.file.LoadedConfig;
+import de.leoxian.moonlightcore.common.playerskin.PlayerSkinHandler;
 import de.leoxian.moonlightcore.common.util.DynamicRegistryUtils;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundCreateDimensionPacketPayload;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundRemoveDynamicDimensionPacketPayload;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundRequestValidConfigurationsPacketPayload;
+import de.leoxian.moonlightcore.core.network.clientbound.ClientboundSyncLoadedConfigPacketPayload;
 import de.leoxian.moonlightcore.internal.common.config.ConfigRegistry;
-import de.leoxian.moonlightcore.internal.core.network.clientbound.*;
-import de.leoxian.moonlightcore.internal.core.network.serverbound.ServerboundAcceptedConfigurationsPacketPayload;
+import de.leoxian.moonlightcore.core.network.serverbound.ServerboundAcceptedConfigurationsPacketPayload;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.DimensionType;
 
+import java.util.List;
+
 public final class MoonlightCoreClient {
 	public static void initializeClient() {
 		initializeNetwork();
+		initializeEvents();
+	}
+
+	private static void initializeEvents() {
+		ClientLevelTickEvents.END.subscribe(level -> List.copyOf(level.players()).forEach(PlayerSkinHandler::tick));
 	}
 
 	private static void initializeNetwork() {
